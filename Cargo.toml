@@ -1,6 +1,9 @@
 [workspace]
 members  = []
 resolver = "2"
+members = [
+    "printf"
+]
 
 [workspace.package]
 edition      = "2021"
