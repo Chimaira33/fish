@@ -1,0 +1,3 @@
+#!/data/data/com.termux/files/usr/bin/sh -x
+
+./add-shell ${DSTVOLUME}usr/local/bin/fish

@@ -1,0 +1,10 @@
+include = ["Cargo.toml", "crates/**/Cargo.toml", ".cargo/config.toml", "xtask/**/*.toml"]
+exclude = ["./benchmark/**/*.toml"]
+
+[formatting]
+align_entries = true
+column_width = 120
+reorder_keys = true
+
+[schema]
+path = "https://raw.githubusercontent.com/tamasfe/taplo/master/site/site/public/schemas/Cargo.toml.json"
