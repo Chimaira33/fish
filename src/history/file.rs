@@ -255,11 +255,7 @@ fn escape_yaml_fish_2_0(s: &mut Vec<u8>) {
 fn maybe_unescape_yaml_fish_2_0(s: &[u8]) -> Cow<[u8]> {
     // This is faster than s.contains(b'\\') and can be auto-vectorized to SIMD. See benchmark note
     // on unescape_yaml_fish_2_0().
-    if !s
-        .iter()
-        .copied()
-        .fold(false, |acc, b| acc | (b == b'\\'))
-    {
+    if !s.iter().copied().fold(false, |acc, b| acc | (b == b'\\')) {
         return s.into();
     }
     unescape_yaml_fish_2_0(s).into()
