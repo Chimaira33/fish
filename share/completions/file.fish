@@ -6,10 +6,10 @@ complete -c file -s C -l compile -d 'Write an output file containing a pre-parse
 complete -c file -s h -l no-dereference -d 'Do not follow symlinks'
 
 if test (uname) = Darwin
-    complete -c file -s i -d 'Do not classify regular file contents'
-    complete -c file -s I -l mime -d 'Output mime type strings instead human readable strings'
+  complete -c file -s i -d 'Do not classify regular file contents'
+  complete -c file -s I -l mime -d 'Output mime type strings instead human readable strings'
 else
-    complete -c file -s i -l mime -d 'Output mime type strings instead human readable strings'
+  complete -c file -s i -l mime -d 'Output mime type strings instead human readable strings'
 end
 
 complete -c file -s k -l keep-going -d 'Don\'t stop at the first match'

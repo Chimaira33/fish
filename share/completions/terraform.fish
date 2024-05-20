@@ -1,17 +1,17 @@
 # Returns 0 if the command has not had a subcommand yet
 # Does not currently account for -chdir
 function __fish_terraform_needs_command
-    set -l cmd (commandline -xpc)
+  set -l cmd (commandline -xpc)
 
-    if test (count $cmd) -eq 1
-        return 0
-    end
+  if test (count $cmd) -eq 1
+    return 0
+  end
 
-    return 1
+  return 1
 end
 
 function __fish_terraform_workspaces
-    terraform workspace list | string replace -r "^[\s\*]*" ""
+  terraform workspace list | string replace -r "^[\s\*]*" ""
 end
 
 # general options

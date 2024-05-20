@@ -1,5 +1,5 @@
 function __single
-    complete -f -c ar -n __fish_use_subcommand -a $argv[1] -d $argv[2] # no dash
+  complete -f -c ar -n __fish_use_subcommand -a $argv[1] -d $argv[2] # no dash
 end
 
 __single d "Delete modules from the archive."

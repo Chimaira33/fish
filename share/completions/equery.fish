@@ -40,9 +40,9 @@ complete -c equery -n __fish_use_subcommand -xa which -d "Print full path to ebu
 
 ## Arguments
 complete -c equery -n '__fish_seen_subcommand_from c changes d depends g depgraph y keywords m meta u uses w which' \
-    -xa '(__fish_print_portage_available_pkgs)'
+  -xa '(__fish_print_portage_available_pkgs)'
 complete -c equery -n '__fish_seen_subcommand_from k check f files s size' \
-    -xa '(__fish_print_portage_installed_pkgs)'
+  -xa '(__fish_print_portage_installed_pkgs)'
 
 ## Local opts
 # belongs
@@ -54,7 +54,7 @@ complete -c equery -n '__fish_seen_subcommand_from b belongs' -s n -l name-only 
 complete -c equery -n '__fish_seen_subcommand_from c changes' -s l -l latest -d "Display only latest ChangeLog entry"
 complete -c equery -n '__fish_seen_subcommand_from c changes' -s f -l full -d "Display full ChangeLog"
 complete -c equery -n '__fish_seen_subcommand_from c changes' -l limit -d "Limit number of entries displayed (with --full)" \
-    -xa "(seq 99)"
+  -xa "(seq 99)"
 #complete -c equery -n '__fish_seen_subcommand_from c changes'      -l from=VER          -d "Set which version to display from"
 #complete -c equery -n '__fish_seen_subcommand_from c changes'      -l to=VER            -d "Set which version to display to"
 
@@ -66,7 +66,7 @@ complete -c equery -n '__fish_seen_subcommand_from k check' -s o -l only-failure
 complete -c equery -n '__fish_seen_subcommand_from d depends' -s a -l all-packages -d "Include dependencies that are not installed (slow)"
 complete -c equery -n '__fish_seen_subcommand_from d depends' -s D -l indirect -d "Search both direct and indirect dependencies"
 complete -c equery -n '__fish_seen_subcommand_from d depends' -l depth -d "Limit indirect dependency tree to specified depth" \
-    -xa "(seq 9)"
+  -xa "(seq 9)"
 
 # depgraph
 complete -c equery -n '__fish_seen_subcommand_from g depgraph' -s A -l no-atom -d "Don't show dependency atom"
@@ -74,18 +74,18 @@ complete -c equery -n '__fish_seen_subcommand_from g depgraph' -s M -l no-mask -
 complete -c equery -n '__fish_seen_subcommand_from g depgraph' -s U -l no-useflags -d "Don't show USE flags"
 complete -c equery -n '__fish_seen_subcommand_from g depgraph' -s l -l linear -d "Don't indent dependencies"
 complete -c equery -n '__fish_seen_subcommand_from g depgraph' -l depth -d "Limit dependency graph to specified depth" \
-    -xa "(seq 9)"
+  -xa "(seq 9)"
 
 # files
 function __fish_equery_files_filter_args
-    printf "%s\n" dir obj sym dev fifo path conf cmd doc man info
+  printf "%s\n" dir obj sym dev fifo path conf cmd doc man info
 end
 complete -c equery -n '__fish_seen_subcommand_from f files' -s m -l md5sum -d "Include MD5 sum in output"
 complete -c equery -n '__fish_seen_subcommand_from f files' -s s -l timestamp -d "Include timestamp in output"
 complete -c equery -n '__fish_seen_subcommand_from f files' -s t -l type -d "Include file type in output"
 complete -c equery -n '__fish_seen_subcommand_from f files' -l tree -d "Display results in a tree"
 complete -c equery -n '__fish_seen_subcommand_from f files' -s f -l filter -d "Filter output by file type" \
-    -xa "(__fish_complete_list , __fish_equery_files_filter_args)"
+  -xa "(__fish_complete_list , __fish_equery_files_filter_args)"
 
 # has + hasuse
 complete -c equery -n '__fish_seen_subcommand_from a has h hasuse' -s I -l exclude-installed -d "Exclude installed pkgs from search path"
@@ -106,9 +106,9 @@ complete -c equery -n '__fish_seen_subcommand_from l list' -s o -l overlay-tree 
 complete -c equery -n '__fish_seen_subcommand_from l list' -s p -l portage-tree -d "List pkgs in the main portage tree"
 #complete -c equery -n '__fish_seen_subcommand_from l list' -s F -l format=TMPL       -d "Specify a custom output format"
 complete -c equery -n '__fish_seen_subcommand_from l list; and not __fish_contains_opt -s p portage-tree' \
-    -xa "(__fish_print_portage_installed_pkgs)"
+  -xa "(__fish_print_portage_installed_pkgs)"
 complete -c equery -n '__fish_seen_subcommand_from l list; and     __fish_contains_opt -s p portage-tree' \
-    -xa "(__fish_print_portage_available_pkgs)"
+  -xa "(__fish_print_portage_available_pkgs)"
 
 # meta
 complete -c equery -n '__fish_seen_subcommand_from m meta' -s d -l description -d "Show extended pkg description"

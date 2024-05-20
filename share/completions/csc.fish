@@ -3,7 +3,7 @@
 
 # Optimization
 for bytes in 512 1024 2048 4096 8192
-    complete -c csc -o "filealign:$bytes" -d "Specifies the size of sections in the output file"
+  complete -c csc -o "filealign:$bytes" -d "Specifies the size of sections in the output file"
 end
 
 complete -c csc -s o -o "o+" -o optimize -o "optimize+" -d "Enable optimizations"
@@ -56,23 +56,23 @@ complete -c csc -o checked- -d "Disable overflow checks"
 
 complete -c csc -o debug -o "debug+" -d "Instruct the compiler to emit debugging information"
 for arguments in full pdbonly
-    complete -c csc -o "debug:$arguments" -d "Instruct the compiler to emit debugging information"
+  complete -c csc -o "debug:$arguments" -d "Instruct the compiler to emit debugging information"
 end
 complete -c csc -o debug- -d "Disable -debug"
 
 for arguments in none prompt queue send
-    complete -c csc -o "errorreport:$arguments" -d "Sets error reporting behavior"
+  complete -c csc -o "errorreport:$arguments" -d "Sets error reporting behavior"
 end
 
 complete -c csc -o fullpaths -d "Specifies the absolute path to the file in compiler output"
 complete -c csc -o "nowarn:" -d "Suppresses the compiler's generation of specified warnings"
 
 for warning_level in (seq 0 4)
-    if test $warning_level -ne 4
-        complete -c csc -o "w:$warning_level" -o "warn:$warning_level" -d "Sets the warning level to $warning_level"
-    else
-        complete -c csc -o "w:$warning_level" -o "warn:$warning_level" -d "Sets the warning level to $warning_level (default)"
-    end
+  if test $warning_level -ne 4
+    complete -c csc -o "w:$warning_level" -o "warn:$warning_level" -d "Sets the warning level to $warning_level"
+  else
+    complete -c csc -o "w:$warning_level" -o "warn:$warning_level" -d "Sets the warning level to $warning_level (default)"
+  end
 end
 
 complete -c csc -o warnaserror -o "warnaserror+" -d "Promotes warnings to errors"
@@ -104,17 +104,17 @@ complete -c csc -o "langversion:preview" -d "Specify latest preview version as l
 complete -c csc -o "langversion:ISO-1" -d "Specify ISO/IEC 23270:2003 C# (1.0/1.2) as language version"
 complete -c csc -o "langversion:ISO-2" -d "Specify ISO/IEC 23270:2006 C# (2.0) as language version"
 for version_number in (seq 3 8)
-    switch $version_number
-        case 7
-            complete -c csc -o "langversion:$version_number" -d "Specify C# $version_number.0 as language version"
-            complete -c csc -o "langversion:$version_number.1" -d "Specify C# $version_number.1 as language version"
-            complete -c csc -o "langversion:$version_number.2" -d "Specify C# $version_number.2 as language version"
-            complete -c csc -o "langversion:$version_number.3" -d "Specify C# $version_number.3 as language version"
-        case 8
-            complete -c csc -o "langversion:$version_number.0" -d "Specify C# $version_number.0 as language version"
-        case "*"
-            complete -c csc -o "langversion:$version_number" -d "Specify C# $version_number.0 as language version"
-    end
+  switch $version_number
+    case 7
+      complete -c csc -o "langversion:$version_number" -d "Specify C# $version_number.0 as language version"
+      complete -c csc -o "langversion:$version_number.1" -d "Specify C# $version_number.1 as language version"
+      complete -c csc -o "langversion:$version_number.2" -d "Specify C# $version_number.2 as language version"
+      complete -c csc -o "langversion:$version_number.3" -d "Specify C# $version_number.3 as language version"
+    case 8
+      complete -c csc -o "langversion:$version_number.0" -d "Specify C# $version_number.0 as language version"
+    case "*"
+      complete -c csc -o "langversion:$version_number" -d "Specify C# $version_number.0 as language version"
+  end
 end
 
 complete -c csc -o "m:" -o "main:" -d "Specifies the location of the Main method"

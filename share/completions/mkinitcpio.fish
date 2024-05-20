@@ -1,7 +1,7 @@
 # Archlinux's mkinitcpio (https://projects.archlinux.org/mkinitcpio.git/)
 
 function __fish_mkinitcpio_complete_hooks
-    mkinitcpio -L | string match -r '^[a-z].*$' | string split \t | string match -r '.+' | string replace -ra '[¹²³]' '\tdeprecated'
+  mkinitcpio -L | string match -r '^[a-z].*$' | string split \t | string match -r '.+' | string replace -ra '[¹²³]' '\tdeprecated'
 end
 
 complete -c mkinitcpio -s A -l addhooks -d 'Add the additional hooks to the image' -a "(__fish_mkinitcpio_complete_hooks)" -f

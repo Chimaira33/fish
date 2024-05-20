@@ -4,23 +4,23 @@
 # https://www.kernel.org/pub/linux/utils/util-linux
 
 function __fish_print_losetup_list_output
-    printf "%s\t%s\n" \
-        NAME "Loop device name" \
-        AUTOCLEAR "Autoclear flag set" \
-        BACK-FILE "Device backing file" \
-        BACK-INO "Backing file inode number" \
-        BACK-MAJ:MIN "Backing file major:minor device number" \
-        MAJ:MIN "Loop device major:minor number" \
-        OFFSET "Offset from the beginning" \
-        PARTSCAN "Partscan flag set" \
-        RO "Read-only device" \
-        SIZELIMIT "Size limit of the file in bytes" \
-        DIO "Access backing file with direct-io" \
-        LOG-SEC "Logical sector size in bytes"
+  printf "%s\t%s\n" \
+    NAME "Loop device name" \
+    AUTOCLEAR "Autoclear flag set" \
+    BACK-FILE "Device backing file" \
+    BACK-INO "Backing file inode number" \
+    BACK-MAJ:MIN "Backing file major:minor device number" \
+    MAJ:MIN "Loop device major:minor number" \
+    OFFSET "Offset from the beginning" \
+    PARTSCAN "Partscan flag set" \
+    RO "Read-only device" \
+    SIZELIMIT "Size limit of the file in bytes" \
+    DIO "Access backing file with direct-io" \
+    LOG-SEC "Logical sector size in bytes"
 end
 
 function __fish_print_losetup_attached
-    losetup --list --raw --noheadings --output NAME,BACK-FILE | string replace ' ' \t
+  losetup --list --raw --noheadings --output NAME,BACK-FILE | string replace ' ' \t
 end
 
 complete -c losetup -s a -l all -d "List all used devices"

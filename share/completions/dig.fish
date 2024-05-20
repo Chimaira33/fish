@@ -1,11 +1,11 @@
 # completion for dig
 
 function __fish_complete_dig
-    set -l token (commandline -ct)
-    switch $token
-        case '+tries=*' '+retry=*' '+time=*' '+bufsize=*' '+ndots=*' '+edns=*'
-            printf '%s\n' $token(seq 0 50)
-    end
+  set -l token (commandline -ct)
+  switch $token
+    case '+tries=*' '+retry=*' '+time=*' '+bufsize=*' '+ndots=*' '+edns=*'
+      printf '%s\n' $token(seq 0 50)
+  end
 end
 
 complete -f -c dig -s 4 -d 'Use IPv4 query transport only'

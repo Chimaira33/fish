@@ -1,18 +1,18 @@
 function __fish_ffprobe_help_type
-    printf '%s\t%s\n' long "Print more options"
-    printf '%s\t%s\n' full "Print all options"
+  printf '%s\t%s\n' long "Print more options"
+  printf '%s\t%s\n' full "Print all options"
 
-    for help_type in decoder encoder demuxer muxer filter
-        set -l regex
+  for help_type in decoder encoder demuxer muxer filter
+    set -l regex
 
-        if test $help_type = filter
-            set regex '\S+\s+(\S+)\s+\S+\s+(\S+)'
-        else
-            set regex '\S+\s+(\S+)\s+(\S+)'
-        end
-
-        printf '%s\n' $help_type=(ffprobe -loglevel quiet -"$help_type"s | string trim | string match -rv '=|:$|^-' | string replace -rf "$regex" '$1\t$2')
+    if test $help_type = filter
+      set regex '\S+\s+(\S+)\s+\S+\s+(\S+)'
+    else
+      set regex '\S+\s+(\S+)\s+(\S+)'
     end
+
+    printf '%s\n' $help_type=(ffprobe -loglevel quiet -"$help_type"s | string trim | string match -rv '=|:$|^-' | string replace -rf "$regex" '$1\t$2')
+  end
 end
 
 # Main options

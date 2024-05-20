@@ -1,37 +1,37 @@
 function __fish_watchexec_print_remaining_args
-    set -l spec w/watch= c/clear='?' o/on-busy-update= r/restart s/signal= stop-signal= stop-timeout= d/debounce= stdin-quit no-vcs-ignore no-project-ignore no-global-ignore no-default-ignore no-discover-ignore p/postpone delay-run= poll= shell= n no-environment emit-events-to= E/env= no-process-group N/notify project-origin= workdir= e/exts= f/filter= filter-file= i/ignore= ignore-file= fs-events= no-meta print-events v/verbose log-file= manual h/help V/version
+  set -l spec w/watch= c/clear='?' o/on-busy-update= r/restart s/signal= stop-signal= stop-timeout= d/debounce= stdin-quit no-vcs-ignore no-project-ignore no-global-ignore no-default-ignore no-discover-ignore p/postpone delay-run= poll= shell= n no-environment emit-events-to= E/env= no-process-group N/notify project-origin= workdir= e/exts= f/filter= filter-file= i/ignore= ignore-file= fs-events= no-meta print-events v/verbose log-file= manual h/help V/version
 
-    set argv (commandline -xpc | string escape) (commandline -ct)
-    set -e argv[1]
+  set argv (commandline -xpc | string escape) (commandline -ct)
+  set -e argv[1]
 
-    argparse -s $spec -- $argv 2>/dev/null
+  argparse -s $spec -- $argv 2>/dev/null
 
-    # The remaining argv is the subcommand with all its options, which is what
-    # we want.
-    if set -q argv[1]
-        and not string match -qr '^-.*' -- $argv[1]
-        string join0 -- $argv
-        return 0
-    else
-        return 1
-    end
+  # The remaining argv is the subcommand with all its options, which is what
+  # we want.
+  if set -q argv[1]
+    and not string match -qr '^-.*' -- $argv[1]
+    string join0 -- $argv
+    return 0
+  else
+    return 1
+  end
 end
 
 function __fish_watchexec_complete_subcommand
-    set -l args (__fish_watchexec_print_remaining_args | string split0)
-    complete -C "$args"
+  set -l args (__fish_watchexec_print_remaining_args | string split0)
+  complete -C "$args"
 end
 
 function __fish_watchexec_at_argfile
-    set -l current (commandline -ct)
-    if test (count (commandline -xpc)) -eq 1
-        and string match -q '@*' -- $current
+  set -l current (commandline -ct)
+  if test (count (commandline -xpc)) -eq 1
+    and string match -q '@*' -- $current
 
-        set current (string sub -s 2 -- $current)
-        __fish_complete_path | string replace -r "^" @
-        return 0
-    end
-    return 1
+    set current (string sub -s 2 -- $current)
+    __fish_complete_path | string replace -r "^" @
+    return 0
+  end
+  return 1
 end
 
 complete -c watchexec -n __fish_watchexec_at_argfile -x -a "(__fish_watchexec_at_argfile)"

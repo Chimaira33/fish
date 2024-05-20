@@ -1,20 +1,20 @@
 function __fish_tmux_sessions -d 'available sessions'
-    tmux list-sessions -F "#S	#{session_windows} windows created: #{session_created_string} [#{session_width}x#{session_height}]#{session_attached}" | sed 's/0$//;s/1$/ (attached)/' 2>/dev/null
+  tmux list-sessions -F "#S	#{session_windows} windows created: #{session_created_string} [#{session_width}x#{session_height}]#{session_attached}" | sed 's/0$//;s/1$/ (attached)/' 2>/dev/null
 end
 
 function __fish_tmux_clients -d 'connected clients'
-    tmux list-clients -F "#{client_tty}	#S: Created: #{client_created_string} [#{client_width}x#{client_height} #{client_termname}]" 2>/dev/null
+  tmux list-clients -F "#{client_tty}	#S: Created: #{client_created_string} [#{client_width}x#{client_height} #{client_termname}]" 2>/dev/null
 end
 
 function __fish_tmux_panes -d 'window panes'
-    #fully qualified pane names
-    tmux list-panes -F '#S:#W.#P	session:window.pane' 2>/dev/null
+  #fully qualified pane names
+  tmux list-panes -F '#S:#W.#P	session:window.pane' 2>/dev/null
 
-    #panes by themselves
-    tmux list-panes -F '#P	pane' 2>/dev/null
+  #panes by themselves
+  tmux list-panes -F '#P	pane' 2>/dev/null
 
-    #windows by themselves
-    tmux list-panes -F '#W	window' 2>/dev/null
+  #windows by themselves
+  tmux list-panes -F '#W	window' 2>/dev/null
 end
 
 #don't allow dirs in the completion list...
@@ -161,118 +161,118 @@ complete -c tmux -n "__fish_seen_subcommand_from $unbind" -xs t -d 'key table' -
 set -l setoption 'set set-option'
 set -l showoptions show-options
 set -l options \
-    backspace \
-    buffer-limit \
-    command-alias \
-    default-terminal \
-    copy-command \
-    escape-time \
-    editor \
-    exit-empty \
-    exit-unattached \
-    extended-keys \
-    focus-events \
-    history-file \
-    message-limit \
-    prompt-history-limit \
-    set-clipboard \
-    terminal-features \
-    terminal-overrides \
-    user-keys \
-    activity-action \
-    assume-paste-time \
-    base-index \
-    bell-action \
-    default-command \
-    default-shell \
-    default-size \
-    destroy-unattached \
-    detach-on-destroy \
-    display-panes-active-colour \
-    display-panes-colour \
-    display-panes-time \
-    display-time \
-    history-limit \
-    key-table \
-    lock-after-time \
-    lock-command \
-    message-command-style \
-    message-style \
-    mouse \
-    prefix \
-    renumber-windows \
-    repeat-time \
-    set-titles \
-    set-titles-string \
-    silence-action \
-    status \
-    status-format \
-    status-interval \
-    status-justify \
-    status-keys \
-    status-left \
-    status-left-length \
-    status-left-style \
-    status-position \
-    status-right \
-    status-right-length \
-    status-right-style \
-    status-style \
-    update-environment \
-    visual-activity \
-    visual-bell \
-    visual-silence \
-    word-separators \
-    aggressive-resize \
-    automatic-rename \
-    automatic-rename-format \
-    clock-mode-colour \
-    clock-mode-style \
-    fill-character \
-    main-pane-height \
-    main-pane-width \
-    copy-mode-match-style \
-    copy-mode-mark-style \
-    copy-mode-current-match-style \
-    mode-keys \
-    mode-style \
-    monitor-activity \
-    monitor-bell \
-    monitor-silence \
-    other-pane-height \
-    other-pane-width \
-    pane-active-border-style \
-    pane-base-index \
-    pane-border-format \
-    pane-border-indicators \
-    pane-border-lines \
-    pane-border-status \
-    pane-border-style \
-    popup-style \
-    popup-border-style \
-    popup-border-lines \
-    window-status-activity-style \
-    window-status-bell-style \
-    window-status-current-format \
-    window-status-current-style \
-    window-status-format \
-    window-status-last-style \
-    window-status-separator \
-    window-status-style \
-    window-size \
-    wrap-search \
-    allow-passthrough \
-    allow-rename \
-    alternate-screen \
-    cursor-colour \
-    pane-colours \
-    cursor-style \
-    remain-on-exit \
-    remain-on-exit-format \
-    scroll-on-clear \
-    synchronize-panes \
-    window-active-style \
-    window-style
+  backspace \
+  buffer-limit \
+  command-alias \
+  default-terminal \
+  copy-command \
+  escape-time \
+  editor \
+  exit-empty \
+  exit-unattached \
+  extended-keys \
+  focus-events \
+  history-file \
+  message-limit \
+  prompt-history-limit \
+  set-clipboard \
+  terminal-features \
+  terminal-overrides \
+  user-keys \
+  activity-action \
+  assume-paste-time \
+  base-index \
+  bell-action \
+  default-command \
+  default-shell \
+  default-size \
+  destroy-unattached \
+  detach-on-destroy \
+  display-panes-active-colour \
+  display-panes-colour \
+  display-panes-time \
+  display-time \
+  history-limit \
+  key-table \
+  lock-after-time \
+  lock-command \
+  message-command-style \
+  message-style \
+  mouse \
+  prefix \
+  renumber-windows \
+  repeat-time \
+  set-titles \
+  set-titles-string \
+  silence-action \
+  status \
+  status-format \
+  status-interval \
+  status-justify \
+  status-keys \
+  status-left \
+  status-left-length \
+  status-left-style \
+  status-position \
+  status-right \
+  status-right-length \
+  status-right-style \
+  status-style \
+  update-environment \
+  visual-activity \
+  visual-bell \
+  visual-silence \
+  word-separators \
+  aggressive-resize \
+  automatic-rename \
+  automatic-rename-format \
+  clock-mode-colour \
+  clock-mode-style \
+  fill-character \
+  main-pane-height \
+  main-pane-width \
+  copy-mode-match-style \
+  copy-mode-mark-style \
+  copy-mode-current-match-style \
+  mode-keys \
+  mode-style \
+  monitor-activity \
+  monitor-bell \
+  monitor-silence \
+  other-pane-height \
+  other-pane-width \
+  pane-active-border-style \
+  pane-base-index \
+  pane-border-format \
+  pane-border-indicators \
+  pane-border-lines \
+  pane-border-status \
+  pane-border-style \
+  popup-style \
+  popup-border-style \
+  popup-border-lines \
+  window-status-activity-style \
+  window-status-bell-style \
+  window-status-current-format \
+  window-status-current-style \
+  window-status-format \
+  window-status-last-style \
+  window-status-separator \
+  window-status-style \
+  window-size \
+  wrap-search \
+  allow-passthrough \
+  allow-rename \
+  alternate-screen \
+  cursor-colour \
+  pane-colours \
+  cursor-style \
+  remain-on-exit \
+  remain-on-exit-format \
+  scroll-on-clear \
+  synchronize-panes \
+  window-active-style \
+  window-style
 complete -c tmux -n __fish_use_subcommand -a "$setoption" -d 'Set or unset option'
 complete -c tmux -n __fish_use_subcommand -a "$showoptions" -d 'Show set options'
 complete -c tmux -n "__fish_seen_subcommand_from $setoption $showoptions" -s p -d 'Pane option'

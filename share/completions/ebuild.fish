@@ -1,11 +1,11 @@
 function __fish_seen_ebuild_arg -d "Test if an ebuild-argument has been given in the current commandline"
-    commandline -xpc | string match -q '*.ebuild'
+  commandline -xpc | string match -q '*.ebuild'
 end
 
 ## Opts
 complete -c ebuild -l debug -d "Run bash with the -x option"
 complete -c ebuild -l color -d "Enable color" \
-    -xa "y n"
+  -xa "y n"
 complete -c ebuild -l force -d "Force regeneration of digests"
 complete -c ebuild -l ignore-default-opts -d "Ignore EBUILD_DEFAULT_OPTS"
 complete -c ebuild -l skip-manifest -d "Skip all manifest checks"

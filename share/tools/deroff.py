@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-""" Deroff.py, ported to Python from the venerable deroff.c """
+"""Deroff.py, ported to Python from the venerable deroff.c"""
 
-import sys, re, string
+import re
+import string
+import sys
 
 IS_PY3 = sys.version_info[0] >= 3
 
@@ -420,7 +422,7 @@ class Deroffer:
         return self.s[idx : idx + 1].isspace()
 
     def str_eq(offset, other, len):
-        return self.s[offset : offset + len] == other[:len]
+        return self.s[offset : offset + len] == other[:len]  # noqa: F821
 
     def prch(self, idx):
         # Note that this return False for the empty string (idx >= len(self.s))
@@ -508,7 +510,7 @@ class Deroffer:
                 return False
 
             if reg in self.reg_table:
-                old_s = self.s
+                old_s = self.s  # noqa: F841
                 self.s = self.reg_table[reg]
                 self.text_arg()
                 return True
@@ -766,7 +768,7 @@ class Deroffer:
         return True
 
     def macro_de(self):
-        macro = True
+        macro = True  # noqa: F841
         self.condputs("\n")
         return True
 
@@ -969,7 +971,7 @@ class Deroffer:
             self.condputs("\n")
             return True
         elif s0s1 in ["de"]:
-            macro = True
+            macro = True  # noqa: F841
             self.condputs("\n")
             return True
         elif s0s1 in ["BL", "VL", "AL", "LB", "RL", "ML", "DL"]:

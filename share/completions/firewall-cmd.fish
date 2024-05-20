@@ -1,25 +1,25 @@
 function __fish_print_firewalld_zones --description "Print list of predefined firewalld zones"
-    firewall-cmd --get-zones | string split " "
+  firewall-cmd --get-zones | string split " "
 end
 
 function __fish_print_firewalld_policies --description "Print list of predefined firewalld policies"
-    firewall-cmd --get-policies | string split " "
+  firewall-cmd --get-policies | string split " "
 end
 
 function __fish_print_firewalld_services --description "Print list of predefined firewalld services"
-    firewall-cmd --get-services | string split " "
+  firewall-cmd --get-services | string split " "
 end
 
 function __fish_print_firewalld_icmptypes --description "Print list of ICMP types supported by firewalld"
-    firewall-cmd --get-icmptypes | string split " "
+  firewall-cmd --get-icmptypes | string split " "
 end
 
 function __fish_print_firewalld_helpers --description "Print list of predefined firewalld helpers"
-    firewall-cmd --get-helpers | string split " "
+  firewall-cmd --get-helpers | string split " "
 end
 
 function __fish_print_firewalld_protocols --description "Print list of protocols supported by firewalld"
-    string replace -f -r '^([[:alnum:]]\S*).*' '$1' </etc/protocols
+  string replace -f -r '^([[:alnum:]]\S*).*' '$1' </etc/protocols
 end
 
 complete -c firewall-cmd -f

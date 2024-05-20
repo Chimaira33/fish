@@ -7,32 +7,32 @@
 
 # Filter the completions per primary command
 function __btrfs_commands
-    if not set -q argv[1]
-        return 1
-    end
-    set -l cmd (commandline -cp)
-    if string match -qr -- "btrfs\s+$argv[1]\s+\S*" $cmd
-        return 0
-    end
+  if not set -q argv[1]
     return 1
+  end
+  set -l cmd (commandline -cp)
+  if string match -qr -- "btrfs\s+$argv[1]\s+\S*" $cmd
+    return 0
+  end
+  return 1
 end
 
 # Filter the completions per command group
 function __btrfs_command_groups
-    if not set -q argv[1]
-        return 1
-    end
-    set -l cmd (commandline -cp)
-    if set -q argv[2]
-        if string match -qr -- "btrfs\s+$argv[1]\s+$argv[2]\s+\S*" $cmd
-            return 0
-        end
-        return 1
-    end
-    if string match -qr -- "btrfs\s+$argv[1]\s+\S*\$" $cmd
-        return 0
+  if not set -q argv[1]
+    return 1
+  end
+  set -l cmd (commandline -cp)
+  if set -q argv[2]
+    if string match -qr -- "btrfs\s+$argv[1]\s+$argv[2]\s+\S*" $cmd
+      return 0
     end
     return 1
+  end
+  if string match -qr -- "btrfs\s+$argv[1]\s+\S*\$" $cmd
+    return 0
+  end
+  return 1
 end
 
 set -l check '__btrfs_commands check'

@@ -80,22 +80,22 @@ complete -c as -o mamd64 -d 'Accept only AMD64 ISA'
 complete -c as -o mintel64 -d 'Accept only Intel64 ISA'
 
 function __fish_complete_as_march
-    # Complete: CPU[,EXTENSION...]
+  # Complete: CPU[,EXTENSION...]
 
-    set -l cpus generic32 generic64 i386 i486 i586 i686 pentium pentiumpro pentiumii pentiumiii pentium4 prescott nocona core core2 corei7 l1om k1om iamcu k6 k6_2 athlon opteron k8 amdfam10 bdver1 bdver2 bdver3 bdver4 znver1 btver1 btver2
+  set -l cpus generic32 generic64 i386 i486 i586 i686 pentium pentiumpro pentiumii pentiumiii pentium4 prescott nocona core core2 corei7 l1om k1om iamcu k6 k6_2 athlon opteron k8 amdfam10 bdver1 bdver2 bdver3 bdver4 znver1 btver1 btver2
 
-    set -l extensions 8087 287 387 687 mmx sse sse2 sse3 ssse3 sse4.1 sse4.2 sse4 avx avx2 avx512f avx512cd avx512er avx512pf avx512dq avx512bw avx512vl vmx vmfunc smx xsave xsaveopt xsavec xsaves aes pclmul fsgsbase rdrnd f16c bmi2 fma fma4 xop lwp movbe cx16 ept lzcnt hle rtm invpcid clflush nop syscall rdtscp 3dnow 3dnowa padlock svme sse4a abm bmi tbm adx rdseed prfchw smap mpx sha clflushopt prefetchwt1 se1 clwb avx512ifma avx512vbmi avx512_4fmaps avx512_4vnniw avx512_vpopcntdq clzero mwaitx ospke rdpid ptwrite no87 no287 no387 no687 nommx nosse nosse2 nosse3 nossse3 nosse4.1 nosse4.2 nosse4 noavx noavx2 noavx512f noavx512cd noavx512er noavx512pf noavx512dq noavx512bw noavx512vl noavx512ifma noavx512vbmi noavx512_4fmaps noavx512_4vnniw noavx512_vpopcntdq
+  set -l extensions 8087 287 387 687 mmx sse sse2 sse3 ssse3 sse4.1 sse4.2 sse4 avx avx2 avx512f avx512cd avx512er avx512pf avx512dq avx512bw avx512vl vmx vmfunc smx xsave xsaveopt xsavec xsaves aes pclmul fsgsbase rdrnd f16c bmi2 fma fma4 xop lwp movbe cx16 ept lzcnt hle rtm invpcid clflush nop syscall rdtscp 3dnow 3dnowa padlock svme sse4a abm bmi tbm adx rdseed prfchw smap mpx sha clflushopt prefetchwt1 se1 clwb avx512ifma avx512vbmi avx512_4fmaps avx512_4vnniw avx512_vpopcntdq clzero mwaitx ospke rdpid ptwrite no87 no287 no387 no687 nommx nosse nosse2 nosse3 nossse3 nosse4.1 nosse4.2 nosse4 noavx noavx2 noavx512f noavx512cd noavx512er noavx512pf noavx512dq noavx512bw noavx512vl noavx512ifma noavx512vbmi noavx512_4fmaps noavx512_4vnniw noavx512_vpopcntdq
 
-    set -l token (commandline -ct)
-    set -l opts (string split -- , $token)
+  set -l token (commandline -ct)
+  set -l opts (string split -- , $token)
 
-    if not set -q opts[2]
-        # We are completing the CPU part
-        printf '%s\tCPU\n' $cpus
-    else
-        # We are completing the EXTENSION part
-        printf '%s\tExtension\n' (string join -- , $opts)$extensions
-    end
+  if not set -q opts[2]
+    # We are completing the CPU part
+    printf '%s\tCPU\n' $cpus
+  else
+    # We are completing the EXTENSION part
+    printf '%s\tExtension\n' (string join -- , $opts)$extensions
+  end
 end
 
 complete -c as -o march -x -a '(__fish_complete_as_march)'

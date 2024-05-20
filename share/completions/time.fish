@@ -1,6 +1,6 @@
 if not command -q time
-    complete -c time -a "(__fish_complete_subcommand)" -d Command
-    exit
+  complete -c time -a "(__fish_complete_subcommand)" -d Command
+  exit
 end
 
 complete -c time -a "(__fish_complete_subcommand -- -o --output -f --format)" -d Command

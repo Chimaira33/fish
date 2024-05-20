@@ -1,18 +1,18 @@
 # Completions for make
 function __fish_print_make_targets --argument-names directory file
-    # Since we filter based on localized text, we need to ensure the
-    # text will be using the correct locale.
-    set -lx LC_ALL C
+  # Since we filter based on localized text, we need to ensure the
+  # text will be using the correct locale.
+  set -lx LC_ALL C
 
-    set -l makeflags -C $directory
-    if test -n "$file"
-        set -a makeflags -f $file
-    end
+  set -l makeflags -C $directory
+  if test -n "$file"
+    set -a makeflags -f $file
+  end
 
-    if make --version 2>/dev/null | string match -q 'GNU*'
-        # https://stackoverflow.com/a/26339924
-        make $makeflags -pRrq : 2>/dev/null |
-            awk -F: -v 'bs_regex=\\\\\\\\' '/^# Files/,/^# Finished Make data base/ {
+  if make --version 2>/dev/null | string match -q 'GNU*'
+    # https://stackoverflow.com/a/26339924
+    make $makeflags -pRrq : 2>/dev/null |
+      awk -F: -v 'bs_regex=\\\\\\\\' '/^# Files/,/^# Finished Make data base/ {
                 if ($1 == "# Not a target") skip = 1;
                 if ($1 !~ "^[#.\t]" && !is_continuation ) {
                     if (!skip) print $1;
@@ -20,17 +20,17 @@ function __fish_print_make_targets --argument-names directory file
                 }
                 is_continuation = $0 ~ "^([^#]*[^#" bs_regex "])?(" bs_regex bs_regex ")*" bs_regex "$";
             }' 2>/dev/null
-    else
-        # BSD make
-        make $makeflags -d g1 -rn >/dev/null 2>| awk -F, '/^#\*\*\* Input graph:/,/^$/ {if ($1 !~ "^#... ") {gsub(/# /,"",$1); print $1}}' 2>/dev/null
-    end
+  else
+    # BSD make
+    make $makeflags -d g1 -rn >/dev/null 2>| awk -F, '/^#\*\*\* Input graph:/,/^$/ {if ($1 !~ "^#... ") {gsub(/# /,"",$1); print $1}}' 2>/dev/null
+  end
 end
 
 function __fish_complete_make_targets
-    set -l directory (string replace -rf '^make .*(-C ?|--directory(=| +))([^ ]*) .*$' '$3' -- $argv)
-    or set directory .
-    set -l file (string replace -rf '^make .*(-f ?|--file(=| +))([^ ]*) .*$' '$3' -- $argv)
-    __fish_print_make_targets $directory $file
+  set -l directory (string replace -rf '^make .*(-C ?|--directory(=| +))([^ ]*) .*$' '$3' -- $argv)
+  or set directory .
+  set -l file (string replace -rf '^make .*(-f ?|--file(=| +))([^ ]*) .*$' '$3' -- $argv)
+  __fish_print_make_targets $directory $file
 end
 
 # This completion reenables file completion on

@@ -9,10 +9,10 @@ complete -c rustc -r -l crate-name
 complete -c rustc -x -l edition -a '2015 2018 2021' -d "Specify compiler edition"
 complete -c rustc -x -l emit -a 'asm llvm-bc llvm-ir obj link dep-info metadata mir'
 set -l rustc_print_infos \
-    crate-name file-names sysroot target-libdir cfg calling-conventions \
-    target-list target-cpus target-features relocation-models code-models \
-    tls-models target-spec-json all-target-specs-json native-static-libs \
-    stack-protector-strategies link-args deployment-target
+  crate-name file-names sysroot target-libdir cfg calling-conventions \
+  target-list target-cpus target-features relocation-models code-models \
+  tls-models target-spec-json all-target-specs-json native-static-libs \
+  stack-protector-strategies link-args deployment-target
 complete -c rustc -x -l print -a "$rustc_print_infos" -d "Print compiler information"
 complete -c rustc -s g -d "Equivalent to -C debuginfo=2"
 complete -c rustc -s O -d "Equivalent to -C opt-level=2"
@@ -32,17 +32,17 @@ complete -c rustc -s C -l codegen -xa "(rustc -C help 2>/dev/null | string match
 
 # rustc -Z is only available with the nightly toolchain, which may not be installed
 if rustc +nightly >/dev/null 2>&1
-    set -l rust_docs (rustc +nightly -Z help 2>/dev/null \
+  set -l rust_docs (rustc +nightly -Z help 2>/dev/null \
         | string replace -r -i '(\s+)-Z(.+)--(\s+)([^\n]+)' '$2 $4' \
         | string trim \
         | string match -r '^.*[^:]$')
 
-    for line in $rust_docs
-        set -l docs (string split -m 1 ' ' -- $line)
-        set -l flag (string replace -r '^([a-z\-]+\=|[a-z\-]+)(.*)' '$1' \
+  for line in $rust_docs
+    set -l docs (string split -m 1 ' ' -- $line)
+    set -l flag (string replace -r '^([a-z\-]+\=|[a-z\-]+)(.*)' '$1' \
                                        $docs[1])
-        complete -c rustc -x -s Z -a (string escape -- "$flag") -d "$docs[2]"
-    end
+    complete -c rustc -x -s Z -a (string escape -- "$flag") -d "$docs[2]"
+  end
 end
 
 set -l rust_docs (rustc -W help 2>/dev/null  \
@@ -55,9 +55,9 @@ set -l rust_docs (rustc -W help 2>/dev/null  \
     | string match -r -v '^([a-z\-]+)(\s+)(allow|warn|deny|forbid)')
 
 for line in $rust_docs
-    set -l docs (string split -m 1 ' ' -- $line)
-    complete -c rustc -x -s W -l warn -a (string escape -- "$docs[1]") -d "$docs[2]"
-    complete -c rustc -x -s A -l allow -a (string escape -- "$docs[1]") -d "$docs[2]"
-    complete -c rustc -x -s D -l deny -a (string escape -- "$docs[1]") -d "$docs[2]"
-    complete -c rustc -x -s F -l forbid -a (string escape -- "$docs[1]") -d "$docs[2]"
+  set -l docs (string split -m 1 ' ' -- $line)
+  complete -c rustc -x -s W -l warn -a (string escape -- "$docs[1]") -d "$docs[2]"
+  complete -c rustc -x -s A -l allow -a (string escape -- "$docs[1]") -d "$docs[2]"
+  complete -c rustc -x -s D -l deny -a (string escape -- "$docs[1]") -d "$docs[2]"
+  complete -c rustc -x -s F -l forbid -a (string escape -- "$docs[1]") -d "$docs[2]"
 end

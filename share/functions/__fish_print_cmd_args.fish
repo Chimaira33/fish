@@ -1,3 +1,3 @@
 function __fish_print_cmd_args
-    commandline -pxc
+  commandline -pxc
 end

@@ -1,28 +1,28 @@
 function __fish_lunchy_needs_command
-    set -l cmd (commandline -xpc)
+  set -l cmd (commandline -xpc)
 
-    if test (count $cmd) -eq 1
-        return 0
-    end
+  if test (count $cmd) -eq 1
+    return 0
+  end
 
-    return 1
+  return 1
 end
 
 function __fish_lunchy_using_command
-    set -l cmd (commandline -xpc)
-    set -l cmd_count (count $cmd)
+  set -l cmd (commandline -xpc)
+  set -l cmd_count (count $cmd)
 
-    if test $cmd_count -lt 2
-        return 1
-    end
-
-    for arg in $argv
-        if test $arg = $cmd[2]
-            return 0
-        end
-    end
-
+  if test $cmd_count -lt 2
     return 1
+  end
+
+  for arg in $argv
+    if test $arg = $cmd[2]
+      return 0
+    end
+  end
+
+  return 1
 end
 
 complete -f -c lunchy -s v -l verbose -d 'Show command executions'

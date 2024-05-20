@@ -59,43 +59,43 @@ complete -c $progname -n "not $noopt" -l sysroot -d 'Operate on a mounted guest 
 
 # File, query, sync options (files, query, sync)
 for condition in files query sync
-    complete -c $progname -n "$$condition" -s q -l quiet -d 'Show less information' -f
+  complete -c $progname -n "$$condition" -s q -l quiet -d 'Show less information' -f
 end
 
 # Transaction options (sync, remove, upgrade)
 for condition in sync remove upgrade
-    complete -c $progname -n "$$condition" -s d -l nodeps -d 'Skip [all] dependency checks' -f
-    complete -c $progname -n "$$condition" -s p -l print -d 'Dry run, only print targets' -f
-    complete -c $progname -n "$$condition" -l assume-installed -d 'Add a virtual package to satisfy dependencies' -f
-    complete -c $progname -n "$$condition" -l dbonly -d 'Modify database entry only' -f
-    complete -c $progname -n "$$condition" -l noprogressbar -d 'Do not display progress bar' -f
-    complete -c $progname -n "$$condition" -l noscriptlet -d 'Do not execute install script' -f
-    complete -c $progname -n "$$condition" -l print-format -d 'Specify printf-like format' -x
+  complete -c $progname -n "$$condition" -s d -l nodeps -d 'Skip [all] dependency checks' -f
+  complete -c $progname -n "$$condition" -s p -l print -d 'Dry run, only print targets' -f
+  complete -c $progname -n "$$condition" -l assume-installed -d 'Add a virtual package to satisfy dependencies' -f
+  complete -c $progname -n "$$condition" -l dbonly -d 'Modify database entry only' -f
+  complete -c $progname -n "$$condition" -l noprogressbar -d 'Do not display progress bar' -f
+  complete -c $progname -n "$$condition" -l noscriptlet -d 'Do not execute install script' -f
+  complete -c $progname -n "$$condition" -l print-format -d 'Specify printf-like format' -x
 end
 
 # File and query options (files, query)
 for condition in files query
-    complete -c $progname -n "$$condition" -s l -l list -d 'List the files owned by PACKAGE' -f
+  complete -c $progname -n "$$condition" -s l -l list -d 'List the files owned by PACKAGE' -f
 end
 
 # File and sync options (files, sync)
 for condition in files sync
-    complete -c $progname -n "$$condition" -s y -l refresh -d 'Download fresh package databases [force]' -f
+  complete -c $progname -n "$$condition" -s y -l refresh -d 'Download fresh package databases [force]' -f
 end
 
 # Query and sync options (query, sync)
 for condition in query sync
-    complete -c $progname -n "$$condition" -s g -l groups -d 'Display members of [all] package GROUP' -xa "$listgroups"
+  complete -c $progname -n "$$condition" -s g -l groups -d 'Display members of [all] package GROUP' -xa "$listgroups"
 end
 
 # Sync and upgrade options (sync, upgrade)
 for condition in sync upgrade
-    complete -c $progname -n "$$condition" -l asdeps -d 'Install packages as non-explicitly installed' -f
-    complete -c $progname -n "$$condition" -l asexplicit -d 'Install packages as explicitly installed' -f
-    complete -c $progname -n "$$condition" -l ignore -d 'Ignore a package upgrade (can be used more than once)' -xa "$listall"
-    complete -c $progname -n "$$condition" -l ignoregroup -d 'Ignore a group upgrade (can be used more than once)' -xa "$listgroups"
-    complete -c $progname -n "$$condition" -l needed -d 'Do not reinstall up to date packages' -f
-    complete -c $progname -n "$$condition" -l overwrite -d 'Overwrite conflicting files (can be used more than once)' -rF
+  complete -c $progname -n "$$condition" -l asdeps -d 'Install packages as non-explicitly installed' -f
+  complete -c $progname -n "$$condition" -l asexplicit -d 'Install packages as explicitly installed' -f
+  complete -c $progname -n "$$condition" -l ignore -d 'Ignore a package upgrade (can be used more than once)' -xa "$listall"
+  complete -c $progname -n "$$condition" -l ignoregroup -d 'Ignore a group upgrade (can be used more than once)' -xa "$listgroups"
+  complete -c $progname -n "$$condition" -l needed -d 'Do not reinstall up to date packages' -f
+  complete -c $progname -n "$$condition" -l overwrite -d 'Overwrite conflicting files (can be used more than once)' -rF
 end
 
 # Database options

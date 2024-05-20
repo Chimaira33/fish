@@ -1,14 +1,14 @@
 # Completions for hwinfo
 
 set -l hardware_items all arch bios block bluetooth braille bridge camera \
-    cdrom chipcard cpu disk dsl dvb fingerprint floppy framebuffer gfxcard \
-    hub ide isapnp isdn joystick keyboard memory mmc-ctrl modem monitor mouse \
-    netcard network partition pci pcmcia pcmcia-ctrl pppoe printer redasd \
-    reallyall scanner scsi smp sound storage-ctrl sys tape tv uml usb \
-    usb-ctrl vbe wlan xen zip
+  cdrom chipcard cpu disk dsl dvb fingerprint floppy framebuffer gfxcard \
+  hub ide isapnp isdn joystick keyboard memory mmc-ctrl modem monitor mouse \
+  netcard network partition pci pcmcia pcmcia-ctrl pppoe printer redasd \
+  reallyall scanner scsi smp sound storage-ctrl sys tape tv uml usb \
+  usb-ctrl vbe wlan xen zip
 
 for i in $hardware_items
-    complete -f -c hwinfo -l $i -d "Probe the specified HARDWARE_ITEM"
+  complete -f -c hwinfo -l $i -d "Probe the specified HARDWARE_ITEM"
 end
 
 complete -f -c hwinfo -l short -d "Show only a summary"

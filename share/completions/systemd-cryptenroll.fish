@@ -1,32 +1,32 @@
 function __fish_cryptenroll_pkcs11_devices
-    systemd-cryptenroll --pkcs11-token-uri=list 2>/dev/null | tail -n +2 | string replace -r '(\S+)\s(\S+).*' '$1\t$2'
-    echo -e "auto\tautomatically determine URI of security token"
-    echo -e "list\tlist available PKCS#11 tokens"
+  systemd-cryptenroll --pkcs11-token-uri=list 2>/dev/null | tail -n +2 | string replace -r '(\S+)\s(\S+).*' '$1\t$2'
+  echo -e "auto\tautomatically determine URI of security token"
+  echo -e "list\tlist available PKCS#11 tokens"
 end
 
 function __fish_cryptenroll_fido2_devices
-    systemd-cryptenroll --fido2-device=list 2>/dev/null | tail -n +2 | string replace -ar ' +' ' ' | string replace -r '(\S+)\s(.*)' '$1\t$2'
-    echo -e "auto\tautomatically determine device node of security token"
-    echo -e "list\tlist available FIDO2 tokens"
+  systemd-cryptenroll --fido2-device=list 2>/dev/null | tail -n +2 | string replace -ar ' +' ' ' | string replace -r '(\S+)\s(.*)' '$1\t$2'
+  echo -e "auto\tautomatically determine device node of security token"
+  echo -e "list\tlist available FIDO2 tokens"
 end
 
 function __fish_cryptenroll_tpm2_devices
-    systemd-cryptenroll --tpm2-device=list 2>/dev/null | tail -n +2 | string replace -r '(\S+)\s(\S+).*' '$1\t$2'
-    echo -e "auto\tautomatically determine device node of TPM2 device"
-    echo -e "list\tlist available TPM2 devices"
+  systemd-cryptenroll --tpm2-device=list 2>/dev/null | tail -n +2 | string replace -r '(\S+)\s(\S+).*' '$1\t$2'
+  echo -e "auto\tautomatically determine device node of TPM2 device"
+  echo -e "list\tlist available TPM2 devices"
 end
 
 function __fish_cryptenroll_complete_wipe
-    echo -e "all\twipe all key slots"
-    echo -e "empty\twipe key slots unlocked by an empty passphrase"
-    echo -e "password\twipe key slots unlocked by a traditional passphrase"
-    echo -e "recovery\twipe key slots unlocked by a recovery key"
-    echo -e "pkcs11\twipe key slots unlocked by a PKCS#11 token"
-    echo -e "fido2\twipe key slots unlocked by a FIDO2 token"
-    echo -e "tpm2\twipe key slots unlocked by a TPM2 chip"
-    for i in (seq 0 31)
-        echo -e "$i\twipe key slot $i"
-    end
+  echo -e "all\twipe all key slots"
+  echo -e "empty\twipe key slots unlocked by an empty passphrase"
+  echo -e "password\twipe key slots unlocked by a traditional passphrase"
+  echo -e "recovery\twipe key slots unlocked by a recovery key"
+  echo -e "pkcs11\twipe key slots unlocked by a PKCS#11 token"
+  echo -e "fido2\twipe key slots unlocked by a FIDO2 token"
+  echo -e "tpm2\twipe key slots unlocked by a TPM2 chip"
+  for i in (seq 0 31)
+    echo -e "$i\twipe key slot $i"
+  end
 end
 
 complete -c systemd-cryptenroll -xa "(__fish_complete_blockdevice)"

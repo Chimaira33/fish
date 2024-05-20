@@ -2,12 +2,12 @@
 
 # Check if command already given
 function __fish_prog_needs_command
-    set -l cmd (commandline -xpc)
-    echo $cmd
-    if test (count $cmd) -eq 1
-        return 0
-    end
-    return 1
+  set -l cmd (commandline -xpc)
+  echo $cmd
+  if test (count $cmd) -eq 1
+    return 0
+  end
+  return 1
 end
 
 # Options

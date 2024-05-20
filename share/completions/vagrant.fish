@@ -3,12 +3,12 @@
 #
 # Apparently options can only come after commands, with the exception of "-v" and "-h", which are effectively commands.
 set -l commands box cloud connect destroy \
-    docker-{exec,logs,run} \
-    global-status halt help init list-commands login \
-    package plugin provision push rdp reload resume \
-    rsync rsync-auto share snapshot ssh ssh-config \
-    status suspend up version \
-    port powershell winrm{,-config}
+  docker-{exec,logs,run} \
+  global-status halt help init list-commands login \
+  package plugin provision push rdp reload resume \
+  rsync rsync-auto share snapshot ssh ssh-config \
+  status suspend up version \
+  port powershell winrm{,-config}
 
 set -l box_commands add help list outdated prune remove repackage update
 set -l cloud_commands auth box search provider publish version
@@ -16,88 +16,88 @@ set -l plugin_commands install license list uninstall update
 set -l snapshot_commands delete list pop push restore save
 
 function __fish_print_vagrant_state
-    # Find a .vagrant file/directory above $PWD
-    set -l root
-    set -l dir (pwd -P)
-    while test $dir != /
-        if test -d $dir.vagrant -o -f $dir.vagrant
-            echo $dir.vagrant
-            return 0
-        end
-        # Go up one directory
-        set dir (string replace -r '[^/]*/?$' '' $dir)
+  # Find a .vagrant file/directory above $PWD
+  set -l root
+  set -l dir (pwd -P)
+  while test $dir != /
+    if test -d $dir.vagrant -o -f $dir.vagrant
+      echo $dir.vagrant
+      return 0
     end
-    return 1
+    # Go up one directory
+    set dir (string replace -r '[^/]*/?$' '' $dir)
+  end
+  return 1
 end
 
 function __fish_vagrant_machines
-    if set -l state (__fish_print_vagrant_state)
-        test -d "$state"; or return
-        set -l machines $state/machines/*
-        string replace -- $state/machines/ '' $machines
-    end
+  if set -l state (__fish_print_vagrant_state)
+    test -d "$state"; or return
+    set -l machines $state/machines/*
+    string replace -- $state/machines/ '' $machines
+  end
 end
 
 function __fish_vagrant_boxes
-    set -l vhome $VAGRANT_HOME/boxes
-    set -q vhome[1]; or set vhome ~/.vagrant.d/boxes
-    set -l boxes $vhome/*
-    string replace -- $vhome/ '' $boxes | string replace -- -VAGRANTSLASH- /
+  set -l vhome $VAGRANT_HOME/boxes
+  set -q vhome[1]; or set vhome ~/.vagrant.d/boxes
+  set -l boxes $vhome/*
+  string replace -- $vhome/ '' $boxes | string replace -- -VAGRANTSLASH- /
 end
 
 function __fish_vagrant_need_command -V commands
-    argparse -s h/help v/version -- (commandline -xpc)[2..-1] 2>/dev/null
-    or return
-    if set -q _flag_help[1]; or set -q _flag_help[1]
-        return 1
-    end
-    if set -q argv[1]
-        echo $argv
-        return 1
-    end
-    return 0
+  argparse -s h/help v/version -- (commandline -xpc)[2..-1] 2>/dev/null
+  or return
+  if set -q _flag_help[1]; or set -q _flag_help[1]
+    return 1
+  end
+  if set -q argv[1]
+    echo $argv
+    return 1
+  end
+  return 0
 end
 
 function __fish_vagrant_using_command
-    set -l cmd (__fish_vagrant_need_command)
-    contains -- $cmd[1] $argv
+  set -l cmd (__fish_vagrant_need_command)
+  contains -- $cmd[1] $argv
 end
 
 function __fish_vagrant_box_need_command
-    set -l cmd (__fish_vagrant_need_command)
-    test "$cmd[1]" = box 2>/dev/null
-    or return 1
-    set -e cmd[1]
+  set -l cmd (__fish_vagrant_need_command)
+  test "$cmd[1]" = box 2>/dev/null
+  or return 1
+  set -e cmd[1]
 
-    # Not all of these are valid for all subcommands, but that's not important here.
-    # Yes, none of these have a short version.
-    set -l opts b-box-version= c-cacert= C-capath= 1-cert= 2-clean f-force i-insecure p-provider=
-    set -a opts 3-checksum= 4-checksum-type= n-name=
-    set -a opts g-global d-dry-run a-all B-box
-    argparse -s $opts -- $cmd 2>/dev/null
-    or return 1
-    if set -q argv[1]
-        echo $argv
-        return 1
-    end
-    return 0
+  # Not all of these are valid for all subcommands, but that's not important here.
+  # Yes, none of these have a short version.
+  set -l opts b-box-version= c-cacert= C-capath= 1-cert= 2-clean f-force i-insecure p-provider=
+  set -a opts 3-checksum= 4-checksum-type= n-name=
+  set -a opts g-global d-dry-run a-all B-box
+  argparse -s $opts -- $cmd 2>/dev/null
+  or return 1
+  if set -q argv[1]
+    echo $argv
+    return 1
+  end
+  return 0
 end
 
 function __fish_vagrant_cloud_need_command
-    set -l cmd (__fish_vagrant_need_command)
-    test "$cmd[1]" = cloud 2>/dev/null
-    or return 1
-    set -e cmd[1]
+  set -l cmd (__fish_vagrant_need_command)
+  test "$cmd[1]" = cloud 2>/dev/null
+  or return 1
+  set -e cmd[1]
 
-    set -l opts c-check l-logout t-token d-description= s-short-description= p-private b-box-version=
-    set -a opts f-force r-release u-url v-version-description= P-page= S-short= o-order= L-limit= 1-sort-by=
-    argparse -s $opts -- $cmd 2>/dev/null
-    or return 1
-    if set -q argv[1]
-        echo $argv
-        return 1
-    end
-    return 0
+  set -l opts c-check l-logout t-token d-description= s-short-description= p-private b-box-version=
+  set -a opts f-force r-release u-url v-version-description= P-page= S-short= o-order= L-limit= 1-sort-by=
+  argparse -s $opts -- $cmd 2>/dev/null
+  or return 1
+  if set -q argv[1]
+    echo $argv
+    return 1
+  end
+  return 0
 end
 
 complete -c vagrant -n __fish_vagrant_need_command -fa box -d 'Manage boxes: installation, removal, etc.'

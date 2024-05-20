@@ -1,19 +1,19 @@
 function __fish_opam_using_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -gt 1
-        if test $argv[1] = $cmd[2]
-            return 0
-        end
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -gt 1
+    if test $argv[1] = $cmd[2]
+      return 0
     end
-    return 1
+  end
+  return 1
 end
 
 function __fish_opam_needs_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -eq 1
-        return 0
-    end
-    return 1
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -eq 1
+    return 0
+  end
+  return 1
 end
 
 # general flags

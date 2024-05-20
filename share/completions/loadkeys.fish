@@ -1,12 +1,12 @@
 function __fish_print_console_keymaps
-    # The path(s) used may differ by linux distribution, and are compiled into
-    # loadkeys, which doesn't provide a way to check which paths are searched
-    # or which keymaps it can find. localectl can list keymaps, but is part of
-    # systemd, which we shouldn't depend on.
+  # The path(s) used may differ by linux distribution, and are compiled into
+  # loadkeys, which doesn't provide a way to check which paths are searched
+  # or which keymaps it can find. localectl can list keymaps, but is part of
+  # systemd, which we shouldn't depend on.
 
-    set -l dirs /usr/share/kbd/keymaps /usr/share/keymaps /usr/lib/kbd/keymaps /lib/kbd/keymaps /usr/src/linux/drivers
+  set -l dirs /usr/share/kbd/keymaps /usr/share/keymaps /usr/lib/kbd/keymaps /lib/kbd/keymaps /usr/src/linux/drivers
 
-    path filter -f $dirs/** | string replace -rf '.*/(.*)\.k?map(|\..*)$' '$1'
+  path filter -f $dirs/** | string replace -rf '.*/(.*)\.k?map(|\..*)$' '$1'
 end
 
 complete -fc loadkeys -a "(__fish_print_console_keymaps)"

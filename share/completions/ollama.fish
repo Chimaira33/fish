@@ -1,5 +1,5 @@
 function __fish_ollama_list
-    ollama list 2>/dev/null | tail -n +2 | string replace --regex "\s.*" ""
+  ollama list 2>/dev/null | tail -n +2 | string replace --regex "\s.*" ""
 end
 
 complete -c ollama -a serve -d "Start ollama"

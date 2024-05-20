@@ -1,104 +1,104 @@
 # Completions for `snap` command
 
 function __fish_snap_no_subcommand -d 'Test if snap has yet to be given the subcommand'
-    for i in (commandline -xpc)
-        if contains -- $i abort ack alias aliases buy changes connect disable disconnect download \
-                enable find get help info install interfaces known list login logout prefer refresh remove \
-                revert run set tasks try unalias version watch
-            return 1
-        end
+  for i in (commandline -xpc)
+    if contains -- $i abort ack alias aliases buy changes connect disable disconnect download \
+        enable find get help info install interfaces known list login logout prefer refresh remove \
+        revert run set tasks try unalias version watch
+      return 1
     end
-    return 0
+  end
+  return 0
 end
 
 function __fish_snap_using_subcommand -d 'Test if given subcommand is used'
-    for i in (commandline -xpc)
-        if contains -- $i $argv[1]
-            return 0
-        end
+  for i in (commandline -xpc)
+    if contains -- $i $argv[1]
+      return 0
     end
-    return 1
+  end
+  return 1
 end
 
 function __fish_snap_use_file -d 'Test if snap command should have files as potential completion'
-    for i in (commandline -xpc)
-        if contains -- $i ack try
-            return 0
-        end
+  for i in (commandline -xpc)
+    if contains -- $i ack try
+      return 0
     end
-    return 1
+  end
+  return 1
 end
 
 function __fish_snap_subcommand
-    set -l subcommand $argv[1]
-    set -e argv[1]
-    complete -f -c snap -n __fish_snap_no_subcommand -a $subcommand $argv
+  set -l subcommand $argv[1]
+  set -e argv[1]
+  complete -f -c snap -n __fish_snap_no_subcommand -a $subcommand $argv
 end
 
 function __fish_snap_option
-    set -l subcommand $argv[1]
-    set -e argv[1]
-    complete -f -c snap -n "__fish_snap_using_subcommand $subcommand" $argv
+  set -l subcommand $argv[1]
+  set -e argv[1]
+  complete -f -c snap -n "__fish_snap_using_subcommand $subcommand" $argv
 end
 
 function __fish_snap_disabled_snaps -d 'List disabled snaps'
-    snap list | string match "*disabled" | string replace -r '(.+?) .*disabled' '$1'
+  snap list | string match "*disabled" | string replace -r '(.+?) .*disabled' '$1'
 end
 
 function __fish_snap_enabled_snaps -d 'List disabled snaps'
-    snap list | string match -vr "disabled|Name" | string replace -r '(.+?) .*' '$1'
+  snap list | string match -vr "disabled|Name" | string replace -r '(.+?) .*' '$1'
 end
 
 function __fish_snap_installed_snaps -d 'List installed snaps'
-    snap list | string replace -r '(.+?) .*' '$1' | string match -v 'Name*'
+  snap list | string replace -r '(.+?) .*' '$1' | string match -v 'Name*'
 end
 
 function __fish_snap_interfaces -d 'List of interfaces'
-    for snap in (__fish_snap_installed_snaps)
-        if test $snap != core
-            snap interfaces $snap 2>/dev/null | string replace -r '[- ]*([^ ]*)[ ]+([^ ]+)' '$2$1' | string match -v "*Slot*"
-        end
+  for snap in (__fish_snap_installed_snaps)
+    if test $snap != core
+      snap interfaces $snap 2>/dev/null | string replace -r '[- ]*([^ ]*)[ ]+([^ ]+)' '$2$1' | string match -v "*Slot*"
     end
+  end
 end
 
 function __fish_snap_change_id -d 'List change IDs'
-    snap changes | string match -v 'ID*' | string replace -r '([0-9]*) .*' '$1'
+  snap changes | string match -v 'ID*' | string replace -r '([0-9]*) .*' '$1'
 end
 
 function __fish_snap_aliases -d 'List aliases'
-    snap aliases | string match -v 'Command*' | string replace -r '.* (.+?) .*$' '$1'
-    snap aliases | string match -v 'Command*' | string replace -r '(.*?) .*$' '$1'
+  snap aliases | string match -v 'Command*' | string replace -r '.* (.+?) .*$' '$1'
+  snap aliases | string match -v 'Command*' | string replace -r '(.*?) .*$' '$1'
 end
 
 function __fish_snap_no_assertion -d 'Check that no assertion type is used yet'
-    for i in (commandline -xpc)
-        if contains -- $i account account-key model serial snap-declaration snap-build snap-revision \
-                system-user validation
-            return 1
-        end
+  for i in (commandline -xpc)
+    if contains -- $i account account-key model serial snap-declaration snap-build snap-revision \
+        system-user validation
+      return 1
     end
-    return 0
+  end
+  return 0
 end
 
 function __fish_snap_using_assertion -d 'Check if certain assertion type is used'
-    if __fish_snap_using_subcommand known
-        if __fish_snap_using_subcommand $argv[1]
-            return 0
-        end
+  if __fish_snap_using_subcommand known
+    if __fish_snap_using_subcommand $argv[1]
+      return 0
     end
-    return 1
+  end
+  return 1
 end
 
 function __fish_snap_assertion
-    set -l assertion $argv[1]
-    set -e argv[1]
-    complete -f -c snap -n '__fish_snap_using_subcommand known; and __fish_snap_no_assertion' -a $assertion
-    complete -f -c snap -n "__fish_snap_using_assertion $assertion" -a "(__fish_snap_filters $assertion)" \
-        -d Filter
+  set -l assertion $argv[1]
+  set -e argv[1]
+  complete -f -c snap -n '__fish_snap_using_subcommand known; and __fish_snap_no_assertion' -a $assertion
+  complete -f -c snap -n "__fish_snap_using_assertion $assertion" -a "(__fish_snap_filters $assertion)" \
+    -d Filter
 end
 
 function __fish_snap_filters -d 'List assertion filters'
-    snap known $argv[1] | string match -v 'type:*' | string match '*: *' | string replace -r '(.*): (.*)' '$1=$2'
+  snap known $argv[1] | string match -v 'type:*' | string match '*: *' | string replace -r '(.*): (.*)' '$1=$2'
 end
 
 # Enable file completions where appropriate

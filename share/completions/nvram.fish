@@ -1,7 +1,7 @@
 # completion for nvram (macOS)
 
 function __fish_nvram_variables
-    command nvram -p
+  command nvram -p
 end
 
 complete -c nvram -s x -f -d 'Use  XML  format  for  reading  and  writing variables'

@@ -1,47 +1,47 @@
 function __fish_msf_db_running
-    msfdb status 2>/dev/null | string match -q -r 'Database started|Active: active'
+  msfdb status 2>/dev/null | string match -q -r 'Database started|Active: active'
 end
 
 function __fish_complete_msf_payloads
-    if not set -q __fish_msf_cached_payloads; and __fish_msf_db_running
-        set -g __fish_msf_cached_payloads (msfvenom -l payloads | string replace -f -r '^\s*([[:lower:]]\S*)\s+(\S.*)' '$1\t$2' | string collect)
-    end
-    echo $__fish_msf_cached_payloads
+  if not set -q __fish_msf_cached_payloads; and __fish_msf_db_running
+    set -g __fish_msf_cached_payloads (msfvenom -l payloads | string replace -f -r '^\s*([[:lower:]]\S*)\s+(\S.*)' '$1\t$2' | string collect)
+  end
+  echo $__fish_msf_cached_payloads
 end
 
 function __fish_complete_msf_formats
-    if not set -q __fish_msf_cached_formats; and __fish_msf_db_running
-        set -g __fish_msf_cached_formats (msfvenom -l formats | string replace -f -r '^\s*([[:lower:]]\S*)' '$1' | string collect)
-    end
-    echo $__fish_msf_cached_formats
+  if not set -q __fish_msf_cached_formats; and __fish_msf_db_running
+    set -g __fish_msf_cached_formats (msfvenom -l formats | string replace -f -r '^\s*([[:lower:]]\S*)' '$1' | string collect)
+  end
+  echo $__fish_msf_cached_formats
 end
 
 function __fish_complete_msf_encoders
-    if not set -q __fish_msf_cached_encoders; and __fish_msf_db_running
-        set -g __fish_msf_cached_encoders (msfvenom -l encoders | string replace -f -r '^\s*([[:lower:]]\S*)\s+\S+\s+(\S.*)' '$1\t$2' | string collect)
-    end
-    echo $__fish_msf_cached_encoders
+  if not set -q __fish_msf_cached_encoders; and __fish_msf_db_running
+    set -g __fish_msf_cached_encoders (msfvenom -l encoders | string replace -f -r '^\s*([[:lower:]]\S*)\s+\S+\s+(\S.*)' '$1\t$2' | string collect)
+  end
+  echo $__fish_msf_cached_encoders
 end
 
 function __fish_complete_msf_encrypt
-    if not set -q __fish_msf_cached_encrypt; and __fish_msf_db_running
-        set -g __fish_msf_cached_encrypt (msfvenom -l encrypt | string replace -f -r '^\s*([[:lower:]]\S*)' '$1' | string collect)
-    end
-    echo $__fish_msf_cached_encrypt
+  if not set -q __fish_msf_cached_encrypt; and __fish_msf_db_running
+    set -g __fish_msf_cached_encrypt (msfvenom -l encrypt | string replace -f -r '^\s*([[:lower:]]\S*)' '$1' | string collect)
+  end
+  echo $__fish_msf_cached_encrypt
 end
 
 function __fish_complete_msf_archs
-    if not set -q __fish_msf_cached_archs; and __fish_msf_db_running
-        set -g __fish_msf_cached_archs (msfvenom -l archs | string replace -f -r '^\s*([[:lower:]]\S*)' '$1' | string collect)
-    end
-    echo $__fish_msf_cached_archs
+  if not set -q __fish_msf_cached_archs; and __fish_msf_db_running
+    set -g __fish_msf_cached_archs (msfvenom -l archs | string replace -f -r '^\s*([[:lower:]]\S*)' '$1' | string collect)
+  end
+  echo $__fish_msf_cached_archs
 end
 
 function __fish_complete_msf_platforms
-    if not set -q __fish_msf_cached_platforms; and __fish_msf_db_running
-        set -g __fish_msf_cached_platforms (msfvenom -l platforms | string replace -f -r '^\s*([[:lower:]]\S*)' '$1' | string collect)
-    end
-    echo $__fish_msf_cached_platforms
+  if not set -q __fish_msf_cached_platforms; and __fish_msf_db_running
+    set -g __fish_msf_cached_platforms (msfvenom -l platforms | string replace -f -r '^\s*([[:lower:]]\S*)' '$1' | string collect)
+  end
+  echo $__fish_msf_cached_platforms
 end
 
 complete -c msfvenom -f

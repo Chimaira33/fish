@@ -1,10 +1,10 @@
 function __fish_obnam_nosubcommand
-    if __fish_seen_subcommand_from add-key backup client-keys clients diff dump-repo force-lock forget fsck \
-            generations genids help help-all kdirstat list-errors list-formats list-keys list-toplevels \
-            ls mount nagios-last-backup-age remove-client remove-key restore verify
-        return 1
-    end
-    return 0
+  if __fish_seen_subcommand_from add-key backup client-keys clients diff dump-repo force-lock forget fsck \
+      generations genids help help-all kdirstat list-errors list-formats list-keys list-toplevels \
+      ls mount nagios-last-backup-age remove-client remove-key restore verify
+    return 1
+  end
+  return 0
 end
 
 complete -c obnam --no-files --condition __fish_obnam_nosubcommand -a add-key -d 'Add a key to the repository'

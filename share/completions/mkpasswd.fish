@@ -1,6 +1,6 @@
 function __fish_mkpasswd_methods --description "Complete hashing methods for mkpasswd"
-    mkpasswd -m help | tail -n +2 | string replace -r '^(\S+)\s+(\S.*)' '$1\t$2'
-    echo -e "help\tList available methods"
+  mkpasswd -m help | tail -n +2 | string replace -r '^(\S+)\s+(\S.*)' '$1\t$2'
+  echo -e "help\tList available methods"
 end
 
 complete -c mkpasswd -f

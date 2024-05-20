@@ -36,9 +36,9 @@ complete -c man -s W -d "Only print locations"
 
 complete -c man -n 'string match -q -- "*/*" (commandline -t | string collect)' --force-files
 if command -q man
-    # We have a conditionally-defined man function,
-    # so we need to check for existence here.
-    if echo | MANPAGER=cat command man -l - &>/dev/null
-        complete -c man -s l -l local-file -d "Local file" -r
-    end
+  # We have a conditionally-defined man function,
+  # so we need to check for existence here.
+  if echo | MANPAGER=cat command man -l - &>/dev/null
+    complete -c man -s l -l local-file -d "Local file" -r
+  end
 end

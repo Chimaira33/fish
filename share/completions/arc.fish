@@ -1,33 +1,33 @@
 # fish completion for arc
 
 function __fish_arc_needs_command
-    set -l cmd (commandline -xpc)
-    if not set -q cmd[2]
-        return 0
-    else
-        set -l skip_next 1
-        # Skip first word because it's "arc" or a wrapper
-        for c in $cmd[2..-1]
-            switch $c
-                # General options that can still take a command
-                case --trace --no-ansi --ansi --load-phutil-library config skip-arcconfig arcrc-file --conduit-{uri,token,version,timeout}
-                    continue
-                case "*"
-                    echo $c
-                    return 1
-            end
-        end
-        return 0
+  set -l cmd (commandline -xpc)
+  if not set -q cmd[2]
+    return 0
+  else
+    set -l skip_next 1
+    # Skip first word because it's "arc" or a wrapper
+    for c in $cmd[2..-1]
+      switch $c
+        # General options that can still take a command
+        case --trace --no-ansi --ansi --load-phutil-library config skip-arcconfig arcrc-file --conduit-{uri,token,version,timeout}
+          continue
+        case "*"
+          echo $c
+          return 1
+      end
     end
-    return 1
+    return 0
+  end
+  return 1
 end
 
 function __fish_arc_using_command
-    set -l cmd (__fish_arc_needs_command)
-    test -z "$cmd"
-    and return 1
-    contains -- $cmd $argv
-    and return 0
+  set -l cmd (__fish_arc_needs_command)
+  test -z "$cmd"
+  and return 1
+  contains -- $cmd $argv
+  and return 0
 end
 
 ### Global options

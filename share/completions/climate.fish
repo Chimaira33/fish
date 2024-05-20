@@ -3,8 +3,8 @@
 # The tool can be found at https://github.com/adtac/climate
 
 function __fish_climate_has_no_argument
-    set -l cmd (commandline -xpc)
-    not set -q cmd[2]
+  set -l cmd (commandline -xpc)
+  not set -q cmd[2]
 end
 
 # Meta

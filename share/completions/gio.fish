@@ -4,7 +4,7 @@
 set -l supported_schemes admin afc afp archive burn cdda computer dav dav+sd davs davs+sd dns-sd file ftp ftpis ftps google-drive gphoto2 http https localtest mtp network nfs recent sftp smb ssh test trash
 
 for scheme in $supported_schemes
-    complete -c gio -n "__fish_seen_subcommand_from cat copy info list mkdir monitor mount move open rename remove save set trash tree" -a "$scheme": -d Scheme
+  complete -c gio -n "__fish_seen_subcommand_from cat copy info list mkdir monitor mount move open rename remove save set trash tree" -a "$scheme": -d Scheme
 end
 
 # Commands
@@ -32,8 +32,8 @@ complete -f -c gio -n "__fish_seen_subcommand_from help" -a "version cat copy in
 
 # Arguments of mime command
 function __fish_gio_list_mimetypes
-    set -l python (__fish_anypython) || return
-    $python -S -c 'import mimetypes; mimetypes.inited or mimetypes.init(); print("\n".join(sorted(set(mimetypes.types_map.values()))))'
+  set -l python (__fish_anypython) || return
+  $python -S -c 'import mimetypes; mimetypes.inited or mimetypes.init(); print("\n".join(sorted(set(mimetypes.types_map.values()))))'
 end
 
 complete -f -c gio -n "__fish_seen_subcommand_from mime" -a "(__fish_gio_list_mimetypes)" -d "MIME type"

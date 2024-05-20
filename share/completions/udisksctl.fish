@@ -1,9 +1,9 @@
 set -l cmds help info dump status monitor mount unmount unlock lock loop-setup loop-delete power-off smart-simulate
 
 function __fish_print_mounted_blockdevice
-    if test -r /proc/mounts
-        string match -r "^/[^ ]*" </proc/mounts
-    end
+  if test -r /proc/mounts
+    string match -r "^/[^ ]*" </proc/mounts
+  end
 end
 
 complete -f -c udisksctl -n "__fish_seen_subcommand_from $cmds" -l help -d "Shows help"
@@ -45,11 +45,11 @@ complete -c udisksctl -n "__fish_seen_subcommand_from smart-simulate" -s f -l fi
 complete -c udisksctl -n "__fish_seen_subcommand_from mount unmount lock unlock loop-setup loop-delete power-off smart-simulate" -l no-user-interaction -d "Do not authenticate the user if needed"
 
 for cmd in mount lock unlock
-    complete -r -c udisksctl -n "__fish_seen_subcommand_from $cmd" -s p -l object-path -d "Object to $cmd"
-    complete -r -c udisksctl -n "__fish_seen_subcommand_from $cmd" -s b -l block-device -d "Block device to $cmd" -a "(__fish_complete_blockdevice)"
+  complete -r -c udisksctl -n "__fish_seen_subcommand_from $cmd" -s p -l object-path -d "Object to $cmd"
+  complete -r -c udisksctl -n "__fish_seen_subcommand_from $cmd" -s b -l block-device -d "Block device to $cmd" -a "(__fish_complete_blockdevice)"
 end
 
 for cmd in power-off smart-simulate
-    complete -r -c udisksctl -n "__fish_seen_subcommand_from $cmd" -s p -l object-path -d "Object path for ATA device"
-    complete -r -c udisksctl -n "__fish_seen_subcommand_from $cmd" -s b -l block-device -d "Block device for ATA device" -a "(__fish_complete_blockdevice)"
+  complete -r -c udisksctl -n "__fish_seen_subcommand_from $cmd" -s p -l object-path -d "Object path for ATA device"
+  complete -r -c udisksctl -n "__fish_seen_subcommand_from $cmd" -s b -l block-device -d "Block device for ATA device" -a "(__fish_complete_blockdevice)"
 end

@@ -35,14 +35,14 @@ complete -c mvn -f -o c -l lax-checksums -d "Warn if checksums don't match"
 complete -c mvn -f -o cpu -l check-plugin-updates -d "Ineffective, only kept for backward compatibility"
 
 function __fish_mvn_complete_definition
-    set -l current_token (commandline -t)
-    set -l previous_token (commandline -xpc)[-1]
-    string match -qr -- '^(-D|--define\b)' $current_token $previous_token
-    or return
-    set -l keyval (string split --max=1 -- = $current_token)
-    or return
-    # Use normal file completion for the value.
-    printf -- "$keyval[1]=%s\n" (complete -C "__fish_command_without_completions $keyval[2]")
+  set -l current_token (commandline -t)
+  set -l previous_token (commandline -xpc)[-1]
+  string match -qr -- '^(-D|--define\b)' $current_token $previous_token
+  or return
+  set -l keyval (string split --max=1 -- = $current_token)
+  or return
+  # Use normal file completion for the value.
+  printf -- "$keyval[1]=%s\n" (complete -C "__fish_command_without_completions $keyval[2]")
 end
 
 complete -c mvn -f -o D -l define -d "Define a system property"
@@ -80,14 +80,14 @@ complete -c mvn -f -o X -l debug -d "Produce execution debug output"
 #
 #TODO search pom.xml hierarchy
 function __fish_mvn_profiles
-    # find line opening the profile-tag
-    # read next line
-    # extract contents of id-tag
-    sed -n -e '/<profile>/{n; s!^.*<id>\([^<]*\)</id>.*$!\1!; p}' ~/.m2/settings.xml pom.xml 2>/dev/null
+  # find line opening the profile-tag
+  # read next line
+  # extract contents of id-tag
+  sed -n -e '/<profile>/{n; s!^.*<id>\([^<]*\)</id>.*$!\1!; p}' ~/.m2/settings.xml pom.xml 2>/dev/null
 end
 
 function __fish_mvn_projects
-    grep "<module>" pom.xml 2>/dev/null | sed 's/[[:space:]]*<[^<]*>\(.*\)<[^<]*>/\1/'
+  grep "<module>" pom.xml 2>/dev/null | sed 's/[[:space:]]*<[^<]*>\(.*\)<[^<]*>/\1/'
 end
 
 complete -c mvn -f -r -o P -l activate-profiles -a "(__fish_mvn_profiles)" -d "Comma-delimited list of profiles to activate"

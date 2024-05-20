@@ -5,20 +5,20 @@
 #############
 
 function __fish_diskutil_devices
-    set -l mountpoints /dev/disk*
-    printf '%s\n' $mountpoints
+  set -l mountpoints /dev/disk*
+  printf '%s\n' $mountpoints
 end
 
 function __fish_diskutil_mounted_volumes
-    set -l mountpoints /Volumes/*
-    printf '%s\n' $mountpoints
+  set -l mountpoints /Volumes/*
+  printf '%s\n' $mountpoints
 end
 
 function __fish_diskutil_using_not_subcommand
-    not __fish_seen_subcommand_from apfs
-    and not __fish_seen_subcommand_from appleRAID
-    and not __fish_seen_subcommand_from coreStorage
-    and __fish_seen_subcommand_from $argv
+  not __fish_seen_subcommand_from apfs
+  and not __fish_seen_subcommand_from appleRAID
+  and not __fish_seen_subcommand_from coreStorage
+  and __fish_seen_subcommand_from $argv
 end
 
 ############

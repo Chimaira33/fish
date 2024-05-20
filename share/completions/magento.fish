@@ -1,213 +1,213 @@
 function __fish_print_magento_url_protocols -d "Shows all available URL protocols"
-    echo http://
-    echo https://
+  echo http://
+  echo https://
 end
 
 function __fish_print_magento_mysql_engines
-    echo MyISAM\t"MyISAM storage engine"
-    echo InnoDB\t"Supports transactions, row-level locking, and foreign keys"
-    echo BLACKHOLE\t"/dev/null storage engine (anything you write to it disappears)"
-    echo MEMORY\t"Hash based, stored in memory, useful for temporary tables"
-    echo CSV\t"CSV storage engine"
-    echo ARCHIVE\t"Archive storage engine"
+  echo MyISAM\t"MyISAM storage engine"
+  echo InnoDB\t"Supports transactions, row-level locking, and foreign keys"
+  echo BLACKHOLE\t"/dev/null storage engine (anything you write to it disappears)"
+  echo MEMORY\t"Hash based, stored in memory, useful for temporary tables"
+  echo CSV\t"CSV storage engine"
+  echo ARCHIVE\t"Archive storage engine"
 end
 
 ###
 
 function __fish_print_magento_modules -d "Lists all Magento modules"
-    set -l modules (magento module:status)
+  set -l modules (magento module:status)
 
-    for i in $test
-        if test -n "$i" -a "$i" != None
-            echo $i
-        end
+  for i in $test
+    if test -n "$i" -a "$i" != None
+      echo $i
     end
+  end
 end
 
 function __fish_print_magento_i18n_packing_modes -d "Shows all available packing modes"
-    echo replace\t"replace language pack by new one"
-    echo merge\t"merge language packages"
+  echo replace\t"replace language pack by new one"
+  echo merge\t"merge language packages"
 end
 
 function __fish_print_magento_available_ides -d "Shows all IDEs supported by magento"
-    echo phpstorm\t"JetBrains PhpStorm"
+  echo phpstorm\t"JetBrains PhpStorm"
 end
 
 function __fish_print_magento_available_tests -d "Shows all available magento tests"
-    echo all\t"all tests"
-    echo unit\t"unit tests only"
-    echo integration\t"integration tests only"
-    echo integration-all\t"all integration tests"
-    echo static\t"static file tests only"
-    echo static-all\t"all static file tests"
-    echo integrity\t"integrity tests only"
-    echo legacy\t"legacy tests only"
-    echo default\t"all tests"
+  echo all\t"all tests"
+  echo unit\t"unit tests only"
+  echo integration\t"integration tests only"
+  echo integration-all\t"all integration tests"
+  echo static\t"static file tests only"
+  echo static-all\t"all static file tests"
+  echo integrity\t"integrity tests only"
+  echo legacy\t"legacy tests only"
+  echo default\t"all tests"
 end
 
 function __fish_print_magento_theme_areas -d "Shows all available magento theme areas"
-    echo frontend\t"Frontend"
-    echo adminhtml\t"Backend"
+  echo frontend\t"Frontend"
+  echo adminhtml\t"Backend"
 end
 
 function __fish_print_magento_languages -d "Shows all existing magento languages"
-    echo af_ZA\t"Afrikaans (South Africa)"
-    echo sq_AL\t"Albanian (Albania)"
-    echo ar_DZ\t"Arabic (Algeria)"
-    echo ar_EG\t"Arabic (Egypt)"
-    echo ar_KW\t"Arabic (Kuwait)"
-    echo ar_MA\t"Arabic (Morocco)"
-    echo ar_SA\t"Arabic (Saudi Arabia)"
-    echo az_Latn_AZ\t"Azerbaijani (Azerbaijan)"
-    echo eu_ES\t"Basque (Spain)"
-    echo be_BY\t"Belarusian (Belarus)"
-    echo bn_BD\t"Bengali (Bangladesh)"
-    echo bs_Latn_BA\t"Bosnian (Bosnia and Herzegovina)"
-    echo bg_BG\t"Bulgarian (Bulgaria)"
-    echo ca_ES\t"Catalan (Spain)"
-    echo zh_Hans_CN\t"Chinese (China)"
-    echo zh_Hant_HK\t"Chinese (Hong Kong SAR China)"
-    echo zh_Hant_TW\t"Chinese (Taiwan)"
-    echo hr_HR\t"Croatian (Croatia)"
-    echo cs_CZ\t"Czech (Czech Republic)"
-    echo da_DK\t"Danish (Denmark)"
-    echo nl_BE\t"Dutch (Belgium)"
-    echo nl_NL\t"Dutch (Netherlands)"
-    echo en_AU\t"English (Australia)"
-    echo en_CA\t"English (Canada)"
-    echo en_IE\t"English (Ireland)"
-    echo en_NZ\t"English (New Zealand)"
-    echo en_GB\t"English (United Kingdom)"
-    echo en_US\t"English (United States)"
-    echo et_EE\t"Estonian (Estonia)"
-    echo fil_PH\t"Filipino (Philippines)"
-    echo fi_FI\t"Finnish (Finland)"
-    echo fr_BE\t"French (Belgium)"
-    echo fr_CA\t"French (Canada)"
-    echo fr_FR\t"French (France)"
-    echo gl_ES\t"Galician (Spain)"
-    echo ka_GE\t"Georgian (Georgia)"
-    echo de_AT\t"German (Austria)"
-    echo de_DE\t"German (Germany)"
-    echo de_CH\t"German (Switzerland)"
-    echo el_GR\t"Greek (Greece)"
-    echo gu_IN\t"Gujarati (India)"
-    echo he_IL\t"Hebrew (Israel)"
-    echo hi_IN\t"Hindi (India)"
-    echo hu_HU\t"Hungarian (Hungary)"
-    echo is_IS\t"Icelandic (Iceland)"
-    echo id_ID\t"Indonesian (Indonesia)"
-    echo it_IT\t"Italian (Italy)"
-    echo it_CH\t"Italian (Switzerland)"
-    echo ja_JP\t"Japanese (Japan)"
-    echo km_KH\t"Khmer (Cambodia)"
-    echo ko_KR\t"Korean (South Korea)"
-    echo lo_LA\t"Lao (Laos)"
-    echo lv_LV\t"Latvian (Latvia)"
-    echo lt_LT\t"Lithuanian (Lithuania)"
-    echo mk_MK\t"Macedonian (Macedonia)"
-    echo ms_Latn_MY\t"Malay (Malaysia)"
-    echo mn_Cyrl_MN\t"Mongolian (Mongolia)"
-    echo nb_NO\t"Norwegian Bokmål (Norway)"
-    echo nn_NO\t"Norwegian Nynorsk (Norway)"
-    echo fa_IR\t"Persian (Iran)"
-    echo pl_PL\t"Polish (Poland)"
-    echo pt_BR\t"Portuguese (Brazil)"
-    echo pt_PT\t"Portuguese (Portugal)"
-    echo ro_RO\t"Romanian (Romania)"
-    echo ru_RU\t"Russian (Russia)"
-    echo sr_Cyrl_RS\t"Serbian (Serbia)"
-    echo sk_SK\t"Slovak (Slovakia)"
-    echo sl_SI\t"Slovenian (Slovenia)"
-    echo es_AR\t"Spanish (Argentina)"
-    echo es_CL\t"Spanish (Chile)"
-    echo es_CO\t"Spanish (Colombia)"
-    echo es_CR\t"Spanish (Costa Rica)"
-    echo es_MX\t"Spanish (Mexico)"
-    echo es_PA\t"Spanish (Panama)"
-    echo es_PE\t"Spanish (Peru)"
-    echo es_ES\t"Spanish (Spain)"
-    echo es_VE\t"Spanish (Venezuela)"
-    echo sw_KE\t"Swahili (Kenya)"
-    echo sv_SE\t"Swedish (Sweden)"
-    echo th_TH\t"Thai (Thailand)"
-    echo tr_TR\t"Turkish (Turkey)"
-    echo uk_UA\t"Ukrainian (Ukraine)"
-    echo vi_VN\t"Vietnamese (Vietnam)"
-    echo cy_GB\t"Welsh (United Kingdom)"
+  echo af_ZA\t"Afrikaans (South Africa)"
+  echo sq_AL\t"Albanian (Albania)"
+  echo ar_DZ\t"Arabic (Algeria)"
+  echo ar_EG\t"Arabic (Egypt)"
+  echo ar_KW\t"Arabic (Kuwait)"
+  echo ar_MA\t"Arabic (Morocco)"
+  echo ar_SA\t"Arabic (Saudi Arabia)"
+  echo az_Latn_AZ\t"Azerbaijani (Azerbaijan)"
+  echo eu_ES\t"Basque (Spain)"
+  echo be_BY\t"Belarusian (Belarus)"
+  echo bn_BD\t"Bengali (Bangladesh)"
+  echo bs_Latn_BA\t"Bosnian (Bosnia and Herzegovina)"
+  echo bg_BG\t"Bulgarian (Bulgaria)"
+  echo ca_ES\t"Catalan (Spain)"
+  echo zh_Hans_CN\t"Chinese (China)"
+  echo zh_Hant_HK\t"Chinese (Hong Kong SAR China)"
+  echo zh_Hant_TW\t"Chinese (Taiwan)"
+  echo hr_HR\t"Croatian (Croatia)"
+  echo cs_CZ\t"Czech (Czech Republic)"
+  echo da_DK\t"Danish (Denmark)"
+  echo nl_BE\t"Dutch (Belgium)"
+  echo nl_NL\t"Dutch (Netherlands)"
+  echo en_AU\t"English (Australia)"
+  echo en_CA\t"English (Canada)"
+  echo en_IE\t"English (Ireland)"
+  echo en_NZ\t"English (New Zealand)"
+  echo en_GB\t"English (United Kingdom)"
+  echo en_US\t"English (United States)"
+  echo et_EE\t"Estonian (Estonia)"
+  echo fil_PH\t"Filipino (Philippines)"
+  echo fi_FI\t"Finnish (Finland)"
+  echo fr_BE\t"French (Belgium)"
+  echo fr_CA\t"French (Canada)"
+  echo fr_FR\t"French (France)"
+  echo gl_ES\t"Galician (Spain)"
+  echo ka_GE\t"Georgian (Georgia)"
+  echo de_AT\t"German (Austria)"
+  echo de_DE\t"German (Germany)"
+  echo de_CH\t"German (Switzerland)"
+  echo el_GR\t"Greek (Greece)"
+  echo gu_IN\t"Gujarati (India)"
+  echo he_IL\t"Hebrew (Israel)"
+  echo hi_IN\t"Hindi (India)"
+  echo hu_HU\t"Hungarian (Hungary)"
+  echo is_IS\t"Icelandic (Iceland)"
+  echo id_ID\t"Indonesian (Indonesia)"
+  echo it_IT\t"Italian (Italy)"
+  echo it_CH\t"Italian (Switzerland)"
+  echo ja_JP\t"Japanese (Japan)"
+  echo km_KH\t"Khmer (Cambodia)"
+  echo ko_KR\t"Korean (South Korea)"
+  echo lo_LA\t"Lao (Laos)"
+  echo lv_LV\t"Latvian (Latvia)"
+  echo lt_LT\t"Lithuanian (Lithuania)"
+  echo mk_MK\t"Macedonian (Macedonia)"
+  echo ms_Latn_MY\t"Malay (Malaysia)"
+  echo mn_Cyrl_MN\t"Mongolian (Mongolia)"
+  echo nb_NO\t"Norwegian Bokmål (Norway)"
+  echo nn_NO\t"Norwegian Nynorsk (Norway)"
+  echo fa_IR\t"Persian (Iran)"
+  echo pl_PL\t"Polish (Poland)"
+  echo pt_BR\t"Portuguese (Brazil)"
+  echo pt_PT\t"Portuguese (Portugal)"
+  echo ro_RO\t"Romanian (Romania)"
+  echo ru_RU\t"Russian (Russia)"
+  echo sr_Cyrl_RS\t"Serbian (Serbia)"
+  echo sk_SK\t"Slovak (Slovakia)"
+  echo sl_SI\t"Slovenian (Slovenia)"
+  echo es_AR\t"Spanish (Argentina)"
+  echo es_CL\t"Spanish (Chile)"
+  echo es_CO\t"Spanish (Colombia)"
+  echo es_CR\t"Spanish (Costa Rica)"
+  echo es_MX\t"Spanish (Mexico)"
+  echo es_PA\t"Spanish (Panama)"
+  echo es_PE\t"Spanish (Peru)"
+  echo es_ES\t"Spanish (Spain)"
+  echo es_VE\t"Spanish (Venezuela)"
+  echo sw_KE\t"Swahili (Kenya)"
+  echo sv_SE\t"Swedish (Sweden)"
+  echo th_TH\t"Thai (Thailand)"
+  echo tr_TR\t"Turkish (Turkey)"
+  echo uk_UA\t"Ukrainian (Ukraine)"
+  echo vi_VN\t"Vietnamese (Vietnam)"
+  echo cy_GB\t"Welsh (United Kingdom)"
 end
 
 function __fish_print_magento_source_theme_file_types -d "Shows all available source theme file types"
-    echo less\t"Currently only LESS is supported"
+  echo less\t"Currently only LESS is supported"
 end
 
 function __fish_print_magento_deploy_modes -d "Shows all available deploy modes"
-    echo developer\t"Development mode"
-    echo production\t"Production mode"
+  echo developer\t"Development mode"
+  echo production\t"Production mode"
 end
 
 function __fish_print_magento_cache_types -d "Shows all available cache types"
-    echo config\t"Configuration"
-    echo layout\t"Layout"
-    echo block_html\t"Block HTML output"
-    echo collections\t"Collections data"
-    echo db_ddl\t"Database schema"
-    echo eav\t"Entity attribute value (EAV)"
-    echo full_page\t"Page cache"
-    echo reflection\t"Reflection"
-    echo translate\t"Translations"
-    echo config_integration\t"Integration configuration"
-    echo config_integration_api\t"Integration API configuration"
-    echo config_webservice\t"Web services configuration"
+  echo config\t"Configuration"
+  echo layout\t"Layout"
+  echo block_html\t"Block HTML output"
+  echo collections\t"Collections data"
+  echo db_ddl\t"Database schema"
+  echo eav\t"Entity attribute value (EAV)"
+  echo full_page\t"Page cache"
+  echo reflection\t"Reflection"
+  echo translate\t"Translations"
+  echo config_integration\t"Integration configuration"
+  echo config_integration_api\t"Integration API configuration"
+  echo config_webservice\t"Web services configuration"
 end
 
 function __fish_print_magento_verbosity_levels -d "Shows all available verbosity levels"
-    echo 1\t"normal output"
-    echo 2\t"more verbose output"
-    echo 3\t"debug"
+  echo 1\t"normal output"
+  echo 2\t"more verbose output"
+  echo 3\t"debug"
 end
 
 function __fish_print_magento_list_formats -d "Shows all available output formats"
-    echo txt\t"Print as plain text"
-    echo json\t"Print as JSON"
-    echo xml\t"Print as XML"
+  echo txt\t"Print as plain text"
+  echo json\t"Print as JSON"
+  echo xml\t"Print as XML"
 end
 
 function __fish_print_magento_commands_list -d "Lists magento commands"
-    set -l commands help list admin:user:create admin:user:unlock \
-        app:config:dump cache:clean cache:disable cache:enable cache:flush \
-        cache:status catalog:images:resize catalog:product:attributes:cleanup \
-        cron:run customer:hash:upgrade deploy:mode:set deploy:mode:show \
-        dev:source-theme:deploy dev:tests:run dev:urn-catalog:generate \
-        dev:xml:convert i18n:collect-phrases i18n:pack i18n:uninstall \
-        indexer:info indexer:reindex indexer:reset indexer:set-mode \
-        indexer:show-mode indexer:status info:adminuri info:backups:list \
-        info:currency:list info:dependencies:show-framework \
-        info:dependencies:show-modules info:dependencies:show-modules-circular \
-        info:language:list info:timezone:list maintenance:allow-ips \
-        maintenance:disable maintenance:enable maintenance:status module:disable \
-        module:enable module:status module:uninstall sampledata:deploy \
-        sampledata:remove sampledata:reset setup:backup setup:config:set \
-        setup:cron:run setup:db-data:upgrade setup:db-schema:upgrade \
-        setup:db:status setup:di:compile setup:install \
-        setup:performance:generate-fixtures setup:rollback \
-        setup:static-content:deploy setup:store-config:set \
-        setup:uninstall setup:upgrade theme:uninstall
-    for i in $commands
-        echo $i
-    end
+  set -l commands help list admin:user:create admin:user:unlock \
+    app:config:dump cache:clean cache:disable cache:enable cache:flush \
+    cache:status catalog:images:resize catalog:product:attributes:cleanup \
+    cron:run customer:hash:upgrade deploy:mode:set deploy:mode:show \
+    dev:source-theme:deploy dev:tests:run dev:urn-catalog:generate \
+    dev:xml:convert i18n:collect-phrases i18n:pack i18n:uninstall \
+    indexer:info indexer:reindex indexer:reset indexer:set-mode \
+    indexer:show-mode indexer:status info:adminuri info:backups:list \
+    info:currency:list info:dependencies:show-framework \
+    info:dependencies:show-modules info:dependencies:show-modules-circular \
+    info:language:list info:timezone:list maintenance:allow-ips \
+    maintenance:disable maintenance:enable maintenance:status module:disable \
+    module:enable module:status module:uninstall sampledata:deploy \
+    sampledata:remove sampledata:reset setup:backup setup:config:set \
+    setup:cron:run setup:db-data:upgrade setup:db-schema:upgrade \
+    setup:db:status setup:di:compile setup:install \
+    setup:performance:generate-fixtures setup:rollback \
+    setup:static-content:deploy setup:store-config:set \
+    setup:uninstall setup:upgrade theme:uninstall
+  for i in $commands
+    echo $i
+  end
 end
 
 #########################################################
 
 function __fish_magento_not_in_command -d "Checks that prompt is not inside of magento command"
-    set -l cmd (commandline -xpc)
-    for i in $cmd
-        if contains -- $i (__fish_print_magento_commands_list)
-            return 1
-        end
+  set -l cmd (commandline -xpc)
+  for i in $cmd
+    if contains -- $i (__fish_print_magento_commands_list)
+      return 1
     end
-    return 0
+  end
+  return 0
 end
 
 #########################################################
@@ -218,32 +218,32 @@ end
 # in the arguments, even though if more than a single command is specified,
 # p4 will complain.
 function __fish_magento_is_using_command -d "Checks if prompt is in a specific command"
-    if contains -- $argv[1] (commandline -xpc)
-        return 0
-    end
-    return 1
+  if contains -- $argv[1] (commandline -xpc)
+    return 0
+  end
+  return 1
 end
 
 #########################################################
 
 function __fish_magento_register_command -d "Adds a completion for a specific command"
-    complete -c magento -n __fish_magento_not_in_command -a $argv[1] $argv[2..-1]
+  complete -c magento -n __fish_magento_not_in_command -a $argv[1] $argv[2..-1]
 end
 
 #########################################################
 
 function __fish_magento_register_command_option -d "Adds a specific option for a command"
-    complete -c magento -n "__fish_magento_is_using_command $argv[1]" $argv[2..-1]
+  complete -c magento -n "__fish_magento_is_using_command $argv[1]" $argv[2..-1]
 end
 
 #########################################################
 
 function __fish_magento_parameter_missing -d "Checks if a parameter has been given already"
-    if __fish_contains_opt $argv
-        return 1
-    end
+  if __fish_contains_opt $argv
+    return 1
+  end
 
-    return 0
+  return 0
 end
 
 ##################

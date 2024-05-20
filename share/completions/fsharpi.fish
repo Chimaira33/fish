@@ -10,7 +10,7 @@ complete -c fsharpi -o "r:" -l "reference:" -d "Reference an assembly"
 complete -c fsharpi -s g -o "g+" -l debug -l "debug+" -d "Emit debug information"
 complete -c fsharpi -o g- -l debug- -d "Disable --debug"
 for arguments in full pdbonly portable embedded
-    complete -c fsharpi -o "g:$arguments" -l "debug:$arguments" -d "Specify debugging type"
+  complete -c fsharpi -o "g:$arguments" -l "debug:$arguments" -d "Specify debugging type"
 end
 
 complete -c fsharpi -s O -o "O+" -l optimize -l "optimize+" -d "Enable optimizations"
@@ -29,7 +29,7 @@ complete -c fsharpi -l "warnaserror:" -l "warnaserror+:" -d "Report specific war
 complete -c fsharpi -l "warnaserror-:" -d "Disable --warnaserror:"
 
 for warning_level in (seq 0 5)
-    complete -c fsharpi -l "warn:$warning_level" -d "Set a warning level to $warning_level"
+  complete -c fsharpi -l "warn:$warning_level" -d "Set a warning level to $warning_level"
 end
 
 complete -c fsharpi -l "nowarn:" -d "Disable specific warning messages"

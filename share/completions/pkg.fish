@@ -9,38 +9,38 @@
 # out, maintainers can assume we are specifically talking about the (Free)BSD `pkg` command being
 # executed on a BSD system, rather than just work with "not SunOS".
 if ! uname | string match -irq bsd
-    exit
+  exit
 end
 
 function __fish_pkg_is
-    for option in $argv
-        if contains $option (commandline -pxc)
-            return 0
-        end
+  for option in $argv
+    if contains $option (commandline -pxc)
+      return 0
     end
-    return 1
+  end
+  return 1
 end
 
 function __fish_pkg_subcommand
-    set -l skip_next 1
-    for token in (commandline -xpc)
-        if test $skip_next = 1
-            set skip_next 0
-            continue
-        end
-        switch $token
-            # Option parser allows shortened long options
-            case '--*=*'
-                continue
-            case -{o,j,c,r,C,R} --op\* --j\* --ch\* --ro\* --co\* --re\*
-                set skip_next 1
-                continue
-            case '-*'
-                continue
-        end
-        return 1
+  set -l skip_next 1
+  for token in (commandline -xpc)
+    if test $skip_next = 1
+      set skip_next 0
+      continue
     end
-    return 0
+    switch $token
+      # Option parser allows shortened long options
+      case '--*=*'
+        continue
+      case -{o,j,c,r,C,R} --op\* --j\* --ch\* --ro\* --co\* --re\*
+        set skip_next 1
+        continue
+      case '-*'
+        continue
+    end
+    return 1
+  end
+  return 0
 end
 
 complete -c pkg -n __fish_pkg_subcommand -s v -l version -d "Display version and exit"
@@ -170,94 +170,94 @@ complete -c pkg -n '__fish_pkg_is add update' -s f -l force -d "Force a full dow
 
 # alias 
 set -l with_packge_names all-depends annotations build-depends cinfo comment csearch desc iinfo isearch \
-    list options origin provided-depends roptions shared-depends show size
+  list options origin provided-depends roptions shared-depends show size
 
 for alias in (pkg alias -lq)
-    if contains $with_package_names $alias
-        complete -c pkg -n "__fish_pkg_is $alias" -xa '(pkg query "%n")'
-    end
+  if contains $with_package_names $alias
+    complete -c pkg -n "__fish_pkg_is $alias" -xa '(pkg query "%n")'
+  end
 end
 
 function __fish_pkg_aliases
-    for alias in (pkg alias -q)
-        echo $alias | read -l name description
+  for alias in (pkg alias -q)
+    echo $alias | read -l name description
 
-        switch $name
-            case all-depends
-                set description 'Display all dependencies for a given package'
+    switch $name
+      case all-depends
+        set description 'Display all dependencies for a given package'
 
-            case annotations
-                set description 'Display any annotations added to the package'
+      case annotations
+        set description 'Display any annotations added to the package'
 
-            case build-depends
-                set description 'Display build dependencies for a given package'
+      case build-depends
+        set description 'Display build dependencies for a given package'
 
-            case cinfo
-                set description 'Display install package matching case-sensitve regex'
+      case cinfo
+        set description 'Display install package matching case-sensitve regex'
 
-            case comment
-                set description 'Display comment off a package'
+      case comment
+        set description 'Display comment off a package'
 
-            case csearch
-                set description 'Displays package using case-sensitive search'
+      case csearch
+        set description 'Displays package using case-sensitive search'
 
-            case desc
-                set description 'Show package description'
+      case desc
+        set description 'Show package description'
 
-            case iinfo
-                set description 'Display install package matching case-insensitve regex'
+      case iinfo
+        set description 'Display install package matching case-insensitve regex'
 
-            case isearch
-                set description 'Finds package using case-insensitive search'
+      case isearch
+        set description 'Finds package using case-insensitive search'
 
-            case prime-list
-                set description 'Displays names of all manually installed packages'
+      case prime-list
+        set description 'Displays names of all manually installed packages'
 
-            case prime-origins
-                set description 'Displays origin of all manually installed packages'
+      case prime-origins
+        set description 'Displays origin of all manually installed packages'
 
-            case leaf
-                set description 'Lists all leaf packages'
+      case leaf
+        set description 'Lists all leaf packages'
 
-            case list
-                set description 'Display all files from an installed package'
+      case list
+        set description 'Display all files from an installed package'
 
-            case noauto
-                set description 'Displays all non automatically installed packages'
+      case noauto
+        set description 'Displays all non automatically installed packages'
 
-            case options
-                set description 'Display options of a installed package'
+      case options
+        set description 'Display options of a installed package'
 
-            case origin
-                set description 'Shows origin of a package'
+      case origin
+        set description 'Shows origin of a package'
 
-            case provided-depends
-                set description 'Display all shared libraries provided by package'
+      case provided-depends
+        set description 'Display all shared libraries provided by package'
 
-            case raw
-                set description 'Display the full manifest for a package'
+      case raw
+        set description 'Display the full manifest for a package'
 
-            case required-depends
-                set description 'Display the list of packages which require this package'
+      case required-depends
+        set description 'Display the list of packages which require this package'
 
-            case roptions
-                set description 'Display options of a package for the default repository'
+      case roptions
+        set description 'Display options of a package for the default repository'
 
-            case shared-depends
-                set description 'Display all shared libraries used by package'
+      case shared-depends
+        set description 'Display all shared libraries used by package'
 
-            case show
-                set description 'Display full information including lock status for a package'
+      case show
+        set description 'Display full information including lock status for a package'
 
-            case size
-                set description 'Display the total size of files installed by a package'
+      case size
+        set description 'Display the total size of files installed by a package'
 
-            case '*'
-                set description "alias: $description"
+      case '*'
+        set description "alias: $description"
 
-        end
-
-        printf '%s\t%s\n' $name $description
     end
+
+    printf '%s\t%s\n' $name $description
+  end
 
 end

@@ -24,7 +24,7 @@ complete -c unzstd -l filelist -d "Read a list of files"
 complete -c unzstd -l output-dir-flat -d "Specify a directory to output all files"
 
 for format in zstd gzip xz lzma lz4
-    complete -c unzstd -l format="$format" -d "Specify the format to use for decompression"
+  complete -c unzstd -l format="$format" -d "Specify the format to use for decompression"
 end
 
 complete -c unzstd -s h -l help -d "Show help"

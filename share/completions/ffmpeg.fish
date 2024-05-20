@@ -1,126 +1,126 @@
 function __fish_ffmpeg_last_arg
-    echo (commandline -cx)[-1]
+  echo (commandline -cx)[-1]
 end
 
 # Allow completions to match against an argument that includes a stream specifier, e.g. -c:v:2
 function __fish_ffmpeg_complete_regex
-    set -l regex $argv[1]
-    set -l completions $argv[2..-1]
+  set -l regex $argv[1]
+  set -l completions $argv[2..-1]
 
-    complete -x -c ffmpeg -n "__fish_ffmpeg_last_arg | string match -rq -- '^'\"$regex\"'(\$|:)'" \
-        -a "$completions"
+  complete -x -c ffmpeg -n "__fish_ffmpeg_last_arg | string match -rq -- '^'\"$regex\"'(\$|:)'" \
+    -a "$completions"
 end
 
 function __fish_ffmpeg_help_type
-    printf '%s\t%s\n' long "Print more options"
-    printf '%s\t%s\n' full "Print all options"
+  printf '%s\t%s\n' long "Print more options"
+  printf '%s\t%s\n' full "Print all options"
 
-    for help_type in decoder encoder demuxer muxer filter
-        set -l regex
+  for help_type in decoder encoder demuxer muxer filter
+    set -l regex
 
-        if test $help_type = filter
-            set regex '\S+\s+(\S+)\s+\S+\s+(\S+)'
-        else
-            set regex '\S+\s+(\S+)\s+(\S+)'
-        end
-
-        printf '%s\n' $help_type=(ffmpeg -loglevel quiet -"$help_type"s | string trim \
-            | string match -rv '=|:$|^-' | string replace -rf "$regex" '$1\t$2')
+    if test $help_type = filter
+      set regex '\S+\s+(\S+)\s+\S+\s+(\S+)'
+    else
+      set regex '\S+\s+(\S+)\s+(\S+)'
     end
+
+    printf '%s\n' $help_type=(ffmpeg -loglevel quiet -"$help_type"s | string trim \
+            | string match -rv '=|:$|^-' | string replace -rf "$regex" '$1\t$2')
+  end
 end
 
 function __fish_ffmpeg_codec_list
-    printf '%s\t%s\n' copy "Stream copy"
+  printf '%s\t%s\n' copy "Stream copy"
 
-    set -l identifier
+  set -l identifier
 
-    switch $argv[1]
-        case video
-            set identifier '^V.*'
-        case audio
-            set identifier '^A.*'
-        case subtitle
-            set identifier '^S.*'
-        case all
-            set identifier '.*'
-        case '*'
-            return 1
-    end
+  switch $argv[1]
+    case video
+      set identifier '^V.*'
+    case audio
+      set identifier '^A.*'
+    case subtitle
+      set identifier '^S.*'
+    case all
+      set identifier '.*'
+    case '*'
+      return 1
+  end
 
-    printf '%s\n' (ffmpeg -loglevel quiet -decoders | string trim | string match -rv '=|:$|^-' \
+  printf '%s\n' (ffmpeg -loglevel quiet -decoders | string trim | string match -rv '=|:$|^-' \
         | string match -r "$identifier" | string replace -rf '\S+\s+(\S+)\s+(\S+)' '$1\t$2')
 end
 
 function __fish_ffmpeg_pix_fmts
-    # We can't know in advance if the intention is to specify an output pix_fmt because the intent
-    # could be to instead provide a second input, but we can rule out an output if no input has
-    # been specified
-    set -l regex_filter '.'
-    if contains -- -i (commandline -cx)
-        set regex_filter '^I'
-    end
-    ffmpeg -hide_banner -loglevel quiet -pix_fmts |
-        # tail -n +9 | # skip past header
-        string match -rv '[:=-]|FLAGS' | # skip past header
-        string match -er $regex_filter |
-        string replace -rf '^[IOHPB.]{5} (\S+) .*' '$1'
+  # We can't know in advance if the intention is to specify an output pix_fmt because the intent
+  # could be to instead provide a second input, but we can rule out an output if no input has
+  # been specified
+  set -l regex_filter '.'
+  if contains -- -i (commandline -cx)
+    set regex_filter '^I'
+  end
+  ffmpeg -hide_banner -loglevel quiet -pix_fmts |
+    # tail -n +9 | # skip past header
+    string match -rv '[:=-]|FLAGS' | # skip past header
+    string match -er $regex_filter |
+    string replace -rf '^[IOHPB.]{5} (\S+) .*' '$1'
 end
 
 function __fish_ffmpeg_filters
-    # TODO: Figure out how to distinguish {audio,video} source and destination, because some filters
-    # can go cross those lines (e.g. showvolume, which generates a video representation of the input
-    # audio).
+  # TODO: Figure out how to distinguish {audio,video} source and destination, because some filters
+  # can go cross those lines (e.g. showvolume, which generates a video representation of the input
+  # audio).
 
-    set -l filter '.'
-    switch $argv[1]
-        case video
-            set filter '[V]\S*->|->\S*[V]'
-        case audio
-            set filter '[A]\S*->|->\S*[A]'
-        case all
-        case '*'
-            set filter '.'
-    end
+  set -l filter '.'
+  switch $argv[1]
+    case video
+      set filter '[V]\S*->|->\S*[V]'
+    case audio
+      set filter '[A]\S*->|->\S*[A]'
+    case all
+    case '*'
+      set filter '.'
+  end
 
-    ffmpeg -hide_banner -loglevel quiet -filters |
-        string match -e -- '->' | # skip past the header
-        string match -er $filter |
-        string replace -rf '^ [TSC.]{3} +(\S+) +\S+->\S+ +(.*)' '$1\t$2'
+  ffmpeg -hide_banner -loglevel quiet -filters |
+    string match -e -- '->' | # skip past the header
+    string match -er $filter |
+    string replace -rf '^ [TSC.]{3} +(\S+) +\S+->\S+ +(.*)' '$1\t$2'
 end
 
 function __fish_ffmpeg_presets
-    set -l cmdline (commandline)
-    if string match -ireq '[hx]26[45]'
-        printf "%s\n" ultrafast superfast veryfast faster fast medium slow slower veryslow placebo
-    end
+  set -l cmdline (commandline)
+  if string match -ireq '[hx]26[45]'
+    printf "%s\n" ultrafast superfast veryfast faster fast medium slow slower veryslow placebo
+  end
 end
 
 function __fish_ffmpeg_tunes
-    set -l cmdline (commandline)
-    if string match -req 264
-        printf "%s\n" film animation grain stillimage fastdecode zerolatency psnr ssim
-    end
-    if string match -req '265|hevc'
-        printf "%s\n" psnr ssim grain zerolatency fastdecode
-    end
+  set -l cmdline (commandline)
+  if string match -req 264
+    printf "%s\n" film animation grain stillimage fastdecode zerolatency psnr ssim
+  end
+  if string match -req '265|hevc'
+    printf "%s\n" psnr ssim grain zerolatency fastdecode
+  end
 end
 
 function __fish_ffmpeg_crfs
-    seq 1 30
+  seq 1 30
 end
 
 function __fish_ffmpeg_profile
-    if string match -req 264
-        printf "%s\n" baseline main high
-    end
-    if string match -req '265|hevc'
-        printf "%s\n" main high
-    end
+  if string match -req 264
+    printf "%s\n" baseline main high
+  end
+  if string match -req '265|hevc'
+    printf "%s\n" main high
+  end
 end
 
 function __fish_ffmpeg_formats
-    # TODO: Use heuristic to determine input vs output format and filter accordingly
-    ffmpeg -hide_banner -loglevel quiet -formats | string replace -rf '^ [DE.]{2} ([a-z0-9_]+) +(\S.+)$' '$1\t$2'
+  # TODO: Use heuristic to determine input vs output format and filter accordingly
+  ffmpeg -hide_banner -loglevel quiet -formats | string replace -rf '^ [DE.]{2} ([a-z0-9_]+) +(\S.+)$' '$1\t$2'
 end
 
 complete -c ffmpeg -s i -d "Specify input file"
@@ -150,7 +150,7 @@ complete -c ffmpeg -o hwaccels -d "Show available HW acceleration methods"
 
 # Global options
 complete -x -c ffmpeg -o loglevel -s v \
-    -a "quiet panic fatal error warning info verbose debug trace" -d "Set logging level"
+  -a "quiet panic fatal error warning info verbose debug trace" -d "Set logging level"
 complete -c ffmpeg -o report -d "Generate a report"
 complete -c ffmpeg -o max_alloc -d "Set maximum size of a single allocated block"
 complete -c ffmpeg -s y -d "Overwrite output files"
@@ -177,7 +177,7 @@ complete -c ffmpeg -o metadata -d "Add metadata"
 complete -c ffmpeg -o program -d "Add program with specified streams"
 complete -x -c ffmpeg -o target -a '(for target in vcd svcd dvd dv dv50 ; echo "$target" ; \
     echo pal-"$target" ; echo ntsc-"$target" ; echo film-"$target" ; end)' \
-    -d "Specify target file type"
+  -d "Specify target file type"
 complete -c ffmpeg -o apad -d "Audio pad"
 complete -c ffmpeg -o frames -d "Set the number of frames to output"
 complete -c ffmpeg -o filter -d "Set stream filtergraph"
@@ -259,63 +259,63 @@ __fish_ffmpeg_complete_regex profile "(__fish_ffmpeg_profiles)"
 # ffmpeg .... -filter:v filter1,filter2=f2_arg1=f2_arg1_val:f2_arg2
 
 function __fish_ffmpeg_split_filter_graph
-    set -l filters (string split , $argv[1])
-    printf "%s\n" $filters
+  set -l filters (string split , $argv[1])
+  printf "%s\n" $filters
 end
 
 # Given a single filter expression, emits the filter name on the first line and then each key=value
 # pair of arguments to the filter on each subsequent line.
 function __fish_ffmpeg_decompose_filter
-    set -l parts (string split -m 1 = "$argv")
-    echo $parts[1] # the filter name
-    set -l arguments (string split : $parts[2])
-    printf "%s\n" $arguments
+  set -l parts (string split -m 1 = "$argv")
+  echo $parts[1] # the filter name
+  set -l arguments (string split : $parts[2])
+  printf "%s\n" $arguments
 end
 
 function __fish_ffmpeg_concat_filters
-    string join -- , $argv
+  string join -- , $argv
 end
 
 function __fish_ffmpeg_concat_filter_args
-    string join -- : $argv
+  string join -- : $argv
 end
 
 function __fish_ffmpeg_complete_filter
-    set -l filter_type all
-    if string match -rq -- '^-(vf(ilter)?|f(ilter)?:v)' (__fish_ffmpeg_last_arg)
-        set filter_type video
-    else if string match -rq -- '^-(af(ilter)?|f(ilter)?:a)' (__fish_ffmpeg_last_arg)
-        set filter_type audio
-    end
+  set -l filter_type all
+  if string match -rq -- '^-(vf(ilter)?|f(ilter)?:v)' (__fish_ffmpeg_last_arg)
+    set filter_type video
+  else if string match -rq -- '^-(af(ilter)?|f(ilter)?:a)' (__fish_ffmpeg_last_arg)
+    set filter_type audio
+  end
 
-    # echo -e "\n **** $filter_type **** \n" > /dev/tty
+  # echo -e "\n **** $filter_type **** \n" > /dev/tty
 
-    set -l filters_arg (commandline -xp)[-1]
-    if string match -rq -- '^-' $filters_arg
-        # No filter name started
-        __fish_ffmpeg_filters $filter_type
-        return
-    end
+  set -l filters_arg (commandline -xp)[-1]
+  if string match -rq -- '^-' $filters_arg
+    # No filter name started
+    __fish_ffmpeg_filters $filter_type
+    return
+  end
 
-    set -l filters (__fish_ffmpeg_split_filter_graph $filters_arg)
-    # We are completing only the last filter (in case there are multiple)
-    set -l filter $filters[-1]
-    # Remove it from the list of passed-through filters
-    set -e filters[-1]
-    # `ffmpeg -h filter=FILTER` exposes information that can be used to dynamically complete not
-    # only the name of the filter but also the name of its individual options. We currently only
-    # support completing the name of the filter.
-    set -l decomposed (__fish_ffmpeg_decompose_filter $filter)
-    set -l filter_name $decomposed[1]
-    set -l filter_args (__fish_ffmpeg_concat_filter_args $decomposed[2..-1])
+  set -l filters (__fish_ffmpeg_split_filter_graph $filters_arg)
+  # We are completing only the last filter (in case there are multiple)
+  set -l filter $filters[-1]
+  # Remove it from the list of passed-through filters
+  set -e filters[-1]
+  # `ffmpeg -h filter=FILTER` exposes information that can be used to dynamically complete not
+  # only the name of the filter but also the name of its individual options. We currently only
+  # support completing the name of the filter.
+  set -l decomposed (__fish_ffmpeg_decompose_filter $filter)
+  set -l filter_name $decomposed[1]
+  set -l filter_args (__fish_ffmpeg_concat_filter_args $decomposed[2..-1])
 
-    # Emit the mutated filter graph, with permutations of the final filter name offered as
-    # completions.
-    for known_filter in (__fish_ffmpeg_filters $filter_type)
-        set -l modified_filter (string join = $known_filter $filter_args)
-        __fish_ffmpeg_concat_filters $filters $modified_filter
-    end
+  # Emit the mutated filter graph, with permutations of the final filter name offered as
+  # completions.
+  for known_filter in (__fish_ffmpeg_filters $filter_type)
+    set -l modified_filter (string join = $known_filter $filter_args)
+    __fish_ffmpeg_concat_filters $filters $modified_filter
+  end
 end
 
 complete -x -c ffmpeg -o filter -o filter:v -o filter:s -o filter:a -o vf -o af \
-    -a "(__fish_ffmpeg_complete_filter)"
+  -a "(__fish_ffmpeg_complete_filter)"

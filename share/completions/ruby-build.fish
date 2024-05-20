@@ -1,13 +1,13 @@
 function __fish_ruby-build_needs_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -eq 1
-        return 0
-    end
-    return 1
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -eq 1
+    return 0
+  end
+  return 1
 end
 
 function __fish_ruby-build_definitions
-    ruby-build --definitions
+  ruby-build --definitions
 end
 
 complete -f -c ruby-build -n __fish_ruby-build_needs_command -a '(__fish_ruby-build_definitions)' -d Definition

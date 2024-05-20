@@ -1,41 +1,41 @@
 set -l commands status get-volume inspect set-default set-volume set-mute set-profile clear-default
 
 function __wpctl_get_nodes -a section -a type
-    set -l havesection
-    set -l havetype
-    wpctl status | while read -l line
-        if set -q havesection[1]
-            test -z "$line"; and break
-            if set -q havetype[1]
-                string match -rq '^\s*\│\s*$' -- $line; and break
-                printf '%s\t%s\n' (string match -r '\d+' $line) (string match -rg '\d+\. ([^\[]*)' $line)
-            else
-                string match -q "*$type*" -- $line
-                and set havetype 1
-            end
-        else
-            string match -q "$section*" -- $line
-            and set havesection 1
-        end
+  set -l havesection
+  set -l havetype
+  wpctl status | while read -l line
+    if set -q havesection[1]
+      test -z "$line"; and break
+      if set -q havetype[1]
+        string match -rq '^\s*\│\s*$' -- $line; and break
+        printf '%s\t%s\n' (string match -r '\d+' $line) (string match -rg '\d+\. ([^\[]*)' $line)
+      else
+        string match -q "*$type*" -- $line
+        and set havetype 1
+      end
+    else
+      string match -q "$section*" -- $line
+      and set havesection 1
     end
+  end
 end
 
 function __wpctl_command_shape
-    set -l shape $argv
-    set -l command (commandline -pxc)
-    set -e command[1] # Remove command name
+  set -l shape $argv
+  set -l command (commandline -pxc)
+  set -e command[1] # Remove command name
 
-    # Remove flags as we won't count them with the shape
-    set -l command (string match -v -- '-*' $command)
+  # Remove flags as we won't count them with the shape
+  set -l command (string match -v -- '-*' $command)
 
-    if test (count $command) != (count $shape)
-        return 1
-    end
+  if test (count $command) != (count $shape)
+    return 1
+  end
 
-    while set -q command[1]
-        string match -q -- $shape[1] $command[1]; or return 1
-        set -e shape[1] command[1]
-    end
+  while set -q command[1]
+    string match -q -- $shape[1] $command[1]; or return 1
+    set -e shape[1] command[1]
+  end
 end
 
 complete -c wpctl -f

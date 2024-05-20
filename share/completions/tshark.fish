@@ -3,11 +3,11 @@
 __fish_complete_wireshark tshark
 
 function __fish_tshark_protocols
-    set -l tok (commandline -ct | string collect)
-    set -l tok_param (string replace -r -- '^-O' '' $tok)
-    command tshark -G protocols 2>/dev/null | while read -l -d \t name shortname identifier
-        printf "%s%s\t%s\n" (string replace -r -- '(.+),[^,]*$' '$1,' $tok_param) $tok_no_comma $identifier $name
-    end
+  set -l tok (commandline -ct | string collect)
+  set -l tok_param (string replace -r -- '^-O' '' $tok)
+  command tshark -G protocols 2>/dev/null | while read -l -d \t name shortname identifier
+    printf "%s%s\t%s\n" (string replace -r -- '(.+),[^,]*$' '$1,' $tok_param) $tok_no_comma $identifier $name
+  end
 end
 
 complete -c tshark -s 2 -d 'Perform a two-pass analysis'

@@ -1,7 +1,7 @@
 # completion for defaults (macOS)
 
 function __fish_defaults_domains
-    defaults domains | string split ", "
+  defaults domains | string split ", "
 end
 
 complete -f -c defaults -o currentHost -d 'Restricts preferences operations to the current logged-in host'

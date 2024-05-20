@@ -1,79 +1,79 @@
 # Execute an `iwctl ... list` command and parse output
 function __iwctl_filter -w iwctl
-    # set results "iwctl $cmd list | tail -n +5"
-    # if test -n "$empty"
-    #     set -a results "| string match --invert '*$empty*'"
-    # end
-    # eval "$results" | awk '{print $2}'
-    # awk does not work on multiline entries, therefor we use string match,
-    # which has the added benefit of filtering out the `No devices in ...` lines
+  # set results "iwctl $cmd list | tail -n +5"
+  # if test -n "$empty"
+  #     set -a results "| string match --invert '*$empty*'"
+  # end
+  # eval "$results" | awk '{print $2}'
+  # awk does not work on multiline entries, therefor we use string match,
+  # which has the added benefit of filtering out the `No devices in ...` lines
 
-    argparse -i all-columns -- $argv
+  argparse -i all-columns -- $argv
 
-    # remove color escape sequences
-    set -l results (iwctl $argv | string replace -ra '\e\[[\d;]+m' '')
-    # calculate column widths
-    set -l headers $results[3]
-    # We exploit the fact that all column labels will have >2 space to the left, and inside column labels there is always only one space.
-    set -l leading_ws (string match -r "^ *" -- $headers | string length)
-    set -l column_widths (string match -a -r '(?<=  )\S.*?(?:  (?=\S)|$)' -- $headers | string length)
+  # remove color escape sequences
+  set -l results (iwctl $argv | string replace -ra '\e\[[\d;]+m' '')
+  # calculate column widths
+  set -l headers $results[3]
+  # We exploit the fact that all column labels will have >2 space to the left, and inside column labels there is always only one space.
+  set -l leading_ws (string match -r "^ *" -- $headers | string length)
+  set -l column_widths (string match -a -r '(?<=  )\S.*?(?:  (?=\S)|$)' -- $headers | string length)
 
-    if set -ql _flag_all_columns
-        for line in (string match "  *" -- $results[5..] | string sub -s (math $leading_ws + 1))
-            for column_width in $column_widths
-                printf %s\t (string sub -l $column_width -- $line | string trim -r)
-                set line (string sub -s (math $column_width + 1) -- $line)
-            end
-            printf "\n"
-        end
-    else if set -q column_widths[1]
-        # only take lines starting with `  `, i.e., no `No devices ...`
-        # then take the first column as substring
-        string match "  *" $results[5..] | string sub -s (math $leading_ws + 1) -l $column_widths[1] | string trim -r
+  if set -ql _flag_all_columns
+    for line in (string match "  *" -- $results[5..] | string sub -s (math $leading_ws + 1))
+      for column_width in $column_widths
+        printf %s\t (string sub -l $column_width -- $line | string trim -r)
+        set line (string sub -s (math $column_width + 1) -- $line)
+      end
+      printf "\n"
     end
+  else if set -q column_widths[1]
+    # only take lines starting with `  `, i.e., no `No devices ...`
+    # then take the first column as substring
+    string match "  *" $results[5..] | string sub -s (math $leading_ws + 1) -l $column_widths[1] | string trim -r
+  end
 end
 
 function __iwctl_match_subcoms
-    set -l match (string split --no-empty " " -- $argv)
+  set -l match (string split --no-empty " " -- $argv)
 
-    set argv (commandline -pxc)
-    # iwctl allows to specify arguments for username, password, passphrase and dont-ask regardless of any following commands
-    argparse -i 'u/username=' 'p/password=' 'P/passphrase=' v/dont-ask -- $argv
-    set argv $argv[2..]
+  set argv (commandline -pxc)
+  # iwctl allows to specify arguments for username, password, passphrase and dont-ask regardless of any following commands
+  argparse -i 'u/username=' 'p/password=' 'P/passphrase=' v/dont-ask -- $argv
+  set argv $argv[2..]
 
-    if test (count $argv) != (count $match)
-        return 1
-    end
+  if test (count $argv) != (count $match)
+    return 1
+  end
 
-    while set -q argv[1]
-        string match -q -- $match[1] $argv[1]
-        or return 1
-        set -e match[1] argv[1]
-    end
+  while set -q argv[1]
+    string match -q -- $match[1] $argv[1]
+    or return 1
+    set -e match[1] argv[1]
+  end
 end
 
 function __iwctl_connect
-    set argv (commandline -pxc)
-    # remove all options
-    argparse -i 'u/username=' 'p/password=' 'P/passphrase=' v/dont-ask -- $argv
-    # station name should now be the third argument (`iwctl station <wlan>`)
-    for network in (__iwctl_filter station $argv[3] get-networks rssi-dbms --all-columns)
-        set network (string split \t -- $network)
-        set -l strength "$network[3]"
-        # This follows iwctls display of * to ****
-        # https://git.kernel.org/pub/scm/network/wireless/iwd.git/tree/client/station.c?id=4a0a97379008489daa108c9bc0a4204c1ae9c6a8#n380
-        if test $strength -ge -6000
-            set strength 4
-        else if test $strength -ge -6700
-            set strength 3
-        else if test $strength -ge -7500
-            set strength 2
-        else
-            set strength 1
-        end
-
-        printf "%s\t[%s] - %s\n" "$network[1]" (string repeat -n $strength '*' | string pad -rw 4 -c -) "$network[2]"
+  set argv (commandline -pxc)
+  # remove all options
+  argparse -i 'u/username=' 'p/password=' 'P/passphrase=' v/dont-ask -- $argv
+  # station name should now be the third argument (`iwctl station <wlan>`)
+  for network in (__iwctl_filter station $argv[3] get-networks rssi-dbms --all-columns)
+    set network (string split \t -- $network)
+    set -l strength "$network[3]"
+    # This follows iwctls display of * to ****
+    # https://git.kernel.org/pub/scm/network/wireless/iwd.git/tree/client/station.c?id=4a0a97379008489daa108c9bc0a4204c1ae9c6a8#n380
+    if test $strength -ge -6000
+      set strength 4
+    else if test $strength -ge -6700
+      set strength 3
+    else if test $strength -ge -7500
+      set strength 2
+    else
+      set strength 1
     end
+
+    printf "%s\t[%s] - %s\n" "$network[1]" (string repeat -n $strength '*' | string pad -rw 4 -c -) "$network[2]"
+  end
 end
 
 # The `empty` messages in case we want to go back to using those
@@ -97,7 +97,7 @@ complete -c iwctl -s v -l dont-ask -d "Don't ask for missing credentials"
 
 # Subcommand
 complete -c iwctl -n __iwctl_match_subcoms \
-    -a "ad-hoc adapter ap debug device dpp exit help known-networks quit station version wsc"
+  -a "ad-hoc adapter ap debug device dpp exit help known-networks quit station version wsc"
 
 # ad-hoc
 complete -c iwctl -n '__iwctl_match_subcoms ad-hoc' -a list -d "List devices in Ad-Hoc mode"

@@ -1,21 +1,21 @@
 set -l runtime userparameter_reload \
-    log_level_increase \
-    log_level_increase= \
-    log_level_decrease \
-    log_level_decrease=
+  log_level_increase \
+  log_level_increase= \
+  log_level_decrease \
+  log_level_decrease=
 
 function __fish_string_in_command -a ch
-    string match -rq $ch (commandline)
+  string match -rq $ch (commandline)
 end
 
 function __fish_prepend -a prefix
-    if string match -rq 'log_level_(in|de)crease' $prefix
-        set var "active checks" collector listener
-    end
+  if string match -rq 'log_level_(in|de)crease' $prefix
+    set var "active checks" collector listener
+  end
 
-    for i in $var
-        echo $prefix="$i"
-    end
+  for i in $var
+    echo $prefix="$i"
+  end
 end
 
 # General

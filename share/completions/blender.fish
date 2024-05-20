@@ -1,40 +1,40 @@
 function __blender_player -d 'Check if -a option has been used, to run animation player'
-    return (__fish_contains_opt -s a; and not __fish_contains_opt -s b background)
+  return (__fish_contains_opt -s a; and not __fish_contains_opt -s b background)
 end
 
 function __blender_echo_input_file_name
-    # Find last argument ending in .blend (or .blend1, etc.)
-    # This is because a Blender invocation can open multiple blend file
-    # sequentially, so we need to find the last one up to this point.
-    set -l path (commandline -pxc |
+  # Find last argument ending in .blend (or .blend1, etc.)
+  # This is because a Blender invocation can open multiple blend file
+  # sequentially, so we need to find the last one up to this point.
+  set -l path (commandline -pxc |
         string match -r '.*\\.blend[0-9]*$' |
         tail --lines=1)
-    echo $path
+  echo $path
 end
 
 function __blender_list_scenes
-    blender --background (__blender_echo_input_file_name) --python-expr 'import bpy
+  blender --background (__blender_echo_input_file_name) --python-expr 'import bpy
 for scene in bpy.data.scenes:
     print(f"\t{scene.name}")' 2>/dev/null |
-        string replace -r -f '^\t' ''
+    string replace -r -f '^\t' ''
 end
 
 function __blender_list_texts
-    blender --background (__blender_echo_input_file_name) --python-expr 'import bpy
+  blender --background (__blender_echo_input_file_name) --python-expr 'import bpy
 for text in bpy.data.texts:
     print(f"\t{text.name}")' 2>/dev/null |
-        string replace -r -f '^\t' ''
+    string replace -r -f '^\t' ''
 end
 
 function __blender_list_engines
-    blender --background --engine help 2>/dev/null | string replace -r -f '^\t' ''
+  blender --background --engine help 2>/dev/null | string replace -r -f '^\t' ''
 end
 
 function __blender_list_addons
-    blender --background --python-expr 'import addon_utils
+  blender --background --python-expr 'import addon_utils
 for mod in addon_utils.modules():
     print(f"\t{mod.__name__}")' 2>/dev/null |
-        string replace -r -f '^\t' ''
+    string replace -r -f '^\t' ''
 end
 
 complete -c blender -n 'not __blender_player' -o h -l help -d 'Show help'

@@ -1,9 +1,9 @@
 function __fish_complete_fab_tasks
-    for task in (fab -l)
-        set -l _matched (string match -r "^ +([^ ]*) *([^ ]?.*)" $task)
+  for task in (fab -l)
+    set -l _matched (string match -r "^ +([^ ]*) *([^ ]?.*)" $task)
 
-        printf "%s\t%s\n" "$_matched[2]" "$_matched[3]"
-    end
+    printf "%s\t%s\n" "$_matched[2]" "$_matched[3]"
+  end
 end
 
 # tasks 

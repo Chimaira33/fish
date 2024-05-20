@@ -1,18 +1,18 @@
 # Tab completion for sfdx (https://developer.salesforce.com/tools/sfdxcli).
 
 function __fish_sfdx_using_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -gt 1
-        if test $argv[1] = $cmd[2]
-            return 0
-        end
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -gt 1
+    if test $argv[1] = $cmd[2]
+      return 0
     end
-    return 1
+  end
+  return 1
 end
 
 function __fish_sfdx_find_packagexml
-    # To find manifest (in other words package.xml)
-    printf '%s\n' (find . -type f -regex ".*/package.xml" | string sub -s 3)
+  # To find manifest (in other words package.xml)
+  printf '%s\n' (find . -type f -regex ".*/package.xml" | string sub -s 3)
 end
 
 set -l sfdx_looking -c sfdx -n __fish_use_subcommand

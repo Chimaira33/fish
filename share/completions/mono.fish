@@ -46,14 +46,14 @@ complete -c mono -l aot -a '(__fish_append , \\
   verbose\t"Print additional information about type loading failures" \\
   write-symbols,no-write-symbols\t"Instruct the AOT compiler to emit (or not emit) debug symbol information" \\
   no-opt\t"Instruct the AOT compiler tot no call opt when compiling with LLVM")' \
-    -f -d 'Precompile CIL code to native code'
+  -f -d 'Precompile CIL code to native code'
 
 complete -c mono -l aot-path -d 'Show additional directories to search for AOT images'
 complete -c mono -l apply-bindings \
-    -d 'Apply the assembly bindings from the specified configuration file when running the AOT compiler'
+  -d 'Apply the assembly bindings from the specified configuration file when running the AOT compiler'
 complete -c mono -l assembly-loader \
-    -a 'strict\t"Check that the public key token, culture and version of a candidate assembly matches the requested strong name" legacy\t"Allow candidate as long as the name matches"' \
-    -f -d 'Use assembly loader mode'
+  -a 'strict\t"Check that the public key token, culture and version of a candidate assembly matches the requested strong name" legacy\t"Allow candidate as long as the name matches"' \
+  -f -d 'Use assembly loader mode'
 complete -c mono -l attach -a disable -f -d 'Disable the attach functionality'
 complete -c mono -l config -d 'Read configuration from file instead of using default one'
 
@@ -65,19 +65,19 @@ complete -c mono -l debugger-agent -a '(__fish_append , \\
   setpgid\t"If set to yes, Mono will call setpgid(0, 0) on startup" \\
   suspend\t"Suspend the vm on startup until it connects successfully to a debugger front end" \\
   transport\t"Specify the transport that the debugger will use to communicate")' \
-    -f -d 'Use a debugging agent inside the Mono runtime and connect it to a client user interface'
+  -f -d 'Use a debugging agent inside the Mono runtime and connect it to a client user interface'
 
 complete -c mono -l desktop \
-    -d 'Configure the virtual machine to be better suited for desktop applications'
+  -d 'Configure the virtual machine to be better suited for desktop applications'
 complete -c mono -l full-aot \
-    -d 'Depend exclusively on code generated from previous mono --aot=full'
+  -d 'Depend exclusively on code generated from previous mono --aot=full'
 complete -c mono -l full-aot-interp \
-    -d 'Same as --full-aot with fallback to the interpreter'
+  -d 'Same as --full-aot with fallback to the interpreter'
 complete -c mono -l gc -a 'boehm\tBoehm sgen\tSGen' -f -d 'Use the Garbage Collector engine'
 complete -c mono -l gc-debug -f -d 'Specify MONO_GC_DEBUG environment variable value'
 complete -c mono -l gc-params -f -d 'Specify MONO_GC_PARAMS environment variable value'
 test "$(uname)" = Darwin && complete -c mono -l arch -a '32\t"32 bit" 64\t"64 bit"' -f \
-    -d 'Use the bitness of the Mono binary used, if available'
+  -d 'Use the bitness of the Mono binary used, if available'
 complete -c mono -l interpreter -d 'Use Mono interpreter to execute a given assembly'
 complete -c mono -l hybrid-aot -d 'Run assemblies that have been stripped of IL'
 complete -c mono -l llvm -d 'Use the LLVM optimization and code generation engine to JIT or AOT compile'
@@ -108,21 +108,21 @@ complete -c mono -s o -l optimize -a '(__fish_append , \\
   sse2\t"SSE2 instructions on x86 [arch-dependency]" \\
   tailc\t"Tail recursion and tail calls" \\
   transport\t"Specify the transport that the debugger will use to communicate")' \
-    -f -d 'Use optimizations'
+  -f -d 'Use optimizations'
 
 complete -c mono -l response -d 'Use a response file'
 complete -c mono -l runtime -a '(mono --version)' -f -d 'Use Mono version'
 complete -c mono -l server -d 'Optimize the virtual machine to be better suited for server operations'
 complete -c mono -l use-map-jit -d 'Generate code using MAP_JIT on MacOS'
 complete -c mono -l verify-all \
-    -d 'Verify mscorlib and assemblies in the cache for valid IL, and user code for IL verifiability'
+  -d 'Verify mscorlib and assemblies in the cache for valid IL, and user code for IL verifiability'
 
 # Development options
 complete -c mono -l debug -a '(__fish_append , \\
   casts\t"Produce a detailed error when throwing a InvalidCastException" \\
   mdb-optimizations\t"Disable some JIT optimizations which are usually only disabled when running inside the debugger" \\
   gdb\t"Generate and register debugging information with gdb")' \
-    -f -d 'Use the debugging mode in the runtime'
+  -f -d 'Use the debugging mode in the runtime'
 
 complete -c mono -l profile -f -d 'Use a profiler module with the given arguments'
 complete -c mono -l trace -f -d 'Show method names as they are invoked'
@@ -132,22 +132,22 @@ complete -c mono -l jitmap -d 'Generate a JIT method map in a /tmp/perf-PID.map 
 # JIT maintainer options
 complete -c mono -l bisect -f -d 'This flag is used by the automatic optimization bug bisector'
 complete -c mono -l break -x \
-    -d 'Insert a breakpoint before the method whose name is \'method\' (namespace.class:methodname)'
+  -d 'Insert a breakpoint before the method whose name is \'method\' (namespace.class:methodname)'
 complete -c mono -l breakonex -d 'Use a breakpoint on exceptions'
 complete -c mono -l compile -x -d 'Compile a method (namespace.name:methodname)'
 complete -c mono -l compile-all -d 'Compile all the methods in an assembly'
 complete -c mono -l graph \
-    -a 'cfg\t"Control Flow Graph (CFG)"
+  -a 'cfg\t"Control Flow Graph (CFG)"
     dtree\t"Dominator Tree" code\t"CFG showing code"
     ssa\t"CFG showing code after SSA translation"
     optcode\t"CFG showing code after IR optimizations"' \
-    -x -d 'Generate a postscript file with a graph with the details about the specified method'
+  -x -d 'Generate a postscript file with a graph with the details about the specified method'
 complete -c mono -l ncompile \
-    -d 'Tell runtime to compile methods specified by --compile N times'
+  -d 'Tell runtime to compile methods specified by --compile N times'
 complete -c mono -l stats \
-    -d 'Display information about the work done by the runtime during the execution of an application'
+  -d 'Display information about the work done by the runtime during the execution of an application'
 complete -c mono -l wapi \
-    -a 'hps\t"Delete the global semaphore"
+  -a 'hps\t"Delete the global semaphore"
     semdel\t"List the currently used handles"' \
-    -x -d 'Perform maintenance of the process shared data'
+  -x -d 'Perform maintenance of the process shared data'
 complete -c mono -s v -l verbose -d 'Show more messages'

@@ -1,5 +1,5 @@
 function __fish_print_alternatives_names -d "Get the names of link groups in the alternatives system"
-    alternatives --list | cut -f 1 | string trim
+  alternatives --list | cut -f 1 | string trim
 end
 
 # common options

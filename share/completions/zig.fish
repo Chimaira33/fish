@@ -3,14 +3,14 @@
 
 # This function is based on the `__fish_complete_clang` function.
 function __fish_complete_zig_cc_and_cpp
-    # If the result is for a value, clang only prints the value, so completions
-    # for `-std=` print `c++11` and not `-std=c++11` like we need. See #4174.
-    set -l prefix (commandline -ct | string replace -fr -- '^(.*=)[^=]*' '$1')
+  # If the result is for a value, clang only prints the value, so completions
+  # for `-std=` print `c++11` and not `-std=c++11` like we need. See #4174.
+  set -l prefix (commandline -ct | string replace -fr -- '^(.*=)[^=]*' '$1')
 
-    # first get the completions from clang, with the prefix separated from the value by a comma
-    zig cc --autocomplete=(commandline -ct | string unescape | string replace -- "$prefix" "$prefix,") 2>/dev/null |
-        # and put it in a format that fish understands
-        string replace -r -- '^([^ ]+)\s*(.*)' "$prefix\$1\t\$2"
+  # first get the completions from clang, with the prefix separated from the value by a comma
+  zig cc --autocomplete=(commandline -ct | string unescape | string replace -- "$prefix" "$prefix,") 2>/dev/null |
+    # and put it in a format that fish understands
+    string replace -r -- '^([^ ]+)\s*(.*)' "$prefix\$1\t\$2"
 end
 
 complete -x -c zig -n "not __fish_seen_subcommand_from env help targets version zen" -s h -l help -d "Print command-specific usage"

@@ -4,28 +4,28 @@
 set cmds list list-subsys id-ctrl id-ns id-ns-granularity id-ns-lba-format list-ns list-ctrl nvm-id-ctrl nvm-id-ns nvm-id-ns-lba-format primary-ctrl-caps list-secondary cmdset-ind-id-ns ns-descs id-nvmset id-uuid id-iocs id-domain list-endgrp create-ns delete-ns attach-ns detach-ns get-ns-id get-log telemetry-log fw-log changed-ns-list-log smart-log ana-log error-log effects-log endurance-log predictable-lat-log pred-lat-event-agg-log persistent-event-log endurance-event-agg-log lba-status-log resv-notif-log boot-part-log get-feature device-self-test self-test-log supported-log-pages fid-support-effects-log mi-cmd-support-effects-log media-unit-stat-log supported-cap-config-log set-feature set-property get-property format fw-commit fw-download admin-passthru io-passthru security-send security-recv get-lba-status capacity-mgmt resv-acquire resv-register resv-release resv-report dsm copy flush compare read write write-zeroes write-uncor verify sanitize sanitize-log reset subsystem-reset ns-rescan show-regs discover connect-all connect disconnect disconnect-all config gen-hostnqn show-hostnqn gen-dhchap-key check-dhchap-key gen-tls-key check-tls-key dir-receive dir-send virt-mgmt rpmb lockdown dim version help
 
 function __fish_print_nvme_from_nvme_cli
-    # If jq is installed, we use the JSON output and parse it with jq.
-    # Otherwise, we fallback to the "normal" output which doesn't make any
-    # guarantees on the format.
-    if command -q jq
-        nvme list --output-format json |
-            jq '.Devices[] | "\(.DevicePath)\t\(.ModelNumber) - \(.SerialNumber)"' --raw-output
-    else
-        nvme list --output-format normal | string match -r '^/dev/[^ \t]+'
-    end
+  # If jq is installed, we use the JSON output and parse it with jq.
+  # Otherwise, we fallback to the "normal" output which doesn't make any
+  # guarantees on the format.
+  if command -q jq
+    nvme list --output-format json |
+      jq '.Devices[] | "\(.DevicePath)\t\(.ModelNumber) - \(.SerialNumber)"' --raw-output
+  else
+    nvme list --output-format normal | string match -r '^/dev/[^ \t]+'
+  end
 end
 
 function __fish_print_nvme
-    # We first try to get the list from the nvme command. If this doesn't yield
-    # any results (e.g. when we are not root), we fallback to looking at file
-    # names in /dev/.
-    set -a list (__fish_print_nvme_from_nvme_cli)
+  # We first try to get the list from the nvme command. If this doesn't yield
+  # any results (e.g. when we are not root), we fallback to looking at file
+  # names in /dev/.
+  set -a list (__fish_print_nvme_from_nvme_cli)
 
-    if set -q list[1]
-        printf "%s\n" $list
-    else
-        string match -vr -- 'p[0-9]+$' /dev/nvme*
-    end
+  if set -q list[1]
+    printf "%s\n" $list
+  else
+    string match -vr -- 'p[0-9]+$' /dev/nvme*
+  end
 end
 
 complete -c nvme -f -n "not __fish_seen_subcommand_from $cmds" -a list -d "List all NVMe devices and namespaces on machine"

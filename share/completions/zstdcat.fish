@@ -17,7 +17,7 @@ complete -c zstdcat -s r -d "Recurse directories"
 complete -c zstdcat -l filelist -d "Read a list of files"
 
 for format in zstd gzip xz lzma lz4
-    complete -c zstdcat -l format="$format" -d "Specify the format to use for decompression"
+  complete -c zstdcat -l format="$format" -d "Specify the format to use for decompression"
 end
 
 complete -c zstdcat -s h -l help -d "Show help"

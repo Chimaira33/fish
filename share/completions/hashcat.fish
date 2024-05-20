@@ -1,13 +1,13 @@
 function __fish_hashcat_types --description "Get hashcat hash types"
-    set -l modes (hashcat --example-hashes | string replace -f -r '^(?:MODE: |Hash mode #)(\d+)' '$1')
-    set -l types (hashcat --example-hashes | string replace -f -r '^(?:TYPE:|\s+Name\.+:)\s+(.+)' '$1')
-    for i in (seq (count $modes))
-        echo -e "$modes[$i]\t$types[$i]"
-    end
+  set -l modes (hashcat --example-hashes | string replace -f -r '^(?:MODE: |Hash mode #)(\d+)' '$1')
+  set -l types (hashcat --example-hashes | string replace -f -r '^(?:TYPE:|\s+Name\.+:)\s+(.+)' '$1')
+  for i in (seq (count $modes))
+    echo -e "$modes[$i]\t$types[$i]"
+  end
 end
 
 function __fish_hashcat_outfile_formats --description "Get hashcat outfile formats"
-    echo -e "
+  echo -e "
 1\t'hash[:salt]'
 2\t'plain'
 3\t'hex_plain'
@@ -17,7 +17,7 @@ function __fish_hashcat_outfile_formats --description "Get hashcat outfile forma
 end
 
 function __fish_hashcat_device_types --description "Get hashcat device types"
-    echo -e "
+  echo -e "
 1\t'CPU'
 2\t'GPU'
 3\t'FPGA, DSP, Co-Processor'"

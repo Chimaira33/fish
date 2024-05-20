@@ -1,19 +1,19 @@
 function __fish_complete_unrar -d "Peek inside of archives and list all files"
-    set -l cmd (commandline -pxc)
-    set -e cmd[1]
-    for i in $cmd
-        switch $i
-            case '-*'
-                continue
+  set -l cmd (commandline -pxc)
+  set -e cmd[1]
+  for i in $cmd
+    switch $i
+      case '-*'
+        continue
 
-            case '*.rar'
-                if test -f $i
-                    set -l file_list (unrar vb $i)
-                    printf "%s\tArchived file\n" $file_list
-                end
-                return
+      case '*.rar'
+        if test -f $i
+          set -l file_list (unrar vb $i)
+          printf "%s\tArchived file\n" $file_list
         end
+        return
     end
+  end
 end
 
 complete -c unrar -a "(__fish_complete_unrar)"

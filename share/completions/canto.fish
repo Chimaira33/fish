@@ -1,16 +1,16 @@
 function __fish_canto_using_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -gt 1
-        if test $argv[1] = $cmd[2]
-            return 0
-        end
-        if test count $argv -gt 2
-            if test $argv[2] = $cmd[2]
-                return 0
-            end
-        end
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -gt 1
+    if test $argv[1] = $cmd[2]
+      return 0
     end
-    return 1
+    if test count $argv -gt 2
+      if test $argv[2] = $cmd[2]
+        return 0
+      end
+    end
+  end
+  return 1
 end
 
 complete -f -c canto -s h -l help -d 'Show Help'

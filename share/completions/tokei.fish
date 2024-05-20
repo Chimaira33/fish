@@ -1,9 +1,9 @@
 # Written against `tokei --help`, version 10.0.1 compiled with support for CBOR, JSON, and YAML
 
 function __fish_tokei_supported_serializations
-    # Expecting a line like:
-    # tokei 10.0.1 compiled with serialization support: cbor, json, yaml
-    command tokei --help | grep 'with serialization support' | string split --fields 2 : | string trim | string split ', '
+  # Expecting a line like:
+  # tokei 10.0.1 compiled with serialization support: cbor, json, yaml
+  command tokei --help | grep 'with serialization support' | string split --fields 2 : | string trim | string split ', '
 end
 
 complete -c tokei -s f -l files -d 'Print out statistics for individual files'

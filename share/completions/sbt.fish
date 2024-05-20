@@ -29,7 +29,7 @@ complete -c sbt -f -a '(string split "\n" "
     tasks            List the tasks defined for the current project
     test             Execute all tests
 " | string trim | string replace -r "\s+" "\t")' \
-    -n 'not contains -- "new" (commandline -cpx);
+  -n 'not contains -- "new" (commandline -cpx);
     and not contains -- "client" (commandline -cpx)'
 
 # These cannot be combined with any other commands and require an argument

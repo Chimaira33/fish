@@ -1,6 +1,6 @@
 function __fish_xprop_list_properties
-    # TODO search commandline for a target window ("-root" or "-name foo")
-    xprop -root | string split -f1 '('
+  # TODO search commandline for a target window ("-root" or "-name foo")
+  xprop -root | string split -f1 '('
 end
 
 complete -c xprop -o help -d "Display help and exit"

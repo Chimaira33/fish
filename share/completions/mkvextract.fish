@@ -8,82 +8,82 @@
 # Chapters: 7 entries
 
 function __fish_mkvextract_get_mode
-    set -l cmd (commandline -xpc)
-    set -l skip_next 0
-    for c in $cmd[2..-1]
-        test $skip_next = 1; and set skip_next 0; and continue
-        switch $c
-            # All extraction modes
-            case tracks tags attachments chapters cuesheet timecodes_v2 cues
-                echo $c
-                return 0
-                # General flags that require an option - skip next argument
-            case --ui-language --command-line-charset --output-charset -r --redirect-output --ui-language --debug --engage
-                set skip_next 1
-                # If any of these flags are present, all other args are ignored
-            case -h --help -V --version --check-for-updates
-                return 1
-        end
+  set -l cmd (commandline -xpc)
+  set -l skip_next 0
+  for c in $cmd[2..-1]
+    test $skip_next = 1; and set skip_next 0; and continue
+    switch $c
+      # All extraction modes
+      case tracks tags attachments chapters cuesheet timecodes_v2 cues
+        echo $c
+        return 0
+        # General flags that require an option - skip next argument
+      case --ui-language --command-line-charset --output-charset -r --redirect-output --ui-language --debug --engage
+        set skip_next 1
+        # If any of these flags are present, all other args are ignored
+      case -h --help -V --version --check-for-updates
+        return 1
     end
-    return 1
+  end
+  return 1
 end
 
 function __fish_mkvextract_get_file
-    set -l cmd (commandline -xpc)
-    # Any invocation with a file specified will already have >= 2 args
-    if not set -q cmd[3]
+  set -l cmd (commandline -xpc)
+  # Any invocation with a file specified will already have >= 2 args
+  if not set -q cmd[3]
+    return 1
+  end
+  if not set -l mode (__fish_mkvextract_get_mode)
+    return 1
+  end
+  set -l skip_next 0
+  # Files strictly appear after the mode specifier
+  set -l mode_found 0
+  for c in $cmd[2..-1]
+    test $skip_next = 1; and set skip_next 0; and continue
+    switch $c
+      # We've found the mode specifier, now look for the file
+      case $mode
+        set mode_found 1
+        # Track-specific flags can appear between mode specifier and file
+      case --ui-language --command-line-charset --output-charset -r --redirect-output --ui-language --debug --engage -c --blockadd --simple-language
+        set skip_next 1
+        # These flags now need to be explicitly skipped
+      case -f --parse-fully -v --verbose -q --quiet '@*' --cuesheet --raw --fullraw -s --simple --gui-mode
+        continue
+      case -h --help -V --version --check-for-updates
         return 1
-    end
-    if not set -l mode (__fish_mkvextract_get_mode)
-        return 1
-    end
-    set -l skip_next 0
-    # Files strictly appear after the mode specifier
-    set -l mode_found 0
-    for c in $cmd[2..-1]
-        test $skip_next = 1; and set skip_next 0; and continue
-        switch $c
-            # We've found the mode specifier, now look for the file
-            case $mode
-                set mode_found 1
-                # Track-specific flags can appear between mode specifier and file
-            case --ui-language --command-line-charset --output-charset -r --redirect-output --ui-language --debug --engage -c --blockadd --simple-language
-                set skip_next 1
-                # These flags now need to be explicitly skipped
-            case -f --parse-fully -v --verbose -q --quiet '@*' --cuesheet --raw --fullraw -s --simple --gui-mode
-                continue
-            case -h --help -V --version --check-for-updates
-                return 1
-            case '*'
-                if test $mode_found = 1
-                    echo -- $c
-                    return 0
-                end
+      case '*'
+        if test $mode_found = 1
+          echo -- $c
+          return 0
         end
     end
-    return 1
+  end
+  return 1
 end
 
 function __fish_mkvextract_using_mode
-    set -l mode (__fish_mkvextract_get_mode)
-    and set -l file (__fish_mkvextract_get_file)
-    and contains -- $mode $argv
+  set -l mode (__fish_mkvextract_get_mode)
+  and set -l file (__fish_mkvextract_get_file)
+  and contains -- $mode $argv
 end
 
 function __fish_mkvextract_print_attachments
-    if set -l matroska (__fish_mkvextract_get_file)
-        if set -l info (mkvmerge -i $matroska)
-            string match 'Attachment ID*' -- $info | string replace -r '.*?(\d+).*? type \'(.*?)\'.*?file name \'(.*?)\'' '$1:\t$3 ($2)'
-        end
+  if set -l matroska (__fish_mkvextract_get_file)
+    if set -l info (mkvmerge -i $matroska)
+      string match 'Attachment ID*' -- $info | string replace -r '.*?(\d+).*? type \'(.*?)\'.*?file name \'(.*?)\'' '$1:\t$3 ($2)'
     end
+  end
 end
 
 function __fish_mkvextract_print_tracks
-    if set -l matroska (__fish_mkvextract_get_file)
-        if set -l info (mkvmerge -i $matroska)
-            string match 'Track ID*' -- $info | string replace -r '.*?(\d+): (.*)' '$1:\t$2'
-        end
+  if set -l matroska (__fish_mkvextract_get_file)
+    if set -l info (mkvmerge -i $matroska)
+      string match 'Track ID*' -- $info | string replace -r '.*?(\d+): (.*)' '$1:\t$2'
     end
+  end
 end
 
 # simple options

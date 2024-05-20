@@ -1,5 +1,5 @@
 function __fish_complete_su_env_whitelist
-    env | string match -v -e -r '^(?:HOME|SHELL|USER|LOGNAME|PATH)=' | string replace -r '([^=]+)=(.*)' '$1\t$2'
+  env | string match -v -e -r '^(?:HOME|SHELL|USER|LOGNAME|PATH)=' | string replace -r '([^=]+)=(.*)' '$1\t$2'
 end
 
 complete -c su -x -a "(__fish_complete_users)"

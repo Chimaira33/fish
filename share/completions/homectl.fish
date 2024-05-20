@@ -2,12 +2,12 @@ set -l commands_need_user activate deactivate inspect authenticate remove update
 set -l commands list create lock-all $commands_need_user
 
 function __homectl_users
-    homectl list | string match -r -- '\S+\s+\d+\s+\d+' | string match -r -- '\S+'
+  homectl list | string match -r -- '\S+\s+\d+\s+\d+' | string match -r -- '\S+'
 end
 
 function __homectl_subcommand_is
-    set -l cmd (commandline -pxc)
-    contains -- $cmd[-1] $argv
+  set -l cmd (commandline -pxc)
+  contains -- $cmd[-1] $argv
 end
 
 # Commands

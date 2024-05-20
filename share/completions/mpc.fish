@@ -1,11 +1,11 @@
 # Completions for mpc, used to control MPD from the command line
 
 set -l subcommands consume crossfade queued mixrampdb mixrampdelay next \
-    pause play prev random repeat replaygain single seek seekthrough stop \
-    toggle add insert clear crop del mv searchplay shuffle load lsplaylists \
-    playlist rm save listall ls search search find findadd list stats mount \
-    mount unmount outputs disable enable toggleoutput channels sendmessage \
-    waitmessage subscribe idle idleloop version volume update rescan current
+  pause play prev random repeat replaygain single seek seekthrough stop \
+  toggle add insert clear crop del mv searchplay shuffle load lsplaylists \
+  playlist rm save listall ls search search find findadd list stats mount \
+  mount unmount outputs disable enable toggleoutput channels sendmessage \
+  waitmessage subscribe idle idleloop version volume update rescan current
 
 # disable file completions
 complete -fc mpc

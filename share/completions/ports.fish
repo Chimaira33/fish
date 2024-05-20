@@ -1,5 +1,5 @@
 function __fish_ports_dirs -d 'Obtain a list of ports local collections'
-    ls /usr/ports
+  ls /usr/ports
 end
 
 complete -f -c ports -s u -l update -a '(__fish_ports_dirs)' -d 'Update ports'

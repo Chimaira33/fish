@@ -1,23 +1,23 @@
 function __krita_complete_image_format
-    set -l previous_token (commandline -xc)[-1]
-    set -l current_token (commandline -t)
+  set -l previous_token (commandline -xc)[-1]
+  set -l current_token (commandline -t)
 
-    if test "$previous_token" = --new-image
-        switch $current_token
-            case '*,*,*'
-                # nothing is completed as arbitrary width and height are expected
-            case '*,'
-                printf '%s,\n' U8 U16 F16 F32 |
-                    string replace -r '^' $current_token
-            case '*'
-                printf '%s,\n' RGBA XYZA LABA CMYKA GRAY YCbCrA
-        end
+  if test "$previous_token" = --new-image
+    switch $current_token
+      case '*,*,*'
+        # nothing is completed as arbitrary width and height are expected
+      case '*,'
+        printf '%s,\n' U8 U16 F16 F32 |
+          string replace -r '^' $current_token
+      case '*'
+        printf '%s,\n' RGBA XYZA LABA CMYKA GRAY YCbCrA
     end
+  end
 end
 
 function __krita_list_workspaces
-    path basename ~/.local/share/krita/workspaces/*.kws |
-        path change-extension ''
+  path basename ~/.local/share/krita/workspaces/*.kws |
+    path change-extension ''
 end
 
 complete -c krita -s h -l help -d 'show help'

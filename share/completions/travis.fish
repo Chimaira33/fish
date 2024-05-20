@@ -1,9 +1,9 @@
 function __fish_travis_needs_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -eq 1
-        return 0
-    end
-    return 1
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -eq 1
+    return 0
+  end
+  return 1
 end
 
 # Commands

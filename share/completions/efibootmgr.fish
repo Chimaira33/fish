@@ -1,7 +1,7 @@
 function __efibootmgr_list_bootnum
-    efibootmgr | string match -r -- "Boot\d+.+" |
-        string split -m1 -f2 -- Boot |
-        string replace -r -- "\* |  " "\t"
+  efibootmgr | string match -r -- "Boot\d+.+" |
+    string split -m1 -f2 -- Boot |
+    string replace -r -- "\* |  " "\t"
 end
 
 complete -f -c efibootmgr -s a -l active -d "sets bootnum active"

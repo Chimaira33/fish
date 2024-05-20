@@ -13,40 +13,40 @@
 #end
 
 function __fish_emerge_print_sets
-    for s in '@'(emerge --list-sets)
-        switch $s
-            case @profile
-                printf '%s\t%s\n' $s 'set of packages deemed necessary for your system to run properly'
-            case @selected-packages
-                printf '%s\t%s\n' $s 'packages listed in /var/lib/portage/world'
-            case @selected-sets
-                printf '%s\t%s\n' $s 'sets listed in /var/lib/portage/world_sets'
-            case @selected
-                printf '%s\t%s\n' $s 'encompasses both the selected-packages and selected-sets sets'
-            case @system
-                printf '%s\t%s\n' $s 'set of packages deemed necessary for your system to run properly'
-            case @world
-                printf '%s\t%s\n' $s 'encompasses the selected, system and profile sets'
-            case '*'
-                echo $s
-        end
+  for s in '@'(emerge --list-sets)
+    switch $s
+      case @profile
+        printf '%s\t%s\n' $s 'set of packages deemed necessary for your system to run properly'
+      case @selected-packages
+        printf '%s\t%s\n' $s 'packages listed in /var/lib/portage/world'
+      case @selected-sets
+        printf '%s\t%s\n' $s 'sets listed in /var/lib/portage/world_sets'
+      case @selected
+        printf '%s\t%s\n' $s 'encompasses both the selected-packages and selected-sets sets'
+      case @system
+        printf '%s\t%s\n' $s 'set of packages deemed necessary for your system to run properly'
+      case @world
+        printf '%s\t%s\n' $s 'encompasses the selected, system and profile sets'
+      case '*'
+        echo $s
     end
+  end
 end
 
 # TODO <ebuild|tbz2file|file|@set|atom>...
 function __fish_emerge_possible_args
-    if __fish_contains_opt check-news -s h help list-sets metadata regen -s r resume \
-            -s s search -s S searchdesc sync -s V version
-        return
-        # TODO deselect=y
-    else if __fish_contains_opt config -s c depclean info -s P prune -s C unmerge
-        __fish_emerge_print_sets
-        __fish_print_portage_installed_pkgs
-        # TODO deselect=n
-    else
-        __fish_emerge_print_sets
-        __fish_print_portage_available_pkgs
-    end
+  if __fish_contains_opt check-news -s h help list-sets metadata regen -s r resume \
+      -s s search -s S searchdesc sync -s V version
+    return
+    # TODO deselect=y
+  else if __fish_contains_opt config -s c depclean info -s P prune -s C unmerge
+    __fish_emerge_print_sets
+    __fish_print_portage_installed_pkgs
+    # TODO deselect=n
+  else
+    __fish_emerge_print_sets
+    __fish_print_portage_available_pkgs
+  end
 end
 
 complete -c emerge -xa "(__fish_emerge_possible_args)"
@@ -95,7 +95,7 @@ complete -c emerge -s B -l buildpkgonly -d "Only build a binary pkg"
 complete -c emerge -s U -l changed-use
 complete -c emerge -s l -l changelog -d "Show changelog of pkg. Use with --pretend"
 complete -c emerge -l color -d "Colorized output" \
-    -xa "y n"
+  -xa "y n"
 complete -c emerge -l columns -d "Align output. Use with --pretend"
 complete -c emerge -l complete-graph
 # complete-graph-if-new-use <yn>
@@ -171,6 +171,6 @@ complete -c emerge -s v -l verbose -d "Run in verbose mode"
 complete -c emerge -l verbose-conflicts -d "Verbose slot conflicts"
 # verbose-slot-rebuilds
 complete -c emerge -l with-bdeps -d "Pull in build time dependencies" \
-    -xa "y n"
+  -xa "y n"
 # with-bdeps-auto <yn>
 # with-test-bdeps

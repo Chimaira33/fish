@@ -1,7 +1,7 @@
 set -l valid_subcmds up down strip save
 
 function __fish_wg_complete_interfaces
-    wg show interfaces | string split " " | string replace -r '$' \tInterface
+  wg show interfaces | string split " " | string replace -r '$' \tInterface
 end
 
 # After a command, this takes a config file.

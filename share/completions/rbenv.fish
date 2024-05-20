@@ -1,44 +1,44 @@
 # fish completion for rbenv
 
 function __fish_rbenv_needs_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -eq 1
-        return 0
-    end
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -eq 1
+    return 0
+  end
 
-    return 1
+  return 1
 end
 
 function __fish_rbenv_using_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -gt 1
-        if test $argv[1] = $cmd[2]
-            return 0
-        end
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -gt 1
+    if test $argv[1] = $cmd[2]
+      return 0
     end
-    return 1
+  end
+  return 1
 end
 
 function __fish_rbenv_executables
-    rbenv exec --complete
+  rbenv exec --complete
 end
 
 function __fish_rbenv_installed_rubies
-    rbenv versions --bare
+  rbenv versions --bare
 end
 
 function __fish_rbenv_official_rubies
-    if command -sq ruby-build
-        ruby-build --definitions
-    else
-        # Remove trailing spaces, otherwise completion options appear like
-        # "\ \ option"
-        rbenv install --list | sed "s/^[[:space:]]*//"
-    end
+  if command -sq ruby-build
+    ruby-build --definitions
+  else
+    # Remove trailing spaces, otherwise completion options appear like
+    # "\ \ option"
+    rbenv install --list | sed "s/^[[:space:]]*//"
+  end
 end
 
 function __fish_rbenv_prefixes
-    rbenv prefix --complete
+  rbenv prefix --complete
 end
 
 ### commands

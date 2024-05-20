@@ -2,45 +2,45 @@
 # http://www.fossil-scm.org/
 
 function __fish_fossil
-    command fossil $argv 2>/dev/null
+  command fossil $argv 2>/dev/null
 end
 
 function __fish_fossil_needs_command
-    test (count (commandline -pxc)) -eq 1
+  test (count (commandline -pxc)) -eq 1
 end
 
 function __fish_fossil_command
-    set -l cmd (commandline -pxc)
-    test (count $cmd) -gt 1
-    and contains -- $cmd[2] $argv
+  set -l cmd (commandline -pxc)
+  test (count $cmd) -gt 1
+  and contains -- $cmd[2] $argv
 end
 
 function __fish_fossil_subcommand
-    set -l cmd (commandline -pxc)
-    test (count $cmd) -eq 2
-    and test $argv[1] = $cmd[2]
+  set -l cmd (commandline -pxc)
+  test (count $cmd) -eq 2
+  and test $argv[1] = $cmd[2]
 end
 
 function __fish_fossil_subsubcommand
-    set -l cmd (commandline -pxc)
-    test (count $cmd) -ge 3
-    and test $argv[1] = $cmd[2]
-    and test $argv[2] = $cmd[3]
+  set -l cmd (commandline -pxc)
+  test (count $cmd) -ge 3
+  and test $argv[1] = $cmd[2]
+  and test $argv[2] = $cmd[3]
 end
 
 function __fish_fossil_subsubcommand_only
-    set -l cmd (commandline -pxc)
-    test (count $cmd) -eq 3
-    and test $argv[1] = $cmd[2]
-    and test $argv[2] = $cmd[3]
+  set -l cmd (commandline -pxc)
+  test (count $cmd) -eq 3
+  and test $argv[1] = $cmd[2]
+  and test $argv[2] = $cmd[3]
 end
 
 function __fish_fossil_subsubsubcommand_only
-    set -l cmd (commandline -pxc)
-    test (count $cmd) -eq 4
-    and test $argv[1] = $cmd[2]
-    and test $argv[2] = $cmd[3]
-    and test $argv[3] = $cmd[4]
+  set -l cmd (commandline -pxc)
+  test (count $cmd) -eq 4
+  and test $argv[1] = $cmd[2]
+  and test $argv[2] = $cmd[3]
+  and test $argv[3] = $cmd[4]
 end
 
 # add

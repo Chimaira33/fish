@@ -1,32 +1,32 @@
 function __fish_complete_svn_diff --description 'Complete "svn diff" arguments'
-    set -l cmdl (commandline -cxp)
-    #set -l cmdl svn diff --diff-cmd diff --extensions '-a -b'
-    set -l diff diff
-    set -l args
-    while set -q cmdl[1]
-        switch $cmdl[1]
-            case --diff-cmd
-                if set -q cmdl[2]
-                    set diff $cmdl[2]
-                    set -e cmd[2]
-                end
-
-            case --extensions
-                if set -q cmdl[2]
-                    set args $cmdl[2]
-                    set -e cmdl[2]
-                end
+  set -l cmdl (commandline -cxp)
+  #set -l cmdl svn diff --diff-cmd diff --extensions '-a -b'
+  set -l diff diff
+  set -l args
+  while set -q cmdl[1]
+    switch $cmdl[1]
+      case --diff-cmd
+        if set -q cmdl[2]
+          set diff $cmdl[2]
+          set -e cmd[2]
         end
-        set -e cmdl[1]
+
+      case --extensions
+        if set -q cmdl[2]
+          set args $cmdl[2]
+          set -e cmdl[2]
+        end
     end
-    set -l token (commandline -cpt)
-    complete -C"$diff $args $token"
+    set -e cmdl[1]
+  end
+  set -l token (commandline -cpt)
+  complete -C"$diff $args $token"
 
 end
 
 function _svn_cmpl_ -d 'Make a completion for a subcommand' --argument-names subcommand
-    set -e argv[1]
-    complete -c svn -n "__fish_seen_subcommand_from $subcommand" $argv
+  set -e argv[1]
+  complete -c svn -n "__fish_seen_subcommand_from $subcommand" $argv
 end
 
 #
@@ -121,115 +121,115 @@ complete -c svn -n 'not __fish_use_subcommand' -l config-option -x -d 'Set user 
 # local commands
 #
 for cmd in $commit $copy $import $lock $mkdir $move $propedit $remove
-    if not test $cmd = lock
-        _svn_cmpl_ $cmd -l editor-cmd -x -d 'Use ARG as external editor'
-    end
-    _svn_cmpl_ $cmd -l message -s m -d 'Specify log message'
-    _svn_cmpl_ $cmd -l encoding -x -d 'Treat value as being in charset encoding ARG'
-    _svn_cmpl_ $cmd -l file -s F -d 'Read log message from file'
-    _svn_cmpl_ $cmd -l force-log -d 'Force validity of log message source'
+  if not test $cmd = lock
+    _svn_cmpl_ $cmd -l editor-cmd -x -d 'Use ARG as external editor'
+  end
+  _svn_cmpl_ $cmd -l message -s m -d 'Specify log message'
+  _svn_cmpl_ $cmd -l encoding -x -d 'Treat value as being in charset encoding ARG'
+  _svn_cmpl_ $cmd -l file -s F -d 'Read log message from file'
+  _svn_cmpl_ $cmd -l force-log -d 'Force validity of log message source'
 end
 
 for cmd in $merge $resolve $switch $update
-    _svn_cmpl_ $cmd -l accept -d 'Specify automatic conflict resolution source' -xa 'base working mine-conflict theirs-conflict mine-full theirs-full'
+  _svn_cmpl_ $cmd -l accept -d 'Specify automatic conflict resolution source' -xa 'base working mine-conflict theirs-conflict mine-full theirs-full'
 end
 
 for cmd in $add $changelist $checkout $commit $diff $export $import $info $list $log $merge $mergeinfo $propdel $propget $proplist $propset $resolve $resolved $revert $stat $switch $update
-    _svn_cmpl_ $cmd -l depth -d 'Limit operation by depth' -xa 'empty files immediates infinity'
+  _svn_cmpl_ $cmd -l depth -d 'Limit operation by depth' -xa 'empty files immediates infinity'
 end
 
 for cmd in $add $changelist $checkout $commit $copy $delete $elog $export $import $merge $mkdir $move $patch $propdel $proplist $propset $resolve $resolved $revert $stat $switch $update $upgrade
-    _svn_cmpl_ $cmd -l quiet -s q -d 'Print nothing, or only summary information'
+  _svn_cmpl_ $cmd -l quiet -s q -d 'Print nothing, or only summary information'
 end
 
 for cmd in $add $blame $checkout $delete $diff $export $import $lock $merge $move $propedit $propset $remove $switch $unlock $update
-    _svn_cmpl_ $cmd -l force -d 'Force operation to run'
+  _svn_cmpl_ $cmd -l force -d 'Force operation to run'
 end
 
 for cmd in $add $changelist $commit $delete $info $lock $log $propset $resolve $resolved $revert $unlock
-    _svn_cmpl_ $cmd -l targets -d 'Process contents of file ARG as additional args' -r
+  _svn_cmpl_ $cmd -l targets -d 'Process contents of file ARG as additional args' -r
 end
 
 for cmd in $changelist $commit $diff $info $propdel $propget $proplist $propset $revert $stat $update
-    _svn_cmpl_ $cmd -l changelist -l cl -d 'Operate only on members of changelist' -r
+  _svn_cmpl_ $cmd -l changelist -l cl -d 'Operate only on members of changelist' -r
 end
 
 for cmd in $blame $diff $info $list $log $propget $proplist $stat
-    _svn_cmpl_ $cmd -l xml -d 'Output in xml'
+  _svn_cmpl_ $cmd -l xml -d 'Output in xml'
 end
 
 for cmd in $commit $copy $delete $import $log $mkdir $move $propedit
-    _svn_cmpl_ $cmd -l with-revprop -d 'Retrieve revision property' -x
+  _svn_cmpl_ $cmd -l with-revprop -d 'Retrieve revision property' -x
 end
 
 for cmd in $diff $log $merge
-    _svn_cmpl_ $cmd -l change -s c -d 'The change made in revision ARG' -xa '(__fish_print_svn_rev)'
+  _svn_cmpl_ $cmd -l change -s c -d 'The change made in revision ARG' -xa '(__fish_print_svn_rev)'
 end
 
 for cmd in $blame $cat $checkout $copy $diff $export $info $list $log $merge $mergeinfo $move $propedit $propget $propdel $proplist $propset $switch $update
-    _svn_cmpl_ $cmd -l revision -s r -d 'Which revision the target is first looked up' -xa '(__fish_print_svn_rev)'
+  _svn_cmpl_ $cmd -l revision -s r -d 'Which revision the target is first looked up' -xa '(__fish_print_svn_rev)'
 end
 
 for cmd in $checkout $copy $export $relocate $stat $switch $update
-    _svn_cmpl_ $cmd -l ignore-externals -d 'Ignore externals definitions'
+  _svn_cmpl_ $cmd -l ignore-externals -d 'Ignore externals definitions'
 end
 
 for cmd in $blame $list $log $propget $proplist $stat
-    _svn_cmpl_ $cmd -l verbose -s v -d 'Print extra information'
+  _svn_cmpl_ $cmd -l verbose -s v -d 'Print extra information'
 end
 
 for cmd in $propdel $propedit $propget $proplist $propset
-    _svn_cmpl_ $cmd -l revprop -d 'Operate on a revision property (use with -r)'
+  _svn_cmpl_ $cmd -l revprop -d 'Operate on a revision property (use with -r)'
 end
 
 for cmd in $add $copy $mkdir $move $update
-    _svn_cmpl_ $cmd -l parents -d 'Add intermediate parents'
+  _svn_cmpl_ $cmd -l parents -d 'Add intermediate parents'
 end
 
 for cmd in $blame $diff $log $merge
-    _svn_cmpl_ $cmd -l extensions -s x -d 'Output 3 lines of unified context' -xa '-u --unified'
-    _svn_cmpl_ $cmd -l extensions -s x -d 'Ignore changes in amount of whitespace' -xa '-b --ignore-space-change'
-    _svn_cmpl_ $cmd -l extensions -s x -d 'Ignore all whitespace' -xa '-w --ignore-all-space'
-    _svn_cmpl_ $cmd -l extensions -s x -d 'Ignore eol style' -xa '-w --ignore-eol-style'
-    _svn_cmpl_ $cmd -l extensions -s x -d 'Show C function name' -xa '-p --show-c-function'
-    _svn_cmpl_ $cmd -l extensions -n '__fish_seen_subcommand_from --diff-cmd' -xa '(__fish_complete_svn_diff)'
+  _svn_cmpl_ $cmd -l extensions -s x -d 'Output 3 lines of unified context' -xa '-u --unified'
+  _svn_cmpl_ $cmd -l extensions -s x -d 'Ignore changes in amount of whitespace' -xa '-b --ignore-space-change'
+  _svn_cmpl_ $cmd -l extensions -s x -d 'Ignore all whitespace' -xa '-w --ignore-all-space'
+  _svn_cmpl_ $cmd -l extensions -s x -d 'Ignore eol style' -xa '-w --ignore-eol-style'
+  _svn_cmpl_ $cmd -l extensions -s x -d 'Show C function name' -xa '-p --show-c-function'
+  _svn_cmpl_ $cmd -l extensions -n '__fish_seen_subcommand_from --diff-cmd' -xa '(__fish_complete_svn_diff)'
 end
 
 for cmd in $cleanup $merge $switch $update
-    _svn_cmpl_ $cmd -l diff3-cmd -d 'Use as merge command' -xa "(complete -C '')"
+  _svn_cmpl_ $cmd -l diff3-cmd -d 'Use as merge command' -xa "(complete -C '')"
 end
 
 for cmd in $blame $info $list $log $stat
-    _svn_cmpl_ $cmd -l incremental -d 'Give output suitable for concatenation'
+  _svn_cmpl_ $cmd -l incremental -d 'Give output suitable for concatenation'
 end
 
 for cmd in $add $import $stat
-    _svn_cmpl_ $cmd -l no-ignore -d 'Disregard default and svn:ignore property ignores'
+  _svn_cmpl_ $cmd -l no-ignore -d 'Disregard default and svn:ignore property ignores'
 end
 
 for cmd in $merge $patch
-    _svn_cmpl_ $cmd -l dry-run -d 'Try operation but make no changes'
+  _svn_cmpl_ $cmd -l dry-run -d 'Try operation but make no changes'
 end
 
 for cmd in $merge $switch
-    _svn_cmpl_ $cmd -l ignore-ancestry -d 'Ignore ancestry when calculating merges'
+  _svn_cmpl_ $cmd -l ignore-ancestry -d 'Ignore ancestry when calculating merges'
 end
 
 for cmd in $diff $log
-    _svn_cmpl_ $cmd -l internal-diff -d 'Override diff-cmd specified in config file'
-    _svn_cmpl_ $cmd -l diff-cmd -d 'Use external diff command' -xa "(complete -C '')"
+  _svn_cmpl_ $cmd -l internal-diff -d 'Override diff-cmd specified in config file'
+  _svn_cmpl_ $cmd -l diff-cmd -d 'Use external diff command' -xa "(complete -C '')"
 end
 
 for cmd in $add $import
-    _svn_cmpl_ $cmd -l no-auto-props -d 'Disable automatic properties'
+  _svn_cmpl_ $cmd -l no-auto-props -d 'Disable automatic properties'
 end
 
 for cmd in $switch $update
-    _svn_cmpl_ $cmd -l set-depth -d 'Set new working copy depth' -xa 'exclude empty files immediates infinity'
+  _svn_cmpl_ $cmd -l set-depth -d 'Set new working copy depth' -xa 'exclude empty files immediates infinity'
 end
 
 for cmd in $blame $log
-    _svn_cmpl_ $cmd -l use-merge-history -s g -d 'Use/display additional information from merge history'
+  _svn_cmpl_ $cmd -l use-merge-history -s g -d 'Use/display additional information from merge history'
 end
 
 #

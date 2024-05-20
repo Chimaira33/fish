@@ -1,12 +1,12 @@
 function __fish_ansible_vault_no_subcommand -d 'Test if ansible-vault has yet to be given the subcommand'
-    commandline -pc | not string match --regex '[^-]\b(?:create|decrypt|edit|encrypt|encrypt_string|rekey|view)\b'
+  commandline -pc | not string match --regex '[^-]\b(?:create|decrypt|edit|encrypt|encrypt_string|rekey|view)\b'
 end
 
 function __fish_ansible_vault_using_command
-    set -l cmd (string trim (__fish_ansible_vault_no_subcommand))
-    test -z "$cmd"
-    and return 1
-    contains -- "$cmd" $argv
+  set -l cmd (string trim (__fish_ansible_vault_no_subcommand))
+  test -z "$cmd"
+  and return 1
+  contains -- "$cmd" $argv
 end
 
 # generic options

@@ -67,41 +67,41 @@ complete -c $progname -n $hasopt -l tmp -x -a '(__fish_complete_directories)' -d
 
 # Transaction options (sync, remove, upgrade)
 for condition in sync remove upgrade
-    complete -c $progname -n $$condition -s d -l nodeps -d 'Skip [all] dependency checks' -f
-    complete -c $progname -n $$condition -l dbonly -d 'Modify database entry only' -f
-    complete -c $progname -n $$condition -l noprogressbar -d 'Do not display progress bar' -f
-    complete -c $progname -n $$condition -l noscriptlet -d 'Do not execute install script' -f
-    complete -c $progname -n $$condition -s p -l print -d 'Dry run, only print targets' -f
-    complete -c $progname -n $$condition -l print-format -x -d 'Specify printf-like format' -f
+  complete -c $progname -n $$condition -s d -l nodeps -d 'Skip [all] dependency checks' -f
+  complete -c $progname -n $$condition -l dbonly -d 'Modify database entry only' -f
+  complete -c $progname -n $$condition -l noprogressbar -d 'Do not display progress bar' -f
+  complete -c $progname -n $$condition -l noscriptlet -d 'Do not execute install script' -f
+  complete -c $progname -n $$condition -s p -l print -d 'Dry run, only print targets' -f
+  complete -c $progname -n $$condition -l print-format -x -d 'Specify printf-like format' -f
 end
 
 # Database and upgrade options (database, sync, upgrade)
 for condition in database sync upgrade
-    complete -c $progname -n $$condition -l asdeps -d 'Mark PACKAGE as dependency' -f
-    complete -c $progname -n $$condition -l asexplicit -d 'Mark PACKAGE as explicitly installed' -f
+  complete -c $progname -n $$condition -l asdeps -d 'Mark PACKAGE as dependency' -f
+  complete -c $progname -n $$condition -l asexplicit -d 'Mark PACKAGE as explicitly installed' -f
 end
 
 # Upgrade options (sync, upgrade)
 for condition in sync upgrade
-    complete -c $progname -n $$condition -l force -d 'Bypass file conflict checks' -f
-    complete -c $progname -n $$condition -l ignore -d 'Ignore upgrade of PACKAGE' -xa "$listinstalled" -f
-    complete -c $progname -n $$condition -l ignoregroup -d 'Ignore upgrade of GROUP' -xa "$listgroups" -f
-    complete -c $progname -n $$condition -l needed -d 'Do not reinstall up-to-date targets' -f
-    complete -c $progname -n $$condition -l recursive -d 'Recursively reinstall all dependencies' -f
+  complete -c $progname -n $$condition -l force -d 'Bypass file conflict checks' -f
+  complete -c $progname -n $$condition -l ignore -d 'Ignore upgrade of PACKAGE' -xa "$listinstalled" -f
+  complete -c $progname -n $$condition -l ignoregroup -d 'Ignore upgrade of GROUP' -xa "$listgroups" -f
+  complete -c $progname -n $$condition -l needed -d 'Do not reinstall up-to-date targets' -f
+  complete -c $progname -n $$condition -l recursive -d 'Recursively reinstall all dependencies' -f
 end
 
 # Query and sync options
 for condition in query sync
-    complete -c $progname -n $$condition -s g -l groups -d 'Display all packages in GROUP' -xa "$listgroups" -f
-    complete -c $progname -n $$condition -s i -l info -d 'Display information on PACKAGE' -f
-    complete -c $progname -n $$condition -s q -l quiet -d 'Show less information' -f
-    complete -c $progname -n $$condition -s s -l search -r -d 'Search packages for regexp' -f
-    # Yaourt only
-    complete -c $progname -n $$condition -l conflicts -d 'Show packages that conflict with one of the targets'
-    complete -c $progname -n $$condition -l depends -d 'Show packages that depend on one of the targets'
-    complete -c $progname -n $$condition -l provides -d 'Show packages that provide one of the targets'
-    complete -c $progname -n $$condition -l replaces -d 'Show packages that replace one of the targets'
-    complete -c $progname -n $$condition -l nameonly -d 'Query the package names only'
+  complete -c $progname -n $$condition -s g -l groups -d 'Display all packages in GROUP' -xa "$listgroups" -f
+  complete -c $progname -n $$condition -s i -l info -d 'Display information on PACKAGE' -f
+  complete -c $progname -n $$condition -s q -l quiet -d 'Show less information' -f
+  complete -c $progname -n $$condition -s s -l search -r -d 'Search packages for regexp' -f
+  # Yaourt only
+  complete -c $progname -n $$condition -l conflicts -d 'Show packages that conflict with one of the targets'
+  complete -c $progname -n $$condition -l depends -d 'Show packages that depend on one of the targets'
+  complete -c $progname -n $$condition -l provides -d 'Show packages that provide one of the targets'
+  complete -c $progname -n $$condition -l replaces -d 'Show packages that replace one of the targets'
+  complete -c $progname -n $$condition -l nameonly -d 'Query the package names only'
 end
 
 # Query options

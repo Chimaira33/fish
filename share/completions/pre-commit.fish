@@ -5,8 +5,8 @@ set -l hook_types pre-commit pre-merge-commit pre-push prepare-commit-msg commit
 functions -q __fish_git || source $__fish_data_dir/completions/git.fish
 
 function __fish_pre_commit_config_print -a key
-    set -l config (__fish_git rev-parse --show-toplevel 2>/dev/null)/.pre-commit-config.yaml
-    test -r "$config" && string match -rg "\s+$key:\s+(\S+)" <$config | string unescape
+  set -l config (__fish_git rev-parse --show-toplevel 2>/dev/null)/.pre-commit-config.yaml
+  test -r "$config" && string match -rg "\s+$key:\s+(\S+)" <$config | string unescape
 end
 
 # Global options

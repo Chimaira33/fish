@@ -9,7 +9,7 @@ complete navi -n "not __fish_seen_subcommand_from $sub_commands && \
 
 set --local internal_functions "url::open welcome widget::last_command map::expand"
 complete navi -n "__fish_seen_subcommand_from fn && not __fish_seen_subcommand_from $internal_functions" \
-    -k -a $internal_functions
+  -k -a $internal_functions
 
 set --local supported_shells "bash zsh fish elvish"
 complete navi -n "__fish_seen_subcommand_from widget && not __fish_seen_subcommand_from $supported_shells" -k -a $supported_shells

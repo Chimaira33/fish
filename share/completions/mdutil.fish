@@ -1,15 +1,15 @@
 # completion for mdutil (macOS)
 
 function __fish_mdutil_volumes
-    command mdutil -a -s | while read -l line
-        if string match -q \t"*" -- $line
-            printf "%s\n" $line
-        else
-            # Use printf to not output a newline so indented lines are joined
-            # to non-indented ones
-            printf "%s" (string replace -r ':$' '' -- $line)
-        end
+  command mdutil -a -s | while read -l line
+    if string match -q \t"*" -- $line
+      printf "%s\n" $line
+    else
+      # Use printf to not output a newline so indented lines are joined
+      # to non-indented ones
+      printf "%s" (string replace -r ':$' '' -- $line)
     end
+  end
 end
 
 complete -c mdutil -s p -f -d 'Publish metadata'

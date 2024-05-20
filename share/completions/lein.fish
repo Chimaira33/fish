@@ -1,9 +1,9 @@
 function __fish_lein_needs_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -eq 1
-        return 0
-    end
-    return 1
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -eq 1
+    return 0
+  end
+  return 1
 end
 
 complete -f -c lein -n __fish_lein_needs_command -a check -d "Check syntax and warn on reflection."

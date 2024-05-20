@@ -1,92 +1,92 @@
 # Completions for Android adb command
 
 function __fish_adb_no_subcommand -d 'Test if adb has yet to be given the subcommand'
-    for i in (commandline -xpc)
-        if contains -- $i connect disconnect devices push pull sync shell emu logcat install uninstall jdwp forward bugreport backup restore version help start-server kill-server remount reboot get-state get-serialno get-devpath status-window root usb tcpip ppp sideload reconnect unroot exec-out
-            return 1
-        end
+  for i in (commandline -xpc)
+    if contains -- $i connect disconnect devices push pull sync shell emu logcat install uninstall jdwp forward bugreport backup restore version help start-server kill-server remount reboot get-state get-serialno get-devpath status-window root usb tcpip ppp sideload reconnect unroot exec-out
+      return 1
     end
-    return 0
+  end
+  return 0
 end
 
 function __fish_adb_get_devices -d 'Run adb devices and parse output'
-    # This seems reasonably portable for all the platforms adb runs on
-    set -l procs (ps -Ao comm= | string match 'adb')
-    # Don't run adb devices unless the server is already started - it takes a while to init
-    if set -q procs[1]
-        adb devices -l | string replace -rf '(\S+).*product:(\S+).*model:(\S+).*' '$1'\t'$2 $3'
-    end
+  # This seems reasonably portable for all the platforms adb runs on
+  set -l procs (ps -Ao comm= | string match 'adb')
+  # Don't run adb devices unless the server is already started - it takes a while to init
+  if set -q procs[1]
+    adb devices -l | string replace -rf '(\S+).*product:(\S+).*model:(\S+).*' '$1'\t'$2 $3'
+  end
 end
 
 function __fish_adb_get_tcpip_devices -d 'Get list of devices connected via TCP/IP'
-    __fish_adb_get_devices | string match -r '^\d+\.\d+\.\d+\.\d+:\d+\t.*'
+  __fish_adb_get_devices | string match -r '^\d+\.\d+\.\d+\.\d+:\d+\t.*'
 end
 
 function __fish_adb_run_command -d 'Runs adb with any -s parameters already given on the command line'
-    set -l sopt
-    set -l sopt_is_next
-    set -l cmd (commandline -pxc)
-    set -e cmd[1]
-    for i in $cmd
-        if test -n "$sopt_is_next"
-            set sopt -s $i
-            break
-        else
-            switch $i
-                case -s
-                    set sopt_is_next 1
-            end
-        end
+  set -l sopt
+  set -l sopt_is_next
+  set -l cmd (commandline -pxc)
+  set -e cmd[1]
+  for i in $cmd
+    if test -n "$sopt_is_next"
+      set sopt -s $i
+      break
+    else
+      switch $i
+        case -s
+          set sopt_is_next 1
+      end
     end
+  end
 
-    # If no -s option, see if there's a -d or -e instead
-    if test -z "$sopt"
-        if contains -- -d $cmd
-            set sopt -d
-        else if contains -- -e $cmd
-            set sopt -e
-        end
+  # If no -s option, see if there's a -d or -e instead
+  if test -z "$sopt"
+    if contains -- -d $cmd
+      set sopt -d
+    else if contains -- -e $cmd
+      set sopt -e
     end
+  end
 
-    # adb returns CRLF (seemingly) so strip CRs
-    adb $sopt shell $argv | string replace -a \r ''
+  # adb returns CRLF (seemingly) so strip CRs
+  adb $sopt shell $argv | string replace -a \r ''
 end
 
 function __fish_adb_list_packages
-    # That "2\>" is to pass the redirection *to adb*.
-    # It sends stderr from commands it executes to its stdout as well.
-    # Why it does that, I don't know - crossing the streams is a bad idea (c.f. Ghostbusters)
-    __fish_adb_run_command pm list packages 2\>/dev/null | string replace 'package:' ''
+  # That "2\>" is to pass the redirection *to adb*.
+  # It sends stderr from commands it executes to its stdout as well.
+  # Why it does that, I don't know - crossing the streams is a bad idea (c.f. Ghostbusters)
+  __fish_adb_run_command pm list packages 2\>/dev/null | string replace 'package:' ''
 end
 
 function __fish_adb_list_uninstallable_packages
-    # -3 doesn't exactly mean show uninstallable, but it's the closest you can get to with pm list
-    __fish_adb_run_command pm list packages -3 | string replace 'package:' ''
+  # -3 doesn't exactly mean show uninstallable, but it's the closest you can get to with pm list
+  __fish_adb_run_command pm list packages -3 | string replace 'package:' ''
 end
 
 function __fish_adb_list_files
-    set -l token (commandline -ct)
+  set -l token (commandline -ct)
 
-    # Have tab complete show initial / if nothing on current token
-    if test -z "$token"
-        set token /
-    end
+  # Have tab complete show initial / if nothing on current token
+  if test -z "$token"
+    set token /
+  end
 
-    # Return list of directories suffixed with '/'
-    __fish_adb_run_command find -H "$token*" -maxdepth 0 -type d 2\>/dev/null | string replace -r '$' /
-    # Return list of files
-    __fish_adb_run_command find -H "$token*" -maxdepth 0 -type f 2\>/dev/null
+  # Return list of directories suffixed with '/'
+  __fish_adb_run_command find -H "$token*" -maxdepth 0 -type d 2\>/dev/null | string replace -r '$' /
+  # Return list of files
+  __fish_adb_run_command find -H "$token*" -maxdepth 0 -type f 2\>/dev/null
 end
 
 function __fish_adb_list_bin
-    # list all binary without group
-    __fish_adb_run_command ls -1 /system/bin/ 2\>/dev/null
-    __fish_adb_run_command ls -1 /system/xbin/ 2\>/dev/null
+  # list all binary without group
+  __fish_adb_run_command ls -1 /system/bin/ 2\>/dev/null
+  __fish_adb_run_command ls -1 /system/xbin/ 2\>/dev/null
 
 end
 
 function __fish_adb_list_properties
-    __fish_adb_run_command getprop | string match -rg '\[(.*)\]:'
+  __fish_adb_run_command getprop | string match -rg '\[(.*)\]:'
 end
 
 # Generic options, must come before command

@@ -3,75 +3,75 @@
 # Print an optspec for argparse to handle yadm's options
 # that are independent of any subcommand. Borrowed from git completion file.
 function __fish_yadm_global_optspecs
-    string join \n v-version h/help C= c=+ 'e-exec-path=?' H-html-path M-man-path I-info-path p/paginate \
-        P/no-pager o-no-replace-objects b-bare G-git-dir= W-work-tree= N-namespace= S-super-prefix= \
-        l-literal-pathspecs g-glob-pathspecs O-noglob-pathspecs i-icase-pathspecs \
-        Y/yadm-dir= R-yadm-repo= n-yadm-config= E-yadm-encrypt= a-yadm-archive= B-yadm-bootstrap=
+  string join \n v-version h/help C= c=+ 'e-exec-path=?' H-html-path M-man-path I-info-path p/paginate \
+    P/no-pager o-no-replace-objects b-bare G-git-dir= W-work-tree= N-namespace= S-super-prefix= \
+    l-literal-pathspecs g-glob-pathspecs O-noglob-pathspecs i-icase-pathspecs \
+    Y/yadm-dir= R-yadm-repo= n-yadm-config= E-yadm-encrypt= a-yadm-archive= B-yadm-bootstrap=
 end
 
 # Config values accepted by `yadm config`
 # See `yadm gitconfig` for setting git config values
 function __fish_yadm_config_keys
-    yadm introspect configs
+  yadm introspect configs
 end
 
 set -l __fish_yadm_subcommands (yadm introspect commands)
 
 # Borrowed from git completion file
 function __fish_yadm_needs_command
-    # Figure out if the current invocation already has a command.
-    set -l cmd (commandline -xpc)
-    set -e cmd[1]
-    argparse -s (__fish_yadm_global_optspecs) -- $cmd 2>/dev/null
-    or return 0
-    # These flags function as commands, effectively.
-    set -q _flag_version; and return 1
-    set -q _flag_html_path; and return 1
-    set -q _flag_man_path; and return 1
-    set -q _flag_info_path; and return 1
-    if set -q argv[1]
-        # Also print the command, so this can be used to figure out what it is.
-        echo $argv[1]
-        return 1
-    end
-    return 0
+  # Figure out if the current invocation already has a command.
+  set -l cmd (commandline -xpc)
+  set -e cmd[1]
+  argparse -s (__fish_yadm_global_optspecs) -- $cmd 2>/dev/null
+  or return 0
+  # These flags function as commands, effectively.
+  set -q _flag_version; and return 1
+  set -q _flag_html_path; and return 1
+  set -q _flag_man_path; and return 1
+  set -q _flag_info_path; and return 1
+  if set -q argv[1]
+    # Also print the command, so this can be used to figure out what it is.
+    echo $argv[1]
+    return 1
+  end
+  return 0
 end
 
 # Borrowed from git completion file
 function __fish_yadm_using_command
-    set -l cmd (__fish_yadm_needs_command)
-    test -z "$cmd"
-    and return 1
-    contains -- $cmd $argv
-    and return 0
-    return 1
+  set -l cmd (__fish_yadm_needs_command)
+  test -z "$cmd"
+  and return 1
+  contains -- $cmd $argv
+  and return 0
+  return 1
 end
 
 # Manual wrapping (instead of `complete -w`) is necessary here because we
 # don't want to inherit all completions from git
 function __fish_complete_yadm_like_git
-    # Remove the first word from the commandline because that is "yadm"
-    set -l cmdline (commandline -xpc; commandline -ct)[2..-1]
+  # Remove the first word from the commandline because that is "yadm"
+  set -l cmdline (commandline -xpc; commandline -ct)[2..-1]
 
-    # `yadm gitconfig` is same as `git config`
-    if __fish_seen_subcommand_from gitconfig
-        set cmdline (string replace 'gitconfig' 'config' "$cmdline")
-    end
+  # `yadm gitconfig` is same as `git config`
+  if __fish_seen_subcommand_from gitconfig
+    set cmdline (string replace 'gitconfig' 'config' "$cmdline")
+  end
 
-    set -l yadm_work_tree (yadm gitconfig --get core.worktree)
-    set -l yadm_repo (yadm introspect repo)
+  set -l yadm_work_tree (yadm gitconfig --get core.worktree)
+  set -l yadm_repo (yadm introspect repo)
 
-    argparse -i 'R-yadm-repo=' -- $cmdline 2>/dev/null
-    if set -q _flag_yadm_repo
-        set yadm_repo $_flag_yadm_repo
-        # argparse *always* sets $argv to remaining arguments after consuming specified options
-        set cmdline $argv
-    end
+  argparse -i 'R-yadm-repo=' -- $cmdline 2>/dev/null
+  if set -q _flag_yadm_repo
+    set yadm_repo $_flag_yadm_repo
+    # argparse *always* sets $argv to remaining arguments after consuming specified options
+    set cmdline $argv
+  end
 
-    set -l git_wrapper_cmd "git --work-tree $yadm_work_tree --git-dir $yadm_repo $cmdline"
+  set -l git_wrapper_cmd "git --work-tree $yadm_work_tree --git-dir $yadm_repo $cmdline"
 
-    # `complete -a` expects each completion to be separated by space, not newline
-    complete -C "$git_wrapper_cmd"
+  # `complete -a` expects each completion to be separated by space, not newline
+  complete -C "$git_wrapper_cmd"
 end
 
 # General git wrapping

@@ -8,142 +8,142 @@
 #########################################################
 
 function __fish_print_p4_client_name -d "Use `p4 info` output to query for current client name"
-    set -l p4info (p4 info -s 2> /dev/null)
-    if string match -qr '^Client unknown' $p4info
-        return
-    end
-    string match -r '^Client name: .+' $p4info | string replace 'Client name: ' ''
+  set -l p4info (p4 info -s 2> /dev/null)
+  if string match -qr '^Client unknown' $p4info
+    return
+  end
+  string match -r '^Client name: .+' $p4info | string replace 'Client name: ' ''
 end
 
 #########################################################
 
 function __fish_print_p4_user_name -d "Use `p4 info` output to query for current client name"
-    string match -r '^User name: .+' (p4 info 2> /dev/null) | string replace 'User name: ' ''
+  string match -r '^User name: .+' (p4 info 2> /dev/null) | string replace 'User name: ' ''
 end
 
 #########################################################
 
 function __fish_print_p4_changelists -d "Reformat output from `p4 changes` to simple format. Specify 'detailed!' as first argument to use username@workspace prefix"
-    set -l detailed
-    if test -n "$argv"
-        and test $argv[1] = "detailed!"
-        set detailed true
-        set -e argv[1]
+  set -l detailed
+  if test -n "$argv"
+    and test $argv[1] = "detailed!"
+    set detailed true
+    set -e argv[1]
+  end
+
+  # The format of `p4 changes -L` is as follows, for each changelist:
+  # Change 1234 on YYYY/MM/DD by user@workspace *status*\n
+  # \n
+  #   \t  Description text line\n
+  #   \t  Description text another line\n
+  # \n
+  set -l changes (p4 changes -L $argv)
+
+  set -l result
+  for line in (string trim -- $changes)
+    if test -z "$line"
+      continue
     end
-
-    # The format of `p4 changes -L` is as follows, for each changelist:
-    # Change 1234 on YYYY/MM/DD by user@workspace *status*\n
-    # \n
-    #   \t  Description text line\n
-    #   \t  Description text another line\n
-    # \n
-    set -l changes (p4 changes -L $argv)
-
-    set -l result
-    for line in (string trim -- $changes)
-        if test -z "$line"
-            continue
-        end
-        # see output format ^^^
-        set -l change_match (string match -ar '^Change ([0-9]+) on [0-9/]+ by (\S+).*$' $line)
-        if test -n "$change_match"
-            if test -n "$result"
-                echo $result
-                set result
-            end
-            set result $change_match[2]\t
-            if test -n "$detailed"
-                set result $result $change_match[3]:
-            end
-        else
-            set result $result $line
-        end
-    end
-
-    if test -n "$result"
+    # see output format ^^^
+    set -l change_match (string match -ar '^Change ([0-9]+) on [0-9/]+ by (\S+).*$' $line)
+    if test -n "$change_match"
+      if test -n "$result"
         echo $result
+        set result
+      end
+      set result $change_match[2]\t
+      if test -n "$detailed"
+        set result $result $change_match[3]:
+      end
+    else
+      set result $result $line
     end
+  end
+
+  if test -n "$result"
+    echo $result
+  end
 end
 
 #########################################################
 
 function __fish_print_p4_opened_files -d "Use `p4 diff` to output the names of all opened files"
-    # p4 opened -s | sed 's/#.*//' | p4 -x - where | awk '/^\// {print $3}'
-    # p4 opened -s | string replace -ar '(^\S+).*$' '$1' | p4 -x - where | string replace -ar '\S+\s\S+\s(\S+)' '$1'
-    string replace -a "$PWD/" '' (p4 diff -sa -sb -sr)
+  # p4 opened -s | sed 's/#.*//' | p4 -x - where | awk '/^\// {print $3}'
+  # p4 opened -s | string replace -ar '(^\S+).*$' '$1' | p4 -x - where | string replace -ar '\S+\s\S+\s(\S+)' '$1'
+  string replace -a "$PWD/" '' (p4 diff -sa -sb -sr)
 end
 
 #########################################################
 
 function __fish_print_p4_branches -d "Prints the list of all defined branches on the server"
-    set -l branches (p4 branches)
-    for branch in $branches
-        # "Branch branch-name YYYY/MM/DD 'description text'"
-        set -l matches (string match -ar '^Branch\s+(\S+)[^\']+\'(.+)\'$' $branch)
-        if not set -q matches[2]
-            # skip $branch if no match for branch name with description
-            continue
-        end
-        # matches[2] = branch name; matches[3] = description
-        echo -n $matches[2]
-        if not set -q matches[3]
-            echo -n \t$matches[3]
-        end
-        echo
+  set -l branches (p4 branches)
+  for branch in $branches
+    # "Branch branch-name YYYY/MM/DD 'description text'"
+    set -l matches (string match -ar '^Branch\s+(\S+)[^\']+\'(.+)\'$' $branch)
+    if not set -q matches[2]
+      # skip $branch if no match for branch name with description
+      continue
     end
+    # matches[2] = branch name; matches[3] = description
+    echo -n $matches[2]
+    if not set -q matches[3]
+      echo -n \t$matches[3]
+    end
+    echo
+  end
 end
 
 #########################################################
 
 function __fish_print_p4_streams
-    # I do not have an example of p4 streams output
-    #p4 streams 2> /dev/null
+  # I do not have an example of p4 streams output
+  #p4 streams 2> /dev/null
 end
 
 #########################################################
 
 function __fish_print_p4_users -d "Lists perforce users suitable for list of completions"
-    # `p4 users` output format:
-    #   "username <email@address> (Full Name) accessed YYYY/MM/DD"
-    # function will output it as:
-    #   username[TAB]Full Name <email@address>
-    string replace -ar '(^\S+) <([^>]+)> \(([^\)]+)\).*$' '$1'\t'$3 <$2>' (p4 users)
+  # `p4 users` output format:
+  #   "username <email@address> (Full Name) accessed YYYY/MM/DD"
+  # function will output it as:
+  #   username[TAB]Full Name <email@address>
+  string replace -ar '(^\S+) <([^>]+)> \(([^\)]+)\).*$' '$1'\t'$3 <$2>' (p4 users)
 end
 
 #########################################################
 
 function __fish_print_p4_workspaces -d "Lists current user's workspaces"
-    set -l user (__fish_print_p4_user_name)
-    if test -z "$user"
-        return
-    end
-    # "Client clientname YYYY/MM/DD root /home/user/workspace/path 'description text'"
-    string replace -ar '^Client (\S+) \S+ root (\S+) \'(.+)\'$' '$1'\t'$3' (p4 clients -u $user)
+  set -l user (__fish_print_p4_user_name)
+  if test -z "$user"
+    return
+  end
+  # "Client clientname YYYY/MM/DD root /home/user/workspace/path 'description text'"
+  string replace -ar '^Client (\S+) \S+ root (\S+) \'(.+)\'$' '$1'\t'$3' (p4 clients -u $user)
 end
 
 #########################################################
 
 function __fish_print_p4_workspace_changelists -d "Lists all changelists for current user"
-    set -l client (__fish_print_p4_client_name)
-    if test -n "$client"
-        __fish_print_p4_changelists -c $client $argv
-    end
+  set -l client (__fish_print_p4_client_name)
+  if test -n "$client"
+    __fish_print_p4_changelists -c $client $argv
+  end
 end
 
 #########################################################
 
 function __fish_print_p4_pending_changelists -d "Lists all *pending* changelists. If 'default' argument is provided, default changelist will also be listed"
-    if set -q argv[1]
-        and test $argv[1] = default
-        echo default\tDefault changelist
-    end
-    __fish_print_p4_workspace_changelists -s pending
+  if set -q argv[1]
+    and test $argv[1] = default
+    echo default\tDefault changelist
+  end
+  __fish_print_p4_workspace_changelists -s pending
 end
 
 #########################################################
 
 function __fish_print_p4_shelved_changelists -d "Lists all changelists with *shelved* files"
-    __fish_print_p4_workspace_changelists -s shelved
+  __fish_print_p4_workspace_changelists -s shelved
 end
 
 #########################################################
@@ -151,146 +151,146 @@ end
 #########################################################
 
 function __fish_print_p4_commands_list -d "Lists p4 commands"
-    set -l commands add annotate attribute branch branches change changes changelist changelists clean client clients copy counter counters cstat delete depot depots describe diff diff2 dirs edit filelog files fix fixes flush fstat grep group groups have help info integ integrate integrated interchanges istat job jobs key keys label labels labelsync list lock logger login logout merge move opened passwd populate print protect protects prune rec reconcile rename reopen resolve resolved revert review reviews set shelve status sizes stream streams submit sync tag tickets unlock unshelve update user users where workspace workspaces
-    for i in $commands
-        echo $i
-    end
+  set -l commands add annotate attribute branch branches change changes changelist changelists clean client clients copy counter counters cstat delete depot depots describe diff diff2 dirs edit filelog files fix fixes flush fstat grep group groups have help info integ integrate integrated interchanges istat job jobs key keys label labels labelsync list lock logger login logout merge move opened passwd populate print protect protects prune rec reconcile rename reopen resolve resolved revert review reviews set shelve status sizes stream streams submit sync tag tickets unlock unshelve update user users where workspace workspaces
+  for i in $commands
+    echo $i
+  end
 end
 
 #########################################################
 
 function __fish_print_p4_env_vars -d "Lists environment variables that can be consumed by perforce"
-    set -l env_vars P4CLIENT P4PORT P4PASSWD P4USER P4CONFIG P4DIFF P4EDITOR P4MERGE P4CHARSET P4TRUST P4PAGER PWD TMP TEMP P4TICKETS P4LANGUAGE P4LOGINSSO P4COMMANDCHARSET P4DIFFUNICODE P4MERGEUNICODE P4CLIENTPATH P4AUDIT P4JOURNAL P4LOG P4PORT P4ROOT P4DEBUG P4NAME P4SSLDIR
-    for var in $env_vars
-        echo $var
-    end
+  set -l env_vars P4CLIENT P4PORT P4PASSWD P4USER P4CONFIG P4DIFF P4EDITOR P4MERGE P4CHARSET P4TRUST P4PAGER PWD TMP TEMP P4TICKETS P4LANGUAGE P4LOGINSSO P4COMMANDCHARSET P4DIFFUNICODE P4MERGEUNICODE P4CLIENTPATH P4AUDIT P4JOURNAL P4LOG P4PORT P4ROOT P4DEBUG P4NAME P4SSLDIR
+  for var in $env_vars
+    echo $var
+  end
 end
 
 #########################################################
 
 function __fish_print_p4_file_types -d "Lists all of available file modes"
-    set -l base_types text binary symlink apple resource unicode utf16
-    for type in $base_types
-        printf '%s\t%s\n' $type+m 'always set modtime' $type+w 'always writeable' $type+x 'exec bit set' $type+k '$Keyword$ expansion of Id, Header, Author, Date, DateUTC, DateTime, DateTimeUTC, DateTimeTZ, Change, File, Revision' $type+ko '$Keyword$ expansion of Id, Header only' $type+l 'exclusive open: disallow multiple opens' $type+C 'server stores compressed file per revision' $type+D 'server stores deltas in RCS format' $type+F 'server stores full file per revision' $type+S 'server stores only single head rev., or specify number to <n> of revisions' $type+X 'server runs archive trigger to access files'
-    end
+  set -l base_types text binary symlink apple resource unicode utf16
+  for type in $base_types
+    printf '%s\t%s\n' $type+m 'always set modtime' $type+w 'always writeable' $type+x 'exec bit set' $type+k '$Keyword$ expansion of Id, Header, Author, Date, DateUTC, DateTime, DateTimeUTC, DateTimeTZ, Change, File, Revision' $type+ko '$Keyword$ expansion of Id, Header only' $type+l 'exclusive open: disallow multiple opens' $type+C 'server stores compressed file per revision' $type+D 'server stores deltas in RCS format' $type+F 'server stores full file per revision' $type+S 'server stores only single head rev., or specify number to <n> of revisions' $type+X 'server runs archive trigger to access files'
+  end
 end
 
 #########################################################
 
 function __fish_print_p4_help_keywords -d "Keywords for `p4 help`"
-    echo administration\t"Help on specialized administration topics"
-    echo charset\t"Describes how to control Unicode translation"
-    echo commands\t"Lists all the Perforce commands"
-    echo configurables\t"Describes all of the server configuration variables"
-    echo dvcs\t"Describes decentralized version control with Perforce"
-    echo environment\t"Lists the Perforce environment variables and their meanings"
-    echo filetypes\t"Lists the Perforce filetypes and their meanings"
-    echo jobview\t"Describes Perforce jobviews"
-    echo legal\t"Legal and license information"
-    echo networkaddress\t"Help on network address syntax"
-    echo replication\t"Describes specialized replication topics"
-    echo revisions\t"Describes Perforce revision specifiers"
-    echo simple\t"Provides short descriptions of the eight most basic Perforce commands"
-    echo usage\t"Lists the six options available with all Perforce commands"
-    echo views\t"Describes the meaning of Perforce views"
+  echo administration\t"Help on specialized administration topics"
+  echo charset\t"Describes how to control Unicode translation"
+  echo commands\t"Lists all the Perforce commands"
+  echo configurables\t"Describes all of the server configuration variables"
+  echo dvcs\t"Describes decentralized version control with Perforce"
+  echo environment\t"Lists the Perforce environment variables and their meanings"
+  echo filetypes\t"Lists the Perforce filetypes and their meanings"
+  echo jobview\t"Describes Perforce jobviews"
+  echo legal\t"Legal and license information"
+  echo networkaddress\t"Help on network address syntax"
+  echo replication\t"Describes specialized replication topics"
+  echo revisions\t"Describes Perforce revision specifiers"
+  echo simple\t"Provides short descriptions of the eight most basic Perforce commands"
+  echo usage\t"Lists the six options available with all Perforce commands"
+  echo views\t"Describes the meaning of Perforce views"
 end
 
 #########################################################
 
 function __fish_print_p4_diff_options -d "Options for `p4 diff -d`"
-    echo n\t"RCS output format, showing additions and deletions made to the file and associated line ranges"
-    echo c\t"context output format, showing line number ranges and N lines of context around the changes" #
-    echo s\t"summary output format, showing only the number of chunks and lines added, deleted, or changed"
-    echo u\t"unified output format, showing added and deleted lines with N lines of context, in a form compatible with the patch(1) utility" #
-    echo l\t"ignore line-ending (CR/LF) convention when finding diffs"
-    echo b\t"ignore changes made within whitespace; this option implies -dl"
-    echo w\t"ignore whitespace altogether; this option implies -dl"
+  echo n\t"RCS output format, showing additions and deletions made to the file and associated line ranges"
+  echo c\t"context output format, showing line number ranges and N lines of context around the changes" #
+  echo s\t"summary output format, showing only the number of chunks and lines added, deleted, or changed"
+  echo u\t"unified output format, showing added and deleted lines with N lines of context, in a form compatible with the patch(1) utility" #
+  echo l\t"ignore line-ending (CR/LF) convention when finding diffs"
+  echo b\t"ignore changes made within whitespace; this option implies -dl"
+  echo w\t"ignore whitespace altogether; this option implies -dl"
 end
 
 #########################################################
 
 function __fish_print_p4_resolve_options -d "Options for `p4 merge` using -a, -A and -d"
-    switch "$argv[1]"
-        case a
-            echo m\t"Automatic: accept the Perforce-recommended file revision (yours, their, merge)"
-            echo y\t"Accept Yours, ignore theirs"
-            echo t\t"Accept Theirs"
-            echo s\t"Safe Accept: merge if no conflict, ignore file otherwise"
-            echo f\t"Force Accept: conflicted changes will leave conflict markers in the file"
-        case A
-            echo b\t"Resolve attributes set by p4 attribute"
-            echo b\t"Resolve file branching; that is, integrations where the source is edited and the target is deleted"
-            echo c\t"Resolve file content changes"
-            echo d\t"Integrations where the source is deleted and target is deleted"
-            echo t\t"Filetype changes"
-            echo m\t"Move and renames"
-        case d
-            echo b\t"Ignore whitespace-only changes (for instance, a tab replaced by eight spaces)"
-            echo w\t"Ignore whitespace altogether (for instance, deletion of tabs or other whitespace)"
-            echo l\t"Ignore differences in line-ending convention"
-    end
+  switch "$argv[1]"
+    case a
+      echo m\t"Automatic: accept the Perforce-recommended file revision (yours, their, merge)"
+      echo y\t"Accept Yours, ignore theirs"
+      echo t\t"Accept Theirs"
+      echo s\t"Safe Accept: merge if no conflict, ignore file otherwise"
+      echo f\t"Force Accept: conflicted changes will leave conflict markers in the file"
+    case A
+      echo b\t"Resolve attributes set by p4 attribute"
+      echo b\t"Resolve file branching; that is, integrations where the source is edited and the target is deleted"
+      echo c\t"Resolve file content changes"
+      echo d\t"Integrations where the source is deleted and target is deleted"
+      echo t\t"Filetype changes"
+      echo m\t"Move and renames"
+    case d
+      echo b\t"Ignore whitespace-only changes (for instance, a tab replaced by eight spaces)"
+      echo w\t"Ignore whitespace altogether (for instance, deletion of tabs or other whitespace)"
+      echo l\t"Ignore differences in line-ending convention"
+  end
 end
 
 #########################################################
 
 function __fish_print_p4_parallel_options -d "Values for --parallel option in various commands"
-    set -l mode
-    if test -n "$argv"
-        set mode $argv[1]
-    end
+  set -l mode
+  if test -n "$argv"
+    set mode $argv[1]
+  end
 
-    # for now only looks that mode is set, later it will need to have a specific setting
-    echo 'threads='\t"sends files concurrently using N independent network connections"
-    echo 'batch='\t"specifies the number of files in a batch"
-    test -n "$mode"
-    or echo 'batchsize='\t"specifies the number of bytes in a batch"
-    echo 'min='\t"specifies the minimum number of files in a parallel sync"
-    test -n "$mode"
-    or echo 'minsize='\t"specifies the minimum number of bytes in a parallel sync"
+  # for now only looks that mode is set, later it will need to have a specific setting
+  echo 'threads='\t"sends files concurrently using N independent network connections"
+  echo 'batch='\t"specifies the number of files in a batch"
+  test -n "$mode"
+  or echo 'batchsize='\t"specifies the number of bytes in a batch"
+  echo 'min='\t"specifies the minimum number of files in a parallel sync"
+  test -n "$mode"
+  or echo 'minsize='\t"specifies the minimum number of bytes in a parallel sync"
 end
 
 #########################################################
 
 function __fish_print_p4_submit_options -d "Options for `p4 submit`"
-    echo 'submitunchanged'\t"Submit all open files (default behavior)"
-    echo 'submitunchanged+reopen'\t"Submit all open files + reopen to default changelist"
-    echo 'revertunchanged'\t"Revert unmodified files, submit all the rest"
-    echo 'revertunchanged+reopen'\t"Revert unmodified files, submit all the rest + reopen them in default changelist"
-    echo 'leaveunchanged'\t"Move unchanged files to default changelist, submit all the rest"
-    echo 'leaveunchanged+reopen'\t"Submit only modified files + reopen all (modified and unmodified) in default changelist"
+  echo 'submitunchanged'\t"Submit all open files (default behavior)"
+  echo 'submitunchanged+reopen'\t"Submit all open files + reopen to default changelist"
+  echo 'revertunchanged'\t"Revert unmodified files, submit all the rest"
+  echo 'revertunchanged+reopen'\t"Revert unmodified files, submit all the rest + reopen them in default changelist"
+  echo 'leaveunchanged'\t"Move unchanged files to default changelist, submit all the rest"
+  echo 'leaveunchanged+reopen'\t"Submit only modified files + reopen all (modified and unmodified) in default changelist"
 end
 
 #########################################################
 
 function __fish_print_p4_noretransfer_options -d "Options for `p4 submit --noretransfer`"
-    echo 1\t"server avoids re-transferring files that have already been archived after a failed submit operation"
-    echo 0\t"server re-transfers all files after a failed submit operation"
+  echo 1\t"server avoids re-transferring files that have already been archived after a failed submit operation"
+  echo 0\t"server re-transfers all files after a failed submit operation"
 end
 
 #########################################################
 
 function __fish_print_p4_integrate_output_options -d "Options for `p4 resolve -O`"
-    echo b\t"outputs the base revision for the merge (if any)"
-    echo r\t"outputs the resolves that are being scheduled"
+  echo b\t"outputs the base revision for the merge (if any)"
+  echo r\t"outputs the resolves that are being scheduled"
 end
 
 #########################################################
 
 function __fish_print_p4_integrate_resolve_options -d "Options for `p4 resolve -R`"
-    echo b\t"schedules a branch resolve instead of branching the target files automatically"
-    echo d\t"schedules a delete resolve instead of deleting the target files automatically"
-    echo s\t"skips cherry-picked revisions that have already been integrated"
+  echo b\t"schedules a branch resolve instead of branching the target files automatically"
+  echo d\t"schedules a delete resolve instead of deleting the target files automatically"
+  echo s\t"skips cherry-picked revisions that have already been integrated"
 end
 
 #########################################################
 
 function __fish_p4_not_in_command -d "Checks that prompt is not inside of p4 command"
-    for i in (commandline -xpc)
-        if contains -- $i (__fish_print_p4_commands_list)
-            return 1
-        end
+  for i in (commandline -xpc)
+    if contains -- $i (__fish_print_p4_commands_list)
+      return 1
     end
-    return 0
+  end
+  return 0
 end
 
 #########################################################
@@ -301,22 +301,22 @@ end
 # in the arguments, even though if more than a single command is specified,
 # p4 will complain.
 function __fish_p4_is_using_command -d "Checks if prompt is in a specific command"
-    if contains -- $argv[1] (commandline -xpc)
-        return 0
-    end
-    return 1
+  if contains -- $argv[1] (commandline -xpc)
+    return 0
+  end
+  return 1
 end
 
 #########################################################
 
 function __fish_p4_register_command -d "Adds a completion for a specific command"
-    complete -c p4 -n __fish_p4_not_in_command -a $argv[1] $argv[2..-1]
+  complete -c p4 -n __fish_p4_not_in_command -a $argv[1] $argv[2..-1]
 end
 
 #########################################################
 
 function __fish_p4_register_command_option -d "Adds a specific option for a command"
-    complete -c p4 -n "__fish_p4_is_using_command $argv[1]" $argv[2..-1]
+  complete -c p4 -n "__fish_p4_is_using_command $argv[1]" $argv[2..-1]
 end
 
 #########################################################
@@ -466,31 +466,31 @@ __fish_p4_register_command_option clean -s n -d "Preview what would be done"
 
 # client, workspace @TODO: -Fs (only in -f), -c (only in -S stream)
 for a in client workspace
-    __fish_p4_register_command_option $a -x -a '(__fish_print_p4_workspaces)'
-    __fish_p4_register_command_option $a -s f -d "Allows the last modification date to be set"
-    __fish_p4_register_command_option $a -s d -f -a '(__fish_print_p4_workspaces)' -d "Delete client workspace even if not owned by user"
-    # __fish_p4_register_command_option $a -a '-Fs' -d 'Deletes client with shelves (must follow -f)'
-    __fish_p4_register_command_option $a -s F -a s -d 'Deletes client with shelves (must follow -f)'
-    __fish_p4_register_command_option $a -s o -d "Write the client workspace spec to standard output"
-    __fish_p4_register_command_option $a -s i -d "Read the client workspace spec from standard input"
-    __fish_p4_register_command_option $a -s c -x -a '(__fish_print_p4_workspace_changelists)' -d "When used with -S stream, preview the workspace spec"
-    __fish_p4_register_command_option $a -s s -d "Switch workspace view"
-    __fish_p4_register_command_option $a -s t -x -d "Specify a client workspace Template"
-    __fish_p4_register_command_option $a -l serverid -x -d "Forcefully delete workspace that is bound to another server"
-    __fish_p4_register_command_option $a -s S -x -a '(__fish_print_p4_streams)' -d "Associates the workspace with the specified stream"
+  __fish_p4_register_command_option $a -x -a '(__fish_print_p4_workspaces)'
+  __fish_p4_register_command_option $a -s f -d "Allows the last modification date to be set"
+  __fish_p4_register_command_option $a -s d -f -a '(__fish_print_p4_workspaces)' -d "Delete client workspace even if not owned by user"
+  # __fish_p4_register_command_option $a -a '-Fs' -d 'Deletes client with shelves (must follow -f)'
+  __fish_p4_register_command_option $a -s F -a s -d 'Deletes client with shelves (must follow -f)'
+  __fish_p4_register_command_option $a -s o -d "Write the client workspace spec to standard output"
+  __fish_p4_register_command_option $a -s i -d "Read the client workspace spec from standard input"
+  __fish_p4_register_command_option $a -s c -x -a '(__fish_print_p4_workspace_changelists)' -d "When used with -S stream, preview the workspace spec"
+  __fish_p4_register_command_option $a -s s -d "Switch workspace view"
+  __fish_p4_register_command_option $a -s t -x -d "Specify a client workspace Template"
+  __fish_p4_register_command_option $a -l serverid -x -d "Forcefully delete workspace that is bound to another server"
+  __fish_p4_register_command_option $a -s S -x -a '(__fish_print_p4_streams)' -d "Associates the workspace with the specified stream"
 end
 
 # clients, workspaces @TODO -U and others are mutually exclusive
 for a in clients workspaces
-    __fish_p4_register_command_option $a -s a -d "List all client workspaces"
-    __fish_p4_register_command_option $a -s e -x -d "List client workspaces matching filter (case-sensitive)"
-    __fish_p4_register_command_option $a -s E -x -d "List client workspaces matching filter (case-insensitive)"
-    __fish_p4_register_command_option $a -s m -x -d "List the first max client workspaces"
-    __fish_p4_register_command_option $a -s s -x -d "List client workspaces bound to the specified serverID"
-    __fish_p4_register_command_option $a -s S -x -a '(__fish_print_p4_streams)' -d "List client workspaces associated with the specified stream"
-    __fish_p4_register_command_option $a -s t -d "Display time and date last update to the workspace"
-    __fish_p4_register_command_option $a -s u -x -a '(__fish_print_p4_users)' -d "List only client workspaces owned by user"
-    __fish_p4_register_command_option $a -s U -d "List only client workspaces unloaded with p4 unload"
+  __fish_p4_register_command_option $a -s a -d "List all client workspaces"
+  __fish_p4_register_command_option $a -s e -x -d "List client workspaces matching filter (case-sensitive)"
+  __fish_p4_register_command_option $a -s E -x -d "List client workspaces matching filter (case-insensitive)"
+  __fish_p4_register_command_option $a -s m -x -d "List the first max client workspaces"
+  __fish_p4_register_command_option $a -s s -x -d "List client workspaces bound to the specified serverID"
+  __fish_p4_register_command_option $a -s S -x -a '(__fish_print_p4_streams)' -d "List client workspaces associated with the specified stream"
+  __fish_p4_register_command_option $a -s t -d "Display time and date last update to the workspace"
+  __fish_p4_register_command_option $a -s u -x -a '(__fish_print_p4_users)' -d "List only client workspaces owned by user"
+  __fish_p4_register_command_option $a -s U -d "List only client workspaces unloaded with p4 unload"
 end
 
 # flush @TODO
@@ -557,29 +557,29 @@ __fish_p4_register_command_option edit -s t -x -a '(__fish_print_p4_file_types)'
 
 # change, changelist
 for a in change changelist
-    __fish_p4_register_command_option $a -x -a '(__fish_print_p4_pending_changelists)'
-    __fish_p4_register_command_option $a -s s -d "Allows jobs to be assigned any status values on submission"
-    __fish_p4_register_command_option $a -s f -d "Force operation"
-    __fish_p4_register_command_option $a -s u -d "Update a submitted changelist"
-    __fish_p4_register_command_option $a -s O -x -a '(__fish_print_p4_pending_changelists)' -d "Changelist number"
-    __fish_p4_register_command_option $a -s d -x -a '(__fish_print_p4_pending_changelists)' -d "Delete a changelist"
-    __fish_p4_register_command_option $a -s o -d "Writes the changelist spec to standard output"
-    __fish_p4_register_command_option $a -s i -d "Read the changelist spec from standard input"
-    __fish_p4_register_command_option $a -s t -x -a "restricted public" -d "Modifies the 'Type' of the change"
-    __fish_p4_register_command_option $a -s U -x -a '(__fish_print_p4_users)' -d "Changes the 'User' of the change"
+  __fish_p4_register_command_option $a -x -a '(__fish_print_p4_pending_changelists)'
+  __fish_p4_register_command_option $a -s s -d "Allows jobs to be assigned any status values on submission"
+  __fish_p4_register_command_option $a -s f -d "Force operation"
+  __fish_p4_register_command_option $a -s u -d "Update a submitted changelist"
+  __fish_p4_register_command_option $a -s O -x -a '(__fish_print_p4_pending_changelists)' -d "Changelist number"
+  __fish_p4_register_command_option $a -s d -x -a '(__fish_print_p4_pending_changelists)' -d "Delete a changelist"
+  __fish_p4_register_command_option $a -s o -d "Writes the changelist spec to standard output"
+  __fish_p4_register_command_option $a -s i -d "Read the changelist spec from standard input"
+  __fish_p4_register_command_option $a -s t -x -a "restricted public" -d "Modifies the 'Type' of the change"
+  __fish_p4_register_command_option $a -s U -x -a '(__fish_print_p4_users)' -d "Changes the 'User' of the change"
 end
 
 # changes, changelists
 for a in changes changelists
-    __fish_p4_register_command_option $a -s i -d "Include changelists of integrated, affected files"
-    __fish_p4_register_command_option $a -s t -d "Display the time as well as the date of each change"
-    __fish_p4_register_command_option $a -s l -d "List long output, with full changelist"
-    __fish_p4_register_command_option $a -s L -d "List long output, with full changelist (truncated)"
-    __fish_p4_register_command_option $a -s f -d "View restricted changes (requires admin permission)"
-    __fish_p4_register_command_option $a -c c -x -a '(__fish_print_p4_workspace_changelists)' -d "List only changes made from the named client workspace"
-    __fish_p4_register_command_option $a -c m -x -d "List only the highest numbered max changes"
-    __fish_p4_register_command_option $a -c s -x -a 'pending submitted shelved' -d "Limit the list to the changelists with the given status"
-    __fish_p4_register_command_option $a -c u -x -a '(__fish_print_p4_users)' -d "List only changes made from the named user"
+  __fish_p4_register_command_option $a -s i -d "Include changelists of integrated, affected files"
+  __fish_p4_register_command_option $a -s t -d "Display the time as well as the date of each change"
+  __fish_p4_register_command_option $a -s l -d "List long output, with full changelist"
+  __fish_p4_register_command_option $a -s L -d "List long output, with full changelist (truncated)"
+  __fish_p4_register_command_option $a -s f -d "View restricted changes (requires admin permission)"
+  __fish_p4_register_command_option $a -c c -x -a '(__fish_print_p4_workspace_changelists)' -d "List only changes made from the named client workspace"
+  __fish_p4_register_command_option $a -c m -x -d "List only the highest numbered max changes"
+  __fish_p4_register_command_option $a -c s -x -a 'pending submitted shelved' -d "Limit the list to the changelists with the given status"
+  __fish_p4_register_command_option $a -c u -x -a '(__fish_print_p4_users)' -d "List only changes made from the named user"
 
 end
 
@@ -661,21 +661,21 @@ __fish_p4_register_command_option unshelve -s S -x -a '(__fish_print_p4_streams)
 
 # integ, integrate @TODO -s fromFile is based on -b branchname, try resolving
 for a in integ integrate
-    __fish_p4_register_command_option $a -s b -x -a '(__fish_print_p4_branches)' -d "Integrate files using sourceFile/targetFile mappings"
-    __fish_p4_register_command_option $a -s n -d "Preview the integrations"
-    __fish_p4_register_command_option $a -s v -d "Open files for branching without copying toFiles"
-    __fish_p4_register_command_option $a -s c -x -a '(__fish_print_p4_pending_changelists)' -d "Open the toFiles in the specified pending changelist"
-    __fish_p4_register_command_option $a -s q -d "Quiet mode"
-    __fish_p4_register_command_option $a -a -Di -d "If file is deleted and re-added, consider it the same file"
-    __fish_p4_register_command_option $a -s f -d "Force integration on all revisions of fromFile and toFile"
-    __fish_p4_register_command_option $a -s h -d "Use the have revision"
-    __fish_p4_register_command_option $a -s O -x -a '(__fish_print_p4_integrate_output_options)' -d "Specify output options"
-    __fish_p4_register_command_option $a -s m -x -d "Limit the command to integrating only the first N files"
-    __fish_p4_register_command_option $a -s R -x -a '(__fish_print_p4_integrate_resolve_options)' -d "Specify resolve options"
-    __fish_p4_register_command_option $a -s s -r -d "Source file and revision"
-    __fish_p4_register_command_option $a -s r -r -d "Reverse the mappings in the branch view"
-    __fish_p4_register_command_option $a -s S -x -a '(__fish_print_p4_streams)' -d "Source stream"
-    __fish_p4_register_command_option $a -s P -x -a '(__fish_print_p4_streams)' -d "Custom parent stream"
+  __fish_p4_register_command_option $a -s b -x -a '(__fish_print_p4_branches)' -d "Integrate files using sourceFile/targetFile mappings"
+  __fish_p4_register_command_option $a -s n -d "Preview the integrations"
+  __fish_p4_register_command_option $a -s v -d "Open files for branching without copying toFiles"
+  __fish_p4_register_command_option $a -s c -x -a '(__fish_print_p4_pending_changelists)' -d "Open the toFiles in the specified pending changelist"
+  __fish_p4_register_command_option $a -s q -d "Quiet mode"
+  __fish_p4_register_command_option $a -a -Di -d "If file is deleted and re-added, consider it the same file"
+  __fish_p4_register_command_option $a -s f -d "Force integration on all revisions of fromFile and toFile"
+  __fish_p4_register_command_option $a -s h -d "Use the have revision"
+  __fish_p4_register_command_option $a -s O -x -a '(__fish_print_p4_integrate_output_options)' -d "Specify output options"
+  __fish_p4_register_command_option $a -s m -x -d "Limit the command to integrating only the first N files"
+  __fish_p4_register_command_option $a -s R -x -a '(__fish_print_p4_integrate_resolve_options)' -d "Specify resolve options"
+  __fish_p4_register_command_option $a -s s -r -d "Source file and revision"
+  __fish_p4_register_command_option $a -s r -r -d "Reverse the mappings in the branch view"
+  __fish_p4_register_command_option $a -s S -x -a '(__fish_print_p4_streams)' -d "Source stream"
+  __fish_p4_register_command_option $a -s P -x -a '(__fish_print_p4_streams)' -d "Custom parent stream"
 end
 
 # integrated @TODO

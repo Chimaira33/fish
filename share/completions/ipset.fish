@@ -1,22 +1,22 @@
 function __fish_ipset_nosubcommand
-    if __fish_seen_subcommand_from create add del test destroy list save restore flush rename swap help version
-        return 1
-    end
-    return 0
+  if __fish_seen_subcommand_from create add del test destroy list save restore flush rename swap help version
+    return 1
+  end
+  return 0
 end
 
 function __fish_ipset_needs_setname
-    if __fish_seen_subcommand_from add del test destroy list save restore flush rename swap
-        return 0
-    end
-    return 1
+  if __fish_seen_subcommand_from add del test destroy list save restore flush rename swap
+    return 0
+  end
+  return 1
 end
 
 function __fish_ipset_list_sets
-    set -l ipset_list (ipset list --name 2>/dev/null)
-    if not __fish_seen_subcommand_from $ipset_list
-        echo $ipset_list
-    end
+  set -l ipset_list (ipset list --name 2>/dev/null)
+  if not __fish_seen_subcommand_from $ipset_list
+    echo $ipset_list
+  end
 end
 
 complete -c ipset --no-files --condition __fish_ipset_nosubcommand -a create -d 'Create a set identified with SETNAME'

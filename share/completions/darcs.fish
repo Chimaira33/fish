@@ -41,35 +41,35 @@ complete -c darcs -n __fish_use_subcommand -x -a repair -d 'Repair a corrupted r
 complete -c darcs -n __fish_use_subcommand -x -a convert -d 'Convert repositories between various formats'
 
 function __fish_darcs_use_show_command
-    set -l cmd (commandline -pxc)
-    set -e cmd[1]
+  set -l cmd (commandline -pxc)
+  set -e cmd[1]
 
-    if contains show $cmd
-        for i in $cmd
-            switch $i
-                case contents
-                    return 1
-                case dependencies
-                    return 1
-                case files
-                    return 1
-                case index
-                    return 1
-                case pristine
-                    return 1
-                case repo
-                    return 1
-                case authors
-                    return 1
-                case tags
-                    return 1
-                case patch-index
-                    return 1
-            end
-        end
-        return 0
+  if contains show $cmd
+    for i in $cmd
+      switch $i
+        case contents
+          return 1
+        case dependencies
+          return 1
+        case files
+          return 1
+        case index
+          return 1
+        case pristine
+          return 1
+        case repo
+          return 1
+        case authors
+          return 1
+        case tags
+          return 1
+        case patch-index
+          return 1
+      end
     end
-    return 1
+    return 0
+  end
+  return 1
 end
 
 complete -c darcs -n __fish_darcs_use_show_command -x -a contents -d 'Outputs a specific version of a file'
@@ -83,39 +83,39 @@ complete -c darcs -n __fish_darcs_use_show_command -x -a tags -d 'Show all tags 
 complete -c darcs -n __fish_darcs_use_show_command -x -a patch-index -d 'Check integrity of patch index'
 
 function __fish_darcs_use_optimize_command
-    set -l cmd (commandline -pxc)
-    set -e cmd[1]
+  set -l cmd (commandline -pxc)
+  set -e cmd[1]
 
-    if contains optimize $cmd
-        for i in $cmd
-            switch $i
-                case clean
-                    return 1
-                case http
-                    return 1
-                case reorder
-                    return 1
-                case enable-patch-index
-                    return 1
-                case disable-patch-index
-                    return 1
-                case compress
-                    return 1
-                case uncompress
-                    return 1
-                case relink
-                    return 1
-                case pristine
-                    return 1
-                case upgrade
-                    return 1
-                case cache
-                    return 1
-            end
-        end
-        return 0
+  if contains optimize $cmd
+    for i in $cmd
+      switch $i
+        case clean
+          return 1
+        case http
+          return 1
+        case reorder
+          return 1
+        case enable-patch-index
+          return 1
+        case disable-patch-index
+          return 1
+        case compress
+          return 1
+        case uncompress
+          return 1
+        case relink
+          return 1
+        case pristine
+          return 1
+        case upgrade
+          return 1
+        case cache
+          return 1
+      end
     end
-    return 1
+    return 0
+  end
+  return 1
 end
 
 complete -c darcs -n __fish_darcs_use_optimize_command -x -a clean -d 'Garbage collect pristine, inventories and patches'

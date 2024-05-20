@@ -11,7 +11,7 @@ complete -c lz4 -s t -l test -d "Test the integrity"
 complete -c lz4 -l list -d "List information about .lz4 file(s)"
 
 for level in (seq 1 12)
-    complete -c lz4 -o $level -d "Set compression level"
+  complete -c lz4 -o $level -d "Set compression level"
 end
 
 complete -c lz4 -l fast -d "Ultra-fast compression"

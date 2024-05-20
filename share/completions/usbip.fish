@@ -1,26 +1,26 @@
 function __fish_usbip_no_subcommand -d 'Test if usbip has yet to be given the subcommand'
-    for i in (commandline -xpc)
-        if contains -- $i attach detach list bind unbind port
-            return 1
-        end
+  for i in (commandline -xpc)
+    if contains -- $i attach detach list bind unbind port
+      return 1
     end
-    return 0
+  end
+  return 0
 end
 
 function __fish_usbip_remote -d 'List remote usbip host'
-    set -l remote (ip r | awk '/via/ {print $3"\t"$5}')
-    printf '%s\n' $remote
+  set -l remote (ip r | awk '/via/ {print $3"\t"$5}')
+  printf '%s\n' $remote
 end
 
 function __fish_usbip_busid -d 'List usbip busid'
-    set -l remote (commandline -xpc | string match -r '(?<=-r)(emote)?=?\s*(\S+)' | string trim)
-    set -l busids (usbip list -r $remote 2> /dev/null | string match -r '\d+-\d+')
-    printf '%s\n' $busids
+  set -l remote (commandline -xpc | string match -r '(?<=-r)(emote)?=?\s*(\S+)' | string trim)
+  set -l busids (usbip list -r $remote 2> /dev/null | string match -r '\d+-\d+')
+  printf '%s\n' $busids
 end
 
 function __fish_usbip_busid_attached -d 'List usbip busid attached'
-    set -l usbids (usbip port 2> /dev/null | string match -r '(?<=Port\s)(\d+)')
-    printf '%s\n' $usbids
+  set -l usbids (usbip port 2> /dev/null | string match -r '(?<=Port\s)(\d+)')
+  printf '%s\n' $usbids
 end
 
 complete -f -c usbip

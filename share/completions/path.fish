@@ -25,7 +25,7 @@ complete -f -c path -n "test (count (commandline -xpc)) -ge 2; and contains -- (
 complete -f -c path -n "test (count (commandline -xpc)) -ge 2; and contains -- (commandline -xpc)[2] filter is" -s x -d "Filter executable paths"
 complete -f -c path -n "test (count (commandline -xpc)) -ge 2; and contains -- (commandline -xpc)[2] mtime" -s R -l relative -d "Show seconds since the modification time"
 complete -f -c path -n "test (count (commandline -xpc)) -ge 2; and contains -- (commandline -xpc)[2] sort" \
-    -l key -x -a 'basename\t"Sort only by basename" dirname\t"Sort only by dirname" path\t"Sort by full path"'
+  -l key -x -a 'basename\t"Sort only by basename" dirname\t"Sort only by dirname" path\t"Sort by full path"'
 complete -f -c path -n "test (count (commandline -xpc)) -ge 2; and contains -- (commandline -xpc)[2] sort" -s u -l unique -d 'Only leave the first of each run with the same key'
 complete -f -c path -n "test (count (commandline -xpc)) -ge 2; and contains -- (commandline -xpc)[2] sort" -s r -l reverse -d 'Reverse the order'
 

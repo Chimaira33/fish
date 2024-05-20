@@ -5,12 +5,12 @@
 #
 
 function __fish_vim-addons_subcommand -d 'Test if vim-addons has yet to be given the subcommand'
-    for i in (commandline -xpc)
-        if contains -- $i list status install remove disable amend files show
-            return 1
-        end
+  for i in (commandline -xpc)
+    if contains -- $i list status install remove disable amend files show
+      return 1
     end
-    return 0
+  end
+  return 0
 end
 
 # Commands

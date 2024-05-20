@@ -9,11 +9,11 @@ set -l actions list available profiles active off profile profile_info recommend
 
 #first argument
 complete -k -c tuned-adm -n "test (__fish_number_of_cmd_args_wo_opts) = 1" \
-    -xa "$actions"
+  -xa "$actions"
 
 # second argument for profile subcommand
 complete -k -c tuned-adm -n "test (__fish_number_of_cmd_args_wo_opts) = 2; and __fish_seen_subcommand_from profile" \
-    -xa "$profiles"
+  -xa "$profiles"
 
 #options
 complete -k -c tuned-adm -s h -l help -d "show this help message and exit"

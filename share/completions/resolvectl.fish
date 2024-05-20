@@ -1,41 +1,41 @@
 # resolvectl (systemd 250)
 
 function __resolvectl_interfaces
-    resolvectl status | string replace -fr '^Link\s+\d+\s+\((.*)\)$' '$1'
+  resolvectl status | string replace -fr '^Link\s+\d+\s+\((.*)\)$' '$1'
 end
 
 function __resolvectl_protocols
-    resolvectl --protocol help | string match -rv ':$'
+  resolvectl --protocol help | string match -rv ':$'
 end
 
 function __resolvectl_types
-    resolvectl --type help | string match -rv ':$'
+  resolvectl --type help | string match -rv ':$'
 end
 
 function __resolvectl_classes
-    resolvectl --class help | string match -rv ':$'
+  resolvectl --class help | string match -rv ':$'
 end
 
 function __resolvectl_commands
-    printf "%b\n" "query\tResolve domain names or IP addresses" \
-        "service\tResolve service records" \
-        "openpgp\tQuery PGP keys for email" \
-        "tlsa\tQuery TLS public keys" \
-        "status\tShow current DNS settings" \
-        "statistics\tShow resolver statistics" \
-        "reset-statistics\tReset statistics counters" \
-        "flush-caches\tFlush DNS RR caches" \
-        "reset-server-features\tFlushe all feature level information" \
-        "dns\tSet per-interface DNS servers" \
-        "domain\tSet per-interface search or routing domains" \
-        "default-route\tSet per-interface default route flag" \
-        "llmnr\tSet per-interface LLMNR settings" \
-        "mdns\tSet per-interface MulticastDNS settings" \
-        "dnssec\tSet per-interface DNSSEC settings" \
-        "dnsovertls\tSet per-interface DNS-over-TLS settings" \
-        "nta\tSet per-interface DNSSEC NTA domains" \
-        "revert\tRevert the per-interface DNS configuration" \
-        "log-level\tSet the log-level"
+  printf "%b\n" "query\tResolve domain names or IP addresses" \
+    "service\tResolve service records" \
+    "openpgp\tQuery PGP keys for email" \
+    "tlsa\tQuery TLS public keys" \
+    "status\tShow current DNS settings" \
+    "statistics\tShow resolver statistics" \
+    "reset-statistics\tReset statistics counters" \
+    "flush-caches\tFlush DNS RR caches" \
+    "reset-server-features\tFlushe all feature level information" \
+    "dns\tSet per-interface DNS servers" \
+    "domain\tSet per-interface search or routing domains" \
+    "default-route\tSet per-interface default route flag" \
+    "llmnr\tSet per-interface LLMNR settings" \
+    "mdns\tSet per-interface MulticastDNS settings" \
+    "dnssec\tSet per-interface DNSSEC settings" \
+    "dnsovertls\tSet per-interface DNS-over-TLS settings" \
+    "nta\tSet per-interface DNSSEC NTA domains" \
+    "revert\tRevert the per-interface DNS configuration" \
+    "log-level\tSet the log-level"
 end
 
 # variables

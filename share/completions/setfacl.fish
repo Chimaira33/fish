@@ -1,19 +1,19 @@
 function __fish_facl_list_spec_keyword
-    for keyword in default user group mask other
-        echo $keyword:
-    end
+  for keyword in default user group mask other
+    echo $keyword:
+  end
 end
 
 function __fish_facl_starts_with_spec_user
-    commandline -ct | string match -r "u(ser)?:"
+  commandline -ct | string match -r "u(ser)?:"
 end
 
 function __fish_facl_starts_with_spec_group
-    commandline -ct | string match -r "g(roup)?:"
+  commandline -ct | string match -r "g(roup)?:"
 end
 
 function __fish_facl_extract_acl
-    commandline -ct | string replace -ar '.*(\w*:).*' '$1'
+  commandline -ct | string replace -ar '.*(\w*:).*' '$1'
 end
 
 complete -c setfacl -s m -s x -l modify -l remove -l set -n __fish_facl_starts_with_spec_user -a '(__fish_facl_extract_acl)(__fish_complete_users  | string replace -a "\t" ":\t")'

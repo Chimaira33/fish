@@ -2,49 +2,49 @@
 # By Jason Brokaw (github.com/jbbrokaw)
 
 function __fish_list_available_addons
-    heroku addons:list | awk -F":" '/^[a-z]/ {print $1}'
+  heroku addons:list | awk -F":" '/^[a-z]/ {print $1}'
 end
 
 function __fish_list_installed_addons
-    heroku addons | awk '{if (NR>1) print $1}'
+  heroku addons | awk '{if (NR>1) print $1}'
 end
 
 function __fish_list_heroku_apps
-    heroku apps | awk '{if (NR>1) print $1}'
+  heroku apps | awk '{if (NR>1) print $1}'
 end
 
 function __fish_list_heroku_config_keys
-    heroku config | awk -F':' '{if (NR>1) print $1}'
+  heroku config | awk -F':' '{if (NR>1) print $1}'
 end
 
 function __fish_list_heroku_domains
-    heroku domains | awk '{if (NR>1) print $1}'
+  heroku domains | awk '{if (NR>1) print $1}'
 end
 
 function __fish_list_heroku_dynos
-    heroku ps | awk -F':' '{if (NR>1) print $1}'
+  heroku ps | awk -F':' '{if (NR>1) print $1}'
 end
 
 function __fish_list_heroku_releases
-    heroku releases | awk '{if (NR>1) print $1}'
+  heroku releases | awk '{if (NR>1) print $1}'
 end
 
 function __fish_heroku_needs_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -eq 1
-        return 0
-    end
-    return 1
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -eq 1
+    return 0
+  end
+  return 1
 end
 
 function __fish_heroku_using_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -gt 1
-        if test $argv[1] = $cmd[2]
-            return 0
-        end
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -gt 1
+    if test $argv[1] = $cmd[2]
+      return 0
     end
-    return 1
+  end
+  return 1
 end
 
 set -l heroku_looking -c heroku -n __fish_heroku_needs_command

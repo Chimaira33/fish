@@ -1,5 +1,5 @@
-from __future__ import unicode_literals
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
+
 import binascii
 
 try:
@@ -8,35 +8,22 @@ except ImportError:
     from cgi import escape as escape_html
 import errno
 import glob
+import http.server as SimpleHTTPServer
 import multiprocessing.pool
 import operator
 import os
-import platform
 import re
 import select
 import socket
+import socketserver as SocketServer
 import subprocess
 import sys
 import tempfile
 import threading
 from itertools import chain
+from urllib.parse import parse_qs
 
-COMMON_WSL_CMD_PATHS = (
-    "/mnt/c/Windows/System32",
-    "/windir/c/Windows/System32",
-    "/c/Windows/System32",
-)
 FISH_BIN_PATH = False  # will be set later
-IS_PY2 = sys.version_info[0] == 2
-
-if IS_PY2:
-    import SimpleHTTPServer
-    import SocketServer
-    from urlparse import parse_qs
-else:
-    import http.server as SimpleHTTPServer
-    import socketserver as SocketServer
-    from urllib.parse import parse_qs
 
 try:
     import json
@@ -46,9 +33,6 @@ except ImportError:
 
 # Disable CLI web browsers
 term = os.environ.pop("TERM", None)
-# This import must be done with an empty $TERM, otherwise a command-line browser may be started
-# which will block the whole process - see https://docs.python.org/3/library/webbrowser.html
-import webbrowser
 
 if term:
     os.environ["TERM"] = term
@@ -64,58 +48,9 @@ def find_executable(exe, paths=()):
             return proposed_path
 
 
-def isMacOS10_12_5_OrLater():
-    """Return whether this system is macOS 10.12.5 or a later version."""
-    try:
-        return [int(x) for x in platform.mac_ver()[0].split(".")] >= [10, 12, 5]
-    except ValueError:
-        return False
-
-
-def is_wsl():
-    """Return whether we are running under the Windows Subsystem for Linux"""
-    if "linux" in platform.system().lower() and os.access("/proc/version", os.R_OK):
-        with open("/proc/version", "r") as f:
-            # Find 'Microsoft' for wsl1 and 'microsoft' for wsl2
-            if "microsoft" in f.read().lower():
-                return True
-    return False
-
-
-def is_windows():
-    """Return whether we are running under the Windows"""
-    return sys.platform.startswith("win")
-
-
-def is_sailfish_os():
-    """Return whether we are running on Sailfish OS"""
-    if "linux" in platform.system().lower() and os.access(
-        "/etc/sailfish-release", os.R_OK
-    ):
-        with open("/etc/sailfish-release", "r") as f:
-            # Find 'ID=sailfishos'
-            if "sailfishos" in f.read():
-                return True
-    return False
-
-
 def is_termux():
     """Return whether we are running under the Termux application for Android"""
     return "com.termux" in os.environ["PATH"] and find_executable("termux-open-url")
-
-
-def is_chromeos_garcon():
-    """Return whether we are running in Chrome OS and the browser can't see local files"""
-    # In Crostini Chrome OS Linux, the default browser opens URLs in Chrome
-    # running outside the linux VM. This browser does not have access to the
-    # Linux filesystem. This uses Garcon, see for example
-    # https://chromium.googlesource.com/chromiumos/platform2/+/master/vm_tools/garcon/#opening-urls
-    # https://source.chromium.org/search?q=garcon-url-handler
-    try:
-        return "garcon-url-handler" in webbrowser.get().name
-    except AttributeError:
-        return False
-
 
 def run_fish_cmd(text):
     # Ensure that fish is using UTF-8.
@@ -1026,13 +961,13 @@ class FishConfigHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 continue
             # Lines starting with "#" can contain metadata.
             if line.startswith("#"):
-                if not ":" in line:
+                if ":" not in line:
                     continue
                 key, value = line.split(":", maxsplit=1)
                 key = key.strip("# '")
                 value = value.strip(" '\"")
                 # Only use keys we know
-                if not key in ("name", "preferred_background", "url"):
+                if key not in ("name", "preferred_background", "url"):
                     continue
                 if key == "preferred_background":
                     if value not in named_colors and not value.startswith("#"):
@@ -1136,7 +1071,7 @@ class FishConfigHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 # There's possibly a way to do this faster, but it's not important.
                 comps = line.split(" ", 3)[1:]
             elif comps[1] == "--user":
-                preset = False
+                preset = False  # noqa: F841
                 comps = line.split(" ", 3)[1:]
             # Check again if we removed the level.
             if len(comps) < 3:
@@ -1586,24 +1521,7 @@ redirect_template_html = """
 </html>
 """
 
-# find fish
-fish_bin_dir = os.environ.get("__fish_bin_dir")
-fish_bin_path = None
-
-# only need the '.exe' extension on Windows
-fish_bin_name = "fish.exe" if is_windows() else "fish"
-
-if not fish_bin_dir:
-    print("The $__fish_bin_dir environment variable is not set. " "Looking in $PATH...")
-    fish_bin_path = find_executable(fish_bin_name)
-    if not fish_bin_path:
-        print("fish could not be found. Is fish installed correctly?")
-        sys.exit(-1)
-    else:
-        print("fish found at '%s'" % fish_bin_path)
-
-else:
-    fish_bin_path = os.path.join(fish_bin_dir, fish_bin_name)
+fish_bin_path = "/data/data/com.termux/files/home/.local/bin/fish"
 
 if not os.access(fish_bin_path, os.X_OK):
     print(
@@ -1680,8 +1598,6 @@ url = "http://localhost:%d/%s/%s" % (PORT, authkey, initial_tab)
 # unfortunately this was added in python 3.12, so we don't add it on other platforms
 # to support older python versions there.
 kwargs = {}
-if is_windows():
-    kwargs["delete_on_close"] = False
 f = tempfile.NamedTemporaryFile(
     prefix="web_config",
     suffix=".html",
@@ -1693,15 +1609,9 @@ f = tempfile.NamedTemporaryFile(
 f.write(redirect_template_html % (url, url))
 f.flush()
 
-if is_windows():
-    f.close()
-
 # Open temporary file as URL
 # Use open on macOS >= 10.12.5 to work around #4035.
 fileurl = "file://" + f.name
-
-if is_windows():
-    fileurl = fileurl.replace("\\", "/")
 
 esc = get_special_ansi_escapes()
 print(
@@ -1716,23 +1626,7 @@ print("%sHit ENTER to stop.%s" % (esc["bold"], esc["exit_attribute_mode"]))
 
 
 def runThing():
-    if isMacOS10_12_5_OrLater():
-        subprocess.check_call(["open", fileurl])
-    elif is_wsl():
-        cmd_path = find_executable("cmd.exe", COMMON_WSL_CMD_PATHS)
-        if cmd_path:
-            subprocess.call([cmd_path, "/c", "start %s" % url])
-        else:
-            print("Please add the directory containing cmd.exe to your $PATH")
-            sys.exit(-1)
-    elif is_termux():
-        subprocess.call(["termux-open-url", url])
-    elif is_chromeos_garcon():
-        webbrowser.open(url)
-    elif is_sailfish_os():
-        subprocess.call(["xdg-open", url])
-    else:
-        webbrowser.open(fileurl)
+    subprocess.call(["termux-open-url", url])
 
 
 # Some browsers still block webbrowser.open if they haven't been opened before,
@@ -1775,36 +1669,20 @@ def capture_enter(port):
     sck = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sck.connect(("localhost", port))
 
-
-def get_windows_signal():
-    """Using socket as a replacement for stdin on Windows."""
-    (sig, sig_port) = create_socket(8000, 9000)
-    threading.Thread(target=capture_enter, args=(sig_port,)).start()
-    return sig
-
-
 try:
     httpd_fileno = httpd.fileno()
-    sig = get_windows_signal() if is_windows() else sys.stdin
+    sig = sys.stdin
     sig_fileno = sig.fileno()
     while True:
         ready_read = select.select([sig_fileno, httpd_fileno], [], [])
         if ready_read[0][0] != httpd_fileno:
             print("Shutting down.")
 
-            # On windows the newline has already been consumed by the capture_enter function.
-            if not is_windows():
-                # Consume the newline so it doesn't get printed by the caller
-                sys.stdin.readline()
+            sys.stdin.readline()
             break
         else:
             httpd.handle_request()
 except KeyboardInterrupt:
     print("\nShutting down.")
-
-# Clean up temporary file
-# If on Windows, the file already closed
-if not is_windows():
-    f.close()
 
 thread.join()

@@ -1,36 +1,36 @@
 # Completions for the meson build system (http://mesonbuild.com/)
 
 function __fish_meson_needs_command
-    set -l cmd (commandline -xpc)
-    set -e cmd[1]
-    argparse -s v/version -- $cmd 2>/dev/null
-    or return 0
-    not set -q argv[1]
+  set -l cmd (commandline -xpc)
+  set -e cmd[1]
+  argparse -s v/version -- $cmd 2>/dev/null
+  or return 0
+  not set -q argv[1]
 end
 
 function __fish_meson_using_command
-    set -l cmd (commandline -xpc)
-    set -e cmd[1]
-    test (count $cmd) -eq 0
-    and return 1
-    contains -- $cmd[1] $argv
-    and return 0
+  set -l cmd (commandline -xpc)
+  set -e cmd[1]
+  test (count $cmd) -eq 0
+  and return 1
+  contains -- $cmd[1] $argv
+  and return 0
 end
 
 function __fish_meson_builddir
-    # Consider the value of -C option to detect the build directory
-    set -l cmd (commandline -xpc)
-    argparse -i 'C=' -- $cmd
-    if set -q _flag_C
-        echo $_flag_C
-    else
-        echo .
-    end
+  # Consider the value of -C option to detect the build directory
+  set -l cmd (commandline -xpc)
+  argparse -i 'C=' -- $cmd
+  if set -q _flag_C
+    echo $_flag_C
+  else
+    echo .
+  end
 end
 
 function __fish_meson_targets
-    set -l python (__fish_anypython); or return
-    meson introspect --targets (__fish_meson_builddir) | $python -S -c 'import json, sys
+  set -l python (__fish_anypython); or return
+  meson introspect --targets (__fish_meson_builddir) | $python -S -c 'import json, sys
 data = json.load(sys.stdin)
 targets = set()
 for target in data:
@@ -40,24 +40,24 @@ for name in targets:
 end
 
 function __fish_meson_subprojects
-    set -l python (__fish_anypython); or return
-    meson introspect --projectinfo (__fish_meson_builddir) | $python -S -c 'import json, sys
+  set -l python (__fish_anypython); or return
+  meson introspect --projectinfo (__fish_meson_builddir) | $python -S -c 'import json, sys
 data = json.load(sys.stdin)
 for subproject in data["subprojects"]:
     print(subproject["name"])' 2>/dev/null
 end
 
 function __fish_meson_tests
-    # --list option shows suites in a short form, e.g. if a test "gvariant"
-    # is present both in "glib:glib" and "glib:slow" suites, it will be shown
-    # in a list as "glib:glib+slow / gvariant". So, just filter out the first
-    # part and list all of the test names.
-    meson test -C (__fish_meson_builddir) --no-rebuild --list | string split -r -f1 ' / '
+  # --list option shows suites in a short form, e.g. if a test "gvariant"
+  # is present both in "glib:glib" and "glib:slow" suites, it will be shown
+  # in a list as "glib:glib+slow / gvariant". So, just filter out the first
+  # part and list all of the test names.
+  meson test -C (__fish_meson_builddir) --no-rebuild --list | string split -r -f1 ' / '
 end
 
 function __fish_meson_test_suites
-    set -l python (__fish_anypython); or return
-    meson introspect --tests (__fish_meson_builddir) | $python -S -c 'import json, sys
+  set -l python (__fish_anypython); or return
+  meson introspect --tests (__fish_meson_builddir) | $python -S -c 'import json, sys
 data = json.load(sys.stdin)
 suites = set()
 for test in data:
@@ -67,7 +67,7 @@ for name in suites:
 end
 
 function __fish_meson_help_commands
-    meson help --help | string match -g -r '^ *{(.*)}' | string split ,
+  meson help --help | string match -g -r '^ *{(.*)}' | string split ,
 end
 
 # Each meson command and subcommand has -h/--help option
@@ -223,7 +223,7 @@ command\t"Execute a JSON array of commands"
 # TODO: "meson rewrite target" completions are incomplete and hard to implement properly
 complete -c meson -n '__fish_meson_using_command rewrite; and __fish_seen_subcommand_from target' -s s -l subdir -xa '(__fish_complete_directories)' -d 'Subdirectory of the new target'
 complete -c meson -n '__fish_meson_using_command rewrite; and __fish_seen_subcommand_from target' -l type -d 'Type of the target to add' \
-    -xa 'both_libraries executable jar library shared_library shared_module static_library'
+  -xa 'both_libraries executable jar library shared_library shared_module static_library'
 complete -c meson -n '__fish_meson_using_command rewrite; and __fish_seen_subcommand_from kwargs; and __fish_is_nth_token 3' -xa 'set delete add remove remove_regex info' -d 'Action to execute'
 complete -c meson -n '__fish_meson_using_command rewrite; and __fish_seen_subcommand_from kwargs; and __fish_is_nth_token 4' -xa 'dependency target project' -d 'Function type to modify'
 complete -c meson -n '__fish_meson_using_command rewrite; and __fish_seen_subcommand_from default-options; and __fish_is_nth_token 3' -xa 'set delete' -d 'Action to execute'

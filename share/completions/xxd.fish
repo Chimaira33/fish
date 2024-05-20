@@ -1,15 +1,15 @@
 function __fish_seen_any_argument
-    # Returns true if none of the switch names appear in the command line.
-    for arg in $argv
-        switch (string length $arg)
-            case 2
-                __fish_seen_argument -o $arg; and return 1
-            case 1
-                __fish_seen_argument -s $arg; and return 1
-            case '*'
-                __fish_seen_argument -l $arg; and return 1
-        end
+  # Returns true if none of the switch names appear in the command line.
+  for arg in $argv
+    switch (string length $arg)
+      case 2
+        __fish_seen_argument -o $arg; and return 1
+      case 1
+        __fish_seen_argument -s $arg; and return 1
+      case '*'
+        __fish_seen_argument -l $arg; and return 1
     end
+  end
 end
 
 set -l xxd_exclusive_args b e i ps r

@@ -1,25 +1,25 @@
 # Completion for bundler
 
 function __fish_bundle_no_command -d 'Test if bundle has been given no subcommand'
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -eq 1
-        return 0
-    end
-    return 1
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -eq 1
+    return 0
+  end
+  return 1
 end
 
 function __fish_bundle_using_command -d 'Test if bundle has been given a specific subcommand'
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -gt 1
-        if test $argv[1] = $cmd[2]
-            return 0
-        end
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -gt 1
+    if test $argv[1] = $cmd[2]
+      return 0
     end
-    return 1
+  end
+  return 1
 end
 
 function __fish_bundled_gems
-    bundle list | sed '1 d' | sed -e 's/\*//g' -e 's/(.*)//g' -e 's/^ *//g' -e 's/ *$//g'
+  bundle list | sed '1 d' | sed -e 's/\*//g' -e 's/(.*)//g' -e 's/^ *//g' -e 's/ *$//g'
 end
 
 # Options for all commands

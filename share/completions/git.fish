@@ -3,623 +3,623 @@
 # Use this instead of calling git directly; it passes the commands that are
 # already present on the commandline to git. This is relevant for --work-tree etc, see issue #6219.
 function __fish_git
-    set -l saved_args $argv
-    set -l global_args
-    set -l cmd (commandline -xpc)
-    # We assume that git is the first command until we have a better awareness of subcommands, see #2705.
-    set -e cmd[1]
-    if argparse -s (__fish_git_global_optspecs) -- $cmd 2>/dev/null
-        # All arguments that were parsed by argparse are global git options.
-        set -l num_global_args (math (count $cmd) - (count $argv))
-        if test $num_global_args -ne 0
-            set global_args $cmd[1..$num_global_args]
-        end
+  set -l saved_args $argv
+  set -l global_args
+  set -l cmd (commandline -xpc)
+  # We assume that git is the first command until we have a better awareness of subcommands, see #2705.
+  set -e cmd[1]
+  if argparse -s (__fish_git_global_optspecs) -- $cmd 2>/dev/null
+    # All arguments that were parsed by argparse are global git options.
+    set -l num_global_args (math (count $cmd) - (count $argv))
+    if test $num_global_args -ne 0
+      set global_args $cmd[1..$num_global_args]
     end
-    # Using 'command git' to avoid interactions for aliases from git to (e.g.) hub
-    command git $global_args $saved_args 2>/dev/null
+  end
+  # Using 'command git' to avoid interactions for aliases from git to (e.g.) hub
+  command git $global_args $saved_args 2>/dev/null
 end
 
 # Print an optspec for argparse to handle git's options that are independent of any subcommand.
 function __fish_git_global_optspecs
-    string join \n v-version h/help C= c=+ 'e-exec-path=?' H-html-path M-man-path I-info-path p/paginate \
-        P/no-pager o-no-replace-objects b-bare G-git-dir= W-work-tree= N-namespace= S-super-prefix= \
-        l-literal-pathspecs g-glob-pathspecs O-noglob-pathspecs i-icase-pathspecs
+  string join \n v-version h/help C= c=+ 'e-exec-path=?' H-html-path M-man-path I-info-path p/paginate \
+    P/no-pager o-no-replace-objects b-bare G-git-dir= W-work-tree= N-namespace= S-super-prefix= \
+    l-literal-pathspecs g-glob-pathspecs O-noglob-pathspecs i-icase-pathspecs
 end
 
 function __fish_git_commits
-    # Complete commits with their subject line as the description
-    # This allows filtering by subject with the new pager!
-    # Because even subject lines can be quite long,
-    # trim them (abbrev'd hash+tab+subject) to 73 characters
-    #
-    # Hashes we just truncate ourselves to 10 characters, without disambiguating.
-    # That technically means that sometimes we don't give usable SHAs,
-    # but according to https://stackoverflow.com/a/37403152/3150338,
-    # that happens for 3 commits out of 600k.
-    # For fish, at the time of writing, out of 12200 commits, 7 commits need 8 characters.
-    # And since this takes about 1/3rd of the time that disambiguating takes...
-    __fish_git log --no-show-signature --pretty=tformat:"%H"\t"%<(64,trunc)%s" --all --max-count=1000 2>/dev/null \
-        | string replace -r '^([0-9a-f]{10})[0-9a-f]*\t(.*)' '$1\t$2'
+  # Complete commits with their subject line as the description
+  # This allows filtering by subject with the new pager!
+  # Because even subject lines can be quite long,
+  # trim them (abbrev'd hash+tab+subject) to 73 characters
+  #
+  # Hashes we just truncate ourselves to 10 characters, without disambiguating.
+  # That technically means that sometimes we don't give usable SHAs,
+  # but according to https://stackoverflow.com/a/37403152/3150338,
+  # that happens for 3 commits out of 600k.
+  # For fish, at the time of writing, out of 12200 commits, 7 commits need 8 characters.
+  # And since this takes about 1/3rd of the time that disambiguating takes...
+  __fish_git log --no-show-signature --pretty=tformat:"%H"\t"%<(64,trunc)%s" --all --max-count=1000 2>/dev/null \
+    | string replace -r '^([0-9a-f]{10})[0-9a-f]*\t(.*)' '$1\t$2'
 end
 
 function __fish_git_recent_commits
-    # Like __fish_git_commits, but not on all branches and limited to
-    # the last 50 commits. Used for fixup, where only the current branch
-    # and the latest commits make sense.
-    __fish_git log --no-show-signature --pretty=tformat:"%h"\t"%<(64,trunc)%s" --max-count=50 $argv 2>/dev/null
+  # Like __fish_git_commits, but not on all branches and limited to
+  # the last 50 commits. Used for fixup, where only the current branch
+  # and the latest commits make sense.
+  __fish_git log --no-show-signature --pretty=tformat:"%h"\t"%<(64,trunc)%s" --max-count=50 $argv 2>/dev/null
 end
 
 function __fish_git_branches
-    # This is much faster than using `git branch` and avoids dealing with localized "detached HEAD" messages.
-    # We intentionally only sort local branches by recency. See discussion in #9248.
-    __fish_git for-each-ref --format='%(refname:strip=2)%09Local Branch' --sort=-committerdate refs/heads/ 2>/dev/null
-    __fish_git for-each-ref --format='%(refname:strip=2)%09Remote Branch' refs/remotes/ 2>/dev/null
+  # This is much faster than using `git branch` and avoids dealing with localized "detached HEAD" messages.
+  # We intentionally only sort local branches by recency. See discussion in #9248.
+  __fish_git for-each-ref --format='%(refname:strip=2)%09Local Branch' --sort=-committerdate refs/heads/ 2>/dev/null
+  __fish_git for-each-ref --format='%(refname:strip=2)%09Remote Branch' refs/remotes/ 2>/dev/null
 end
 
 function __fish_git_submodules
-    __fish_git submodule 2>/dev/null \
-        | string replace -r '^.[^ ]+ ([^ ]+).*$' '$1'
+  __fish_git submodule 2>/dev/null \
+    | string replace -r '^.[^ ]+ ([^ ]+).*$' '$1'
 end
 
 function __fish_git_local_branches
-    __fish_git for-each-ref --format='%(refname:strip=2)%09Local Branch' --sort=-committerdate refs/heads/ 2>/dev/null
+  __fish_git for-each-ref --format='%(refname:strip=2)%09Local Branch' --sort=-committerdate refs/heads/ 2>/dev/null
 end
 
 function __fish_git_unique_remote_branches
-    # `git checkout` accepts remote branches without the remote part
-    # if they are unambiguous.
-    # E.g. if only alice has a "frobulate" branch
-    # `git checkout frobulate` is equivalent to `git checkout -b frobulate --track alice/frobulate`.
-    __fish_git for-each-ref --format="%(refname:strip=3)" \
-        --sort="refname:strip=3" \
-        "refs/remotes/*/$match*" "refs/remotes/*/*/**" 2>/dev/null | uniq -u
+  # `git checkout` accepts remote branches without the remote part
+  # if they are unambiguous.
+  # E.g. if only alice has a "frobulate" branch
+  # `git checkout frobulate` is equivalent to `git checkout -b frobulate --track alice/frobulate`.
+  __fish_git for-each-ref --format="%(refname:strip=3)" \
+    --sort="refname:strip=3" \
+    "refs/remotes/*/$match*" "refs/remotes/*/*/**" 2>/dev/null | uniq -u
 end
 
 function __fish_git_tags
-    __fish_git tag --sort=-creatordate 2>/dev/null
+  __fish_git tag --sort=-creatordate 2>/dev/null
 end
 
 function __fish_git_heads
-    set -l gitdir (__fish_git rev-parse --git-dir 2>/dev/null)
-    or return # No git dir, no need to even test.
-    for head in HEAD FETCH_HEAD ORIG_HEAD MERGE_HEAD
-        if test -f $gitdir/$head
-            echo $head
-        end
+  set -l gitdir (__fish_git rev-parse --git-dir 2>/dev/null)
+  or return # No git dir, no need to even test.
+  for head in HEAD FETCH_HEAD ORIG_HEAD MERGE_HEAD
+    if test -f $gitdir/$head
+      echo $head
     end
+  end
 end
 
 function __fish_git_refs
-    __fish_git_branches
-    __fish_git_tags
-    __fish_git_heads
+  __fish_git_branches
+  __fish_git_tags
+  __fish_git_heads
 end
 
 function __fish_git_remotes
-    __fish_git remote 2>/dev/null
+  __fish_git remote 2>/dev/null
 end
 
 function __fish_git_files
-    # A function to show various kinds of files git knows about,
-    # by parsing `git status --porcelain`.
-    #
-    # This accepts arguments to denote the kind of files:
-    # - added: Staged added files (unstaged adds are untracked)
-    # - copied
-    # - deleted
-    # - deleted-staged
-    # - ignored
-    # - modified: Files that have been modified (but aren't staged)
-    # - modified-staged: Staged modified files
-    # - renamed
-    # - untracked
-    # and as a convenience "all-staged"
-    # to get _all_ kinds of staged files.
+  # A function to show various kinds of files git knows about,
+  # by parsing `git status --porcelain`.
+  #
+  # This accepts arguments to denote the kind of files:
+  # - added: Staged added files (unstaged adds are untracked)
+  # - copied
+  # - deleted
+  # - deleted-staged
+  # - ignored
+  # - modified: Files that have been modified (but aren't staged)
+  # - modified-staged: Staged modified files
+  # - renamed
+  # - untracked
+  # and as a convenience "all-staged"
+  # to get _all_ kinds of staged files.
 
-    # Save the repo root to remove it from the path later.
-    set -l root (__fish_git rev-parse --show-toplevel --is-bare-repository 2>/dev/null)
-    or return
+  # Save the repo root to remove it from the path later.
+  set -l root (__fish_git rev-parse --show-toplevel --is-bare-repository 2>/dev/null)
+  or return
 
-    # Skip bare repositories.
-    test "$root[2]" = true
-    and return
-    or set -e root[2]
+  # Skip bare repositories.
+  test "$root[2]" = true
+  and return
+  or set -e root[2]
 
-    # Cache the translated descriptions so we don't have to get it
-    # once per file.
-    contains -- all-staged $argv; and set -l all_staged
-    contains -- unmerged $argv; and set -l unmerged
-    and set -l unmerged_desc "Unmerged File"
-    contains -- added $argv; or set -ql all_staged; and set -l added
-    and set -l added_desc "Added file"
-    contains -- modified $argv; and set -l modified
-    and set -l modified_desc "Modified file"
-    contains -- untracked $argv; and set -l untracked
-    and set -l untracked_desc "Untracked file"
-    contains -- modified-staged $argv; or set -ql all_staged; and set -l modified_staged
-    and set -l staged_modified_desc "Staged modified file"
-    contains -- modified-staged-deleted $argv; or set -ql modified_staged; and set -l modified_staged_deleted
-    and set -l modified_staged_deleted_desc "Staged modified and deleted file"
-    contains -- deleted $argv; and set -l deleted
-    and set -l deleted_desc "Deleted file"
-    contains -- deleted-staged $argv; or set -ql all_staged; and set -l deleted_staged
-    and set -l staged_deleted_desc "Staged deleted file"
-    contains -- ignored $argv; and set -l ignored
-    and set -l ignored_desc "Ignored file"
-    contains -- renamed $argv; and set -l renamed
-    and set -l renamed_desc "Renamed file"
-    contains -- copied $argv; and set -l copied
-    and set -l copied_desc "Copied file"
+  # Cache the translated descriptions so we don't have to get it
+  # once per file.
+  contains -- all-staged $argv; and set -l all_staged
+  contains -- unmerged $argv; and set -l unmerged
+  and set -l unmerged_desc "Unmerged File"
+  contains -- added $argv; or set -ql all_staged; and set -l added
+  and set -l added_desc "Added file"
+  contains -- modified $argv; and set -l modified
+  and set -l modified_desc "Modified file"
+  contains -- untracked $argv; and set -l untracked
+  and set -l untracked_desc "Untracked file"
+  contains -- modified-staged $argv; or set -ql all_staged; and set -l modified_staged
+  and set -l staged_modified_desc "Staged modified file"
+  contains -- modified-staged-deleted $argv; or set -ql modified_staged; and set -l modified_staged_deleted
+  and set -l modified_staged_deleted_desc "Staged modified and deleted file"
+  contains -- deleted $argv; and set -l deleted
+  and set -l deleted_desc "Deleted file"
+  contains -- deleted-staged $argv; or set -ql all_staged; and set -l deleted_staged
+  and set -l staged_deleted_desc "Staged deleted file"
+  contains -- ignored $argv; and set -l ignored
+  and set -l ignored_desc "Ignored file"
+  contains -- renamed $argv; and set -l renamed
+  and set -l renamed_desc "Renamed file"
+  contains -- copied $argv; and set -l copied
+  and set -l copied_desc "Copied file"
 
-    # git status --porcelain gives us all the info we need, in a format we don't.
-    # The v2 format has better documentation and doesn't use " " to denote anything,
-    # but it's only been added in git 2.11.0, which was released November 2016.
+  # git status --porcelain gives us all the info we need, in a format we don't.
+  # The v2 format has better documentation and doesn't use " " to denote anything,
+  # but it's only been added in git 2.11.0, which was released November 2016.
 
-    # Also, we ignore submodules because they aren't useful as arguments (generally),
-    # and they slow things down quite significantly.
-    # E.g. `git reset $submodule` won't do anything (not even print an error).
-    # --ignore-submodules=all was added in git 1.7.2, released July 2010.
-    #
-    set -l status_opt --ignore-submodules=all
+  # Also, we ignore submodules because they aren't useful as arguments (generally),
+  # and they slow things down quite significantly.
+  # E.g. `git reset $submodule` won't do anything (not even print an error).
+  # --ignore-submodules=all was added in git 1.7.2, released July 2010.
+  #
+  set -l status_opt --ignore-submodules=all
 
-    # If we aren't looking for ignored files, let git status skip them.
-    # (don't use --ignored=no because that was only added in git 2.16, from Jan 2018.
-    set -q ignored; and set -a status_opt --ignored
+  # If we aren't looking for ignored files, let git status skip them.
+  # (don't use --ignored=no because that was only added in git 2.16, from Jan 2018.
+  set -q ignored; and set -a status_opt --ignored
 
-    # If we're looking for untracked files, we give untracked files even inside untracked directories.
-    # This makes it nicer if e.g. you're in an untracked directory and want to just add one file.
-    set -q untracked; and set -a status_opt -uall
-    or set -a status_opt -uno
+  # If we're looking for untracked files, we give untracked files even inside untracked directories.
+  # This makes it nicer if e.g. you're in an untracked directory and want to just add one file.
+  set -q untracked; and set -a status_opt -uall
+  or set -a status_opt -uno
 
-    # We need to set status.relativePaths to true because the porcelain v2 format still honors that,
-    # and core.quotePath to false so characters > 0x80 (i.e. non-ASCII) aren't considered special.
-    # We explicitly enable globs so we can use that to match the current token.
-    set -l git_opt -c status.relativePaths -c core.quotePath=
+  # We need to set status.relativePaths to true because the porcelain v2 format still honors that,
+  # and core.quotePath to false so characters > 0x80 (i.e. non-ASCII) aren't considered special.
+  # We explicitly enable globs so we can use that to match the current token.
+  set -l git_opt -c status.relativePaths -c core.quotePath=
 
-    # If the token starts with `./`, we need to prepend that
-    string match -q './*' -- (commandline -ct)
-    and set -l rel ./
-    or set -l rel
+  # If the token starts with `./`, we need to prepend that
+  string match -q './*' -- (commandline -ct)
+  and set -l rel ./
+  or set -l rel
 
-    # If the token starts with `:`, it's from the repo root
-    string match -q ':*' -- (commandline -ct)
-    and set -l colon 1
-    or set -l colon
+  # If the token starts with `:`, it's from the repo root
+  string match -q ':*' -- (commandline -ct)
+  and set -l colon 1
+  or set -l colon
 
-    # We pick the v2 format if we can, because it shows relative filenames (if used without "-z").
-    # We fall back on the v1 format by reading git's _version_, because trying v2 first is too slow.
-    set -l ver (__fish_git --version | string replace -rf 'git version (\d+)\.(\d+)\.?.*' '$1\n$2')
-    # Version >= 2.11.* has the v2 format.
-    if test "$ver[1]" -gt 2 2>/dev/null; or test "$ver[1]" -eq 2 -a "$ver[2]" -ge 11 2>/dev/null
-        set -l stats (__fish_git $git_opt status --porcelain=2 $status_opt)
-        if set -ql untracked
-            # Fast path for untracked files - it is extremely easy to get a lot of these,
-            # so we handle them first
-            set -l files (string match -rg '^\? "?(.*)"?' -- $stats)
-            set stats (string match -rv '^\? ' -- $stats)
-            printf "$rel%s\n" $files\t$untracked_desc
-            if set -ql colon[1]
-                or set files (string match '../*' -- $files)
-                set files (path resolve -- $files | string replace -- "$root/" ":/:")
-                and printf '%s\n' $files\t$untracked_desc
-            end
-        end
-        printf %s\n $stats | while read -la -d ' ' line
-            set -l file
-            set -l desc
-            # The basic status format is "XY", where X is "our" state (meaning the staging area),
-            # and "Y" is "their" state.
-            # A "." means it's unmodified.
-            switch "$line[1..2]"
-                case 'u *'
-                    # Unmerged
-                    # "Unmerged entries have the following format; the first character is a "u" to distinguish from ordinary changed entries."
-                    # "u <xy> <sub> <m1> <m2> <m3> <mW> <h1> <h2> <h3> <path>"
-                    # This is first to distinguish it from normal modifications et al.
-                    set -ql unmerged
-                    and set file "$line[11..-1]"
-                    and set desc $unmerged_desc
-                case '2 .R*' '2 R.*'
-                    # Renamed/Copied
-                    # From the docs: "Renamed or copied entries have the following format:"
-                    # "2 <XY> <sub> <mH> <mI> <mW> <hH> <hI> <X><score> <path><sep><origPath>"
-                    # Since <sep> is \t, we can't really parse it unambiguously.
-                    # The "-z" format would be great here!
-                    set -ql renamed
-                    and set file (string replace -r '\t[^\t]*' '' -- "$line[10..-1]")
-                    and set desc $renamed_desc
-                case '2 RM*' '2 RT*'
-                    # Staged as renamed, with unstaged modifications (issue #6031)
-                    set -ql renamed
-                    or set -ql modified
-                    and set file (string replace -r '\t[^\t]*' '' -- "$line[10..-1]")
-                    set -ql renamed
-                    and set desc $renamed_desc
-                    set -ql modified
-                    and set --append desc $modified_desc
-                case '2 RD*'
-                    # Staged as renamed, but deleted in the worktree
-                    set -ql renamed
-                    or set -ql deleted
-                    and set file (string replace -r '\t[^\t]*' '' -- "$line[10..-1]")
-                    set -ql renamed
-                    and set desc $renamed_desc
-                    set -ql deleted
-                    and set --append desc $deleted_desc
-                case '2 .C*' '2 C.*'
-                    set -ql copied
-                    and set file (string replace -r '\t[^\t].*' '' -- "$line[10..-1]")
-                    and set desc $copied_desc
-                case '1 A.*'
-                    # Additions are only shown here if they are staged.
-                    # Otherwise it's an untracked file.
-                    set -ql added
-                    and set file "$line[9..-1]"
-                    and set desc $added_desc
-                case '1 AD*'
-                    # Added files that were since deleted
-                    if set -ql added
-                        set file "$line[9..-1]"
-                        set desc $added_desc
-                    else if set -ql deleted
-                        set file "$line[9..-1]"
-                        set desc $deleted_desc
-                    end
-                case "1 AM*" "1 AT*"
-                    # Added files with additional modifications
-                    # ("T" is type-changed. As of git 2.33 this appears to be undocumented.
-                    # it happens when e.g. a file is replaced with a symlink.
-                    # For our purposes it's the same as modified)
-                    if set -ql added
-                        set file "$line[9..-1]"
-                        set desc $added_desc
-                    else if set -ql modified
-                        set file "$line[9..-1]"
-                        set desc $modified_desc
-                    end
-                case '1 .A*'
-                    # Files added with git add --intent-to-add.
-                    set -ql untracked
-                    and set file "$line[9..-1]"
-                    and set desc $untracked_desc
-                case '1 .M*' '1 .T*'
-                    # Modified
-                    # From the docs: "Ordinary changed entries have the following format:"
-                    # "1 <XY> <sub> <mH> <mI> <mW> <hH> <hI> <path>"
-                    # Since <path> can contain spaces, print from element 9 onwards
-                    set -ql modified
-                    and set file "$line[9..-1]"
-                    and set desc $modified_desc
-                case '1 MD*' '1 TD*'
-                    set -ql modified_staged_deleted
-                    and set file "$line[9..-1]"
-                    and set desc $modified_staged_deleted_desc
-                case '1 M.*' '1 T.*'
-                    # If the character is first ("M."), then that means it's "our" change,
-                    # which means it is staged.
-                    # This is useless for many commands - e.g. `checkout` won't do anything with this.
-                    # So it needs to be requested explicitly.
-                    set -ql modified_staged
-                    and set file "$line[9..-1]"
-                    and set desc $staged_modified_desc
-                case '1 MM*' '1 MT*' '1 TM*' '1 TT*'
-                    # Staged-modified with unstaged modifications
-                    # These need to be offered for both kinds of modified.
-                    if set -ql modified
-                        set file "$line[9..-1]"
-                        set desc $modified_desc
-                    else if set -ql modified_staged
-                        set file "$line[9..-1]"
-                        set desc $staged_modified_desc
-                    end
-                case '1 .D*'
-                    set -ql deleted
-                    and set file "$line[9..-1]"
-                    and set desc $deleted_desc
-                case '1 D.*'
-                    # TODO: The docs are unclear on this.
-                    # There is both X unmodified and Y either M or D ("not updated")
-                    # and Y is D and X is unmodified or [MARC] ("deleted in work tree").
-                    # For our purposes, we assume this is a staged deletion.
-                    set -ql deleted_staged
-                    and set file "$line[9..-1]"
-                    and set desc $staged_deleted_desc
-                case '! *'
-                    # Ignored
-                    # "! <path>" - print from element 2 on.
-                    set -ql ignored
-                    and set file "$line[2..-1]"
-                    and set desc $ignored_desc
-            end
-            # Only try printing if the file was selected.
-            if set -q file[1]
-                # Without "-z", git sometimes _quotes_ filenames.
-                # It adds quotes around it _and_ escapes the character.
-                # e.g. `"a\\b"`.
-                # We just remove the quotes and hope it works out.
-                # If this contains newlines or tabs,
-                # there is nothing we can do, but that's a general issue with scripted completions.
-                set file (string trim -c \" -- $file)
-                # The (possibly relative) filename.
-                printf "$rel%s\n" "$file"\t$desc
-                # Now from repo root.
-                # Only do this if the filename isn't a simple child,
-                # or the current token starts with ":"
-                if set -ql colon[1]; or string match -q '../*' -- $file
-                    set -l fromroot (path resolve -- $file 2>/dev/null)
-                    # `:` starts pathspec "magic", and the second `:` terminates it.
-                    # `/` is the magic letter for "from repo root".
-                    # If we didn't terminate it we'd have to escape any special chars
-                    # (non-alphanumeric, glob or regex special characters, in whatever dialect git uses)
-                    and set fromroot (string replace -- "$root/" ":/:" "$fromroot")
-                    and printf '%s\n' "$fromroot"\t$desc
-                end
-            end
-        end
-    else
-        # v1 format logic
-        # This is pretty terrible and reuqires us to do a lot of weird work.
-
-        # A literal "?" for use in `case`.
-        set -l q '\\?'
-        if status test-feature qmark-noglob
-            set q '?'
-        end
-        # Whether we need to use the next line - some entries have two lines.
-        set -l use_next
-
-        # We need to compute relative paths on our own, which is slow.
-        # Pre-remove the root at least, so we have fewer components to deal with.
-        set -l _pwd_list (string replace "$root/" "" -- $PWD/ | string split /)
-        test -z "$_pwd_list[-1]"; and set -e _pwd_list[-1]
-        # Cache the previous relative path because these are sorted, so we can reuse it
-        # often for files in the same directory.
-        set -l previous
-        # Note that we can't use space as a delimiter between status and filename, because
-        # the status can contain spaces - " M" is different from "M ".
-        __fish_git $git_opt status --porcelain -z $status_opt \
-            | while read -lz -d' ' line
-            set -l desc
-            # The entire line is the "from" from a rename.
-            if set -q use_next[1]
-                if contains -- $use_next $argv
-                    set -l var "$use_next"_desc
-                    set desc $$var
-                    set -e use_next[1]
-                else
-                    set -e use_next[1]
-                    continue
-                end
-            end
-
-            # The format is two characters for status, then a space and then
-            # up to a NUL for the filename.
-            #
-            set -l stat (string sub -l 2 -- $line)
-            # The basic status format is "XY", where X is "our" state (meaning the staging area),
-            # and "Y" is "their" state (meaning the work tree).
-            # A " " means it's unmodified.
-            #
-            # Be careful about the ordering here!
-            switch "$stat"
-                case DD AU UD UA DU AA UU
-                    # Unmerged
-                    set -ql unmerged
-                    and set desc $unmerged_desc
-                case 'R ' RM RD
-                    # Renamed/Copied
-                    # These have the "from" name as the next batch.
-                    # TODO: Do we care about the new name?
-                    set use_next renamed
-                    continue
-                case 'C ' CM CD
-                    set use_next copied
-                    continue
-                case AM
-                    if set -ql added
-                        set file "$line[9..-1]"
-                        set desc $added_desc
-                    else if set -ql modified
-                        set file "$line[9..-1]"
-                        set desc $modified_desc
-                    end
-                case AD
-                    if set -ql added
-                        set file "$line[9..-1]"
-                        set desc $added_desc
-                    else if set -ql deleted
-                        set file "$line[9..-1]"
-                        set desc $deleted_desc
-                    end
-                case 'A '
-                    # Additions are only shown here if they are staged.
-                    # Otherwise it's an untracked file.
-                    set -ql added
-                    and set desc $added_desc
-                case '*M'
-                    # Modified
-                    set -ql modified
-                    and set desc $modified_desc
-                case 'M*'
-                    # If the character is first ("M "), then that means it's "our" change,
-                    # which means it is staged.
-                    # This is useless for many commands - e.g. `checkout` won't do anything with this.
-                    # So it needs to be requested explicitly.
-                    set -ql modified_staged
-                    and set desc $staged_modified_desc
-                case '*D'
-                    set -ql deleted
-                    and set desc $deleted_desc
-                case 'D*'
-                    # TODO: The docs are unclear on this.
-                    # There is both X unmodified and Y either M or D ("not updated")
-                    # and Y is D and X is unmodified or [MARC] ("deleted in work tree").
-                    # For our purposes, we assume this is a staged deletion.
-                    set -ql deleted_staged
-                    and set desc $staged_deleted_desc
-                case "$q$q"
-                    # Untracked
-                    set -ql untracked
-                    and set desc $untracked_desc
-                case '!!'
-                    # Ignored
-                    set -ql ignored
-                    and set desc $ignored_desc
-            end
-            if set -q desc[1]
-                # Again: "XY filename", so the filename starts on character 4.
-                set -l relfile (string sub -s 4 -- $line)
-
-                set -l file
-                # Computing relative path by hand.
-                set -l abs (string split / -- $relfile)
-                # If it's in the same directory, we just need to change the filename.
-                if test "$abs[1..-2]" = "$previous[1..-2]"
-                    # If we didn't have a previous file, and the current file is in the current directory,
-                    # this would error out.
-                    #
-                    # See #5728.
-                    set -q previous[1]
-                    and set previous[-1] $abs[-1]
-                    or set previous $abs
-                else
-                    set -l pwd_list $_pwd_list
-                    # Remove common prefix
-                    while test "$pwd_list[1]" = "$abs[1]"
-                        set -e pwd_list[1]
-                        set -e abs[1]
-                    end
-                    # Go a dir up for every entry left in pwd_list, then into $abs
-                    set previous (string replace -r '.*' '..' -- $pwd_list) $abs
-                end
-                set -a file (string join / -- $previous)
-
-                # The filename with ":/:" prepended.
-                if set -ql colon[1]; or string match -q '../*' -- $file
-                    set file (string replace -- "$root/" ":/:" "$root/$relfile")
-                end
-
-                if test "$root/$relfile" -ef "$relfile"
-                    and not set -ql colon[1]
-                    set file $relfile
-                end
-
-                printf '%s\n' $file\t$desc
-            end
-        end
+  # We pick the v2 format if we can, because it shows relative filenames (if used without "-z").
+  # We fall back on the v1 format by reading git's _version_, because trying v2 first is too slow.
+  set -l ver (__fish_git --version | string replace -rf 'git version (\d+)\.(\d+)\.?.*' '$1\n$2')
+  # Version >= 2.11.* has the v2 format.
+  if test "$ver[1]" -gt 2 2>/dev/null; or test "$ver[1]" -eq 2 -a "$ver[2]" -ge 11 2>/dev/null
+    set -l stats (__fish_git $git_opt status --porcelain=2 $status_opt)
+    if set -ql untracked
+      # Fast path for untracked files - it is extremely easy to get a lot of these,
+      # so we handle them first
+      set -l files (string match -rg '^\? "?(.*)"?' -- $stats)
+      set stats (string match -rv '^\? ' -- $stats)
+      printf "$rel%s\n" $files\t$untracked_desc
+      if set -ql colon[1]
+        or set files (string match '../*' -- $files)
+        set files (path resolve -- $files | string replace -- "$root/" ":/:")
+        and printf '%s\n' $files\t$untracked_desc
+      end
     end
+    printf %s\n $stats | while read -la -d ' ' line
+      set -l file
+      set -l desc
+      # The basic status format is "XY", where X is "our" state (meaning the staging area),
+      # and "Y" is "their" state.
+      # A "." means it's unmodified.
+      switch "$line[1..2]"
+        case 'u *'
+          # Unmerged
+          # "Unmerged entries have the following format; the first character is a "u" to distinguish from ordinary changed entries."
+          # "u <xy> <sub> <m1> <m2> <m3> <mW> <h1> <h2> <h3> <path>"
+          # This is first to distinguish it from normal modifications et al.
+          set -ql unmerged
+          and set file "$line[11..-1]"
+          and set desc $unmerged_desc
+        case '2 .R*' '2 R.*'
+          # Renamed/Copied
+          # From the docs: "Renamed or copied entries have the following format:"
+          # "2 <XY> <sub> <mH> <mI> <mW> <hH> <hI> <X><score> <path><sep><origPath>"
+          # Since <sep> is \t, we can't really parse it unambiguously.
+          # The "-z" format would be great here!
+          set -ql renamed
+          and set file (string replace -r '\t[^\t]*' '' -- "$line[10..-1]")
+          and set desc $renamed_desc
+        case '2 RM*' '2 RT*'
+          # Staged as renamed, with unstaged modifications (issue #6031)
+          set -ql renamed
+          or set -ql modified
+          and set file (string replace -r '\t[^\t]*' '' -- "$line[10..-1]")
+          set -ql renamed
+          and set desc $renamed_desc
+          set -ql modified
+          and set --append desc $modified_desc
+        case '2 RD*'
+          # Staged as renamed, but deleted in the worktree
+          set -ql renamed
+          or set -ql deleted
+          and set file (string replace -r '\t[^\t]*' '' -- "$line[10..-1]")
+          set -ql renamed
+          and set desc $renamed_desc
+          set -ql deleted
+          and set --append desc $deleted_desc
+        case '2 .C*' '2 C.*'
+          set -ql copied
+          and set file (string replace -r '\t[^\t].*' '' -- "$line[10..-1]")
+          and set desc $copied_desc
+        case '1 A.*'
+          # Additions are only shown here if they are staged.
+          # Otherwise it's an untracked file.
+          set -ql added
+          and set file "$line[9..-1]"
+          and set desc $added_desc
+        case '1 AD*'
+          # Added files that were since deleted
+          if set -ql added
+            set file "$line[9..-1]"
+            set desc $added_desc
+          else if set -ql deleted
+            set file "$line[9..-1]"
+            set desc $deleted_desc
+          end
+        case "1 AM*" "1 AT*"
+          # Added files with additional modifications
+          # ("T" is type-changed. As of git 2.33 this appears to be undocumented.
+          # it happens when e.g. a file is replaced with a symlink.
+          # For our purposes it's the same as modified)
+          if set -ql added
+            set file "$line[9..-1]"
+            set desc $added_desc
+          else if set -ql modified
+            set file "$line[9..-1]"
+            set desc $modified_desc
+          end
+        case '1 .A*'
+          # Files added with git add --intent-to-add.
+          set -ql untracked
+          and set file "$line[9..-1]"
+          and set desc $untracked_desc
+        case '1 .M*' '1 .T*'
+          # Modified
+          # From the docs: "Ordinary changed entries have the following format:"
+          # "1 <XY> <sub> <mH> <mI> <mW> <hH> <hI> <path>"
+          # Since <path> can contain spaces, print from element 9 onwards
+          set -ql modified
+          and set file "$line[9..-1]"
+          and set desc $modified_desc
+        case '1 MD*' '1 TD*'
+          set -ql modified_staged_deleted
+          and set file "$line[9..-1]"
+          and set desc $modified_staged_deleted_desc
+        case '1 M.*' '1 T.*'
+          # If the character is first ("M."), then that means it's "our" change,
+          # which means it is staged.
+          # This is useless for many commands - e.g. `checkout` won't do anything with this.
+          # So it needs to be requested explicitly.
+          set -ql modified_staged
+          and set file "$line[9..-1]"
+          and set desc $staged_modified_desc
+        case '1 MM*' '1 MT*' '1 TM*' '1 TT*'
+          # Staged-modified with unstaged modifications
+          # These need to be offered for both kinds of modified.
+          if set -ql modified
+            set file "$line[9..-1]"
+            set desc $modified_desc
+          else if set -ql modified_staged
+            set file "$line[9..-1]"
+            set desc $staged_modified_desc
+          end
+        case '1 .D*'
+          set -ql deleted
+          and set file "$line[9..-1]"
+          and set desc $deleted_desc
+        case '1 D.*'
+          # TODO: The docs are unclear on this.
+          # There is both X unmodified and Y either M or D ("not updated")
+          # and Y is D and X is unmodified or [MARC] ("deleted in work tree").
+          # For our purposes, we assume this is a staged deletion.
+          set -ql deleted_staged
+          and set file "$line[9..-1]"
+          and set desc $staged_deleted_desc
+        case '! *'
+          # Ignored
+          # "! <path>" - print from element 2 on.
+          set -ql ignored
+          and set file "$line[2..-1]"
+          and set desc $ignored_desc
+      end
+      # Only try printing if the file was selected.
+      if set -q file[1]
+        # Without "-z", git sometimes _quotes_ filenames.
+        # It adds quotes around it _and_ escapes the character.
+        # e.g. `"a\\b"`.
+        # We just remove the quotes and hope it works out.
+        # If this contains newlines or tabs,
+        # there is nothing we can do, but that's a general issue with scripted completions.
+        set file (string trim -c \" -- $file)
+        # The (possibly relative) filename.
+        printf "$rel%s\n" "$file"\t$desc
+        # Now from repo root.
+        # Only do this if the filename isn't a simple child,
+        # or the current token starts with ":"
+        if set -ql colon[1]; or string match -q '../*' -- $file
+          set -l fromroot (path resolve -- $file 2>/dev/null)
+          # `:` starts pathspec "magic", and the second `:` terminates it.
+          # `/` is the magic letter for "from repo root".
+          # If we didn't terminate it we'd have to escape any special chars
+          # (non-alphanumeric, glob or regex special characters, in whatever dialect git uses)
+          and set fromroot (string replace -- "$root/" ":/:" "$fromroot")
+          and printf '%s\n' "$fromroot"\t$desc
+        end
+      end
+    end
+  else
+    # v1 format logic
+    # This is pretty terrible and reuqires us to do a lot of weird work.
+
+    # A literal "?" for use in `case`.
+    set -l q '\\?'
+    if status test-feature qmark-noglob
+      set q '?'
+    end
+    # Whether we need to use the next line - some entries have two lines.
+    set -l use_next
+
+    # We need to compute relative paths on our own, which is slow.
+    # Pre-remove the root at least, so we have fewer components to deal with.
+    set -l _pwd_list (string replace "$root/" "" -- $PWD/ | string split /)
+    test -z "$_pwd_list[-1]"; and set -e _pwd_list[-1]
+    # Cache the previous relative path because these are sorted, so we can reuse it
+    # often for files in the same directory.
+    set -l previous
+    # Note that we can't use space as a delimiter between status and filename, because
+    # the status can contain spaces - " M" is different from "M ".
+    __fish_git $git_opt status --porcelain -z $status_opt \
+      | while read -lz -d' ' line
+      set -l desc
+      # The entire line is the "from" from a rename.
+      if set -q use_next[1]
+        if contains -- $use_next $argv
+          set -l var "$use_next"_desc
+          set desc $$var
+          set -e use_next[1]
+        else
+          set -e use_next[1]
+          continue
+        end
+      end
+
+      # The format is two characters for status, then a space and then
+      # up to a NUL for the filename.
+      #
+      set -l stat (string sub -l 2 -- $line)
+      # The basic status format is "XY", where X is "our" state (meaning the staging area),
+      # and "Y" is "their" state (meaning the work tree).
+      # A " " means it's unmodified.
+      #
+      # Be careful about the ordering here!
+      switch "$stat"
+        case DD AU UD UA DU AA UU
+          # Unmerged
+          set -ql unmerged
+          and set desc $unmerged_desc
+        case 'R ' RM RD
+          # Renamed/Copied
+          # These have the "from" name as the next batch.
+          # TODO: Do we care about the new name?
+          set use_next renamed
+          continue
+        case 'C ' CM CD
+          set use_next copied
+          continue
+        case AM
+          if set -ql added
+            set file "$line[9..-1]"
+            set desc $added_desc
+          else if set -ql modified
+            set file "$line[9..-1]"
+            set desc $modified_desc
+          end
+        case AD
+          if set -ql added
+            set file "$line[9..-1]"
+            set desc $added_desc
+          else if set -ql deleted
+            set file "$line[9..-1]"
+            set desc $deleted_desc
+          end
+        case 'A '
+          # Additions are only shown here if they are staged.
+          # Otherwise it's an untracked file.
+          set -ql added
+          and set desc $added_desc
+        case '*M'
+          # Modified
+          set -ql modified
+          and set desc $modified_desc
+        case 'M*'
+          # If the character is first ("M "), then that means it's "our" change,
+          # which means it is staged.
+          # This is useless for many commands - e.g. `checkout` won't do anything with this.
+          # So it needs to be requested explicitly.
+          set -ql modified_staged
+          and set desc $staged_modified_desc
+        case '*D'
+          set -ql deleted
+          and set desc $deleted_desc
+        case 'D*'
+          # TODO: The docs are unclear on this.
+          # There is both X unmodified and Y either M or D ("not updated")
+          # and Y is D and X is unmodified or [MARC] ("deleted in work tree").
+          # For our purposes, we assume this is a staged deletion.
+          set -ql deleted_staged
+          and set desc $staged_deleted_desc
+        case "$q$q"
+          # Untracked
+          set -ql untracked
+          and set desc $untracked_desc
+        case '!!'
+          # Ignored
+          set -ql ignored
+          and set desc $ignored_desc
+      end
+      if set -q desc[1]
+        # Again: "XY filename", so the filename starts on character 4.
+        set -l relfile (string sub -s 4 -- $line)
+
+        set -l file
+        # Computing relative path by hand.
+        set -l abs (string split / -- $relfile)
+        # If it's in the same directory, we just need to change the filename.
+        if test "$abs[1..-2]" = "$previous[1..-2]"
+          # If we didn't have a previous file, and the current file is in the current directory,
+          # this would error out.
+          #
+          # See #5728.
+          set -q previous[1]
+          and set previous[-1] $abs[-1]
+          or set previous $abs
+        else
+          set -l pwd_list $_pwd_list
+          # Remove common prefix
+          while test "$pwd_list[1]" = "$abs[1]"
+            set -e pwd_list[1]
+            set -e abs[1]
+          end
+          # Go a dir up for every entry left in pwd_list, then into $abs
+          set previous (string replace -r '.*' '..' -- $pwd_list) $abs
+        end
+        set -a file (string join / -- $previous)
+
+        # The filename with ":/:" prepended.
+        if set -ql colon[1]; or string match -q '../*' -- $file
+          set file (string replace -- "$root/" ":/:" "$root/$relfile")
+        end
+
+        if test "$root/$relfile" -ef "$relfile"
+          and not set -ql colon[1]
+          set file $relfile
+        end
+
+        printf '%s\n' $file\t$desc
+      end
+    end
+  end
 end
 
 # Lists files included in the index of a commit, branch, or tag (not necessarily HEAD)
 function __fish_git_rev_files
-    set -l rev $argv[1]
-    set -l path $argv[2]
+  set -l rev $argv[1]
+  set -l path $argv[2]
 
-    # Strip any partial files from the path before handing it to `git show`
-    set -l path (string replace -r -- '(.*/|).*' '$1' $path)
+  # Strip any partial files from the path before handing it to `git show`
+  set -l path (string replace -r -- '(.*/|).*' '$1' $path)
 
-    # List files in $rev's index, skipping the "tree ..." header, but appending
-    # the parent path, which git does not include in the output (and fish requires)
-    string join \n -- $path(__fish_git show $rev:$path | sed '1,2d')
+  # List files in $rev's index, skipping the "tree ..." header, but appending
+  # the parent path, which git does not include in the output (and fish requires)
+  string join \n -- $path(__fish_git show $rev:$path | sed '1,2d')
 end
 
 # Provides __fish_git_rev_files completions for the current token
 function __fish_git_complete_rev_files
-    set -l split (string split -m 1 ":" -- (commandline -xt))
-    set -l rev $split[1]
-    set -l path $split[2]
+  set -l split (string split -m 1 ":" -- (commandline -xt))
+  set -l rev $split[1]
+  set -l path $split[2]
 
-    printf "$rev:%s\n" (__fish_git_rev_files $rev $path)
+  printf "$rev:%s\n" (__fish_git_rev_files $rev $path)
 end
 
 # Determines whether we can/should complete with __fish_git_rev_files
 function __fish_git_needs_rev_files
-    # git (as of 2.20) accepts the rev:path syntax for a number of subcommands,
-    # but then doesn't emit the expected (or any?) output, e.g. `git log master:foo`
-    #
-    # This definitely works with `git show` to retrieve a copy of a file as it exists
-    # in the index of revision $rev, it should be updated to include others as they
-    # are identified.
-    __fish_git_using_command show; and string match -r "^[^-].*:" -- (commandline -xt)
+  # git (as of 2.20) accepts the rev:path syntax for a number of subcommands,
+  # but then doesn't emit the expected (or any?) output, e.g. `git log master:foo`
+  #
+  # This definitely works with `git show` to retrieve a copy of a file as it exists
+  # in the index of revision $rev, it should be updated to include others as they
+  # are identified.
+  __fish_git_using_command show; and string match -r "^[^-].*:" -- (commandline -xt)
 end
 
 function __fish_git_ranges
-    set -l both (commandline -xt | string replace -r '\.{2,3}' \n\$0\n)
-    set -l from $both[1]
-    set -l dots $both[2]
-    # If we didn't need to split (or there's nothing _to_ split), complete only the first part
-    # Note that status here is from `string replace` because `set` doesn't alter it
-    if test -z "$from" -o $status -gt 0
-        if commandline -ct | string match -q '*..*'
-            # The cursor is right of a .. range operator, make sure to include them first.
-            __fish_git_refs | string replace -r '' "$dots"
-        else
-            __fish_git_refs | string replace \t "$dots"\t
-        end
-        return 0
-    end
-
-    set -l from_refs
+  set -l both (commandline -xt | string replace -r '\.{2,3}' \n\$0\n)
+  set -l from $both[1]
+  set -l dots $both[2]
+  # If we didn't need to split (or there's nothing _to_ split), complete only the first part
+  # Note that status here is from `string replace` because `set` doesn't alter it
+  if test -z "$from" -o $status -gt 0
     if commandline -ct | string match -q '*..*'
-        # If the cursor is right of a .. range operator, only complete the right part.
-        set from_refs $from
+      # The cursor is right of a .. range operator, make sure to include them first.
+      __fish_git_refs | string replace -r '' "$dots"
     else
-        set from_refs (__fish_git_refs | string match -e "$from" | string replace -r \t'.*$' '')
+      __fish_git_refs | string replace \t "$dots"\t
     end
+    return 0
+  end
 
-    set -l to $both[3]
-    # Remove description from the from-ref, not the to-ref.
-    for from_ref in $from_refs
-        for to_ref in (__fish_git_refs | string match "*$to*") # if $to is empty, this correctly matches everything
-            printf "%s%s%s\n" $from_ref $dots $to_ref
-        end
+  set -l from_refs
+  if commandline -ct | string match -q '*..*'
+    # If the cursor is right of a .. range operator, only complete the right part.
+    set from_refs $from
+  else
+    set from_refs (__fish_git_refs | string match -e "$from" | string replace -r \t'.*$' '')
+  end
+
+  set -l to $both[3]
+  # Remove description from the from-ref, not the to-ref.
+  for from_ref in $from_refs
+    for to_ref in (__fish_git_refs | string match "*$to*") # if $to is empty, this correctly matches everything
+      printf "%s%s%s\n" $from_ref $dots $to_ref
     end
+  end
 end
 
 function __fish_git_needs_command
-    # Figure out if the current invocation already has a command.
-    #
-    # This is called hundreds of times and the argparse is kinda slow,
-    # so we cache it as long as the commandline doesn't change.
-    set -l cmdline "$(commandline -c)"
-    if set -q __fish_git_cmdline; and test "$cmdline" = "$__fish_git_cmdline"
-        if set -q __fish_git_cmd[1]
-            echo -- $__fish_git_cmd
-            return 1
-        end
-        return 0
+  # Figure out if the current invocation already has a command.
+  #
+  # This is called hundreds of times and the argparse is kinda slow,
+  # so we cache it as long as the commandline doesn't change.
+  set -l cmdline "$(commandline -c)"
+  if set -q __fish_git_cmdline; and test "$cmdline" = "$__fish_git_cmdline"
+    if set -q __fish_git_cmd[1]
+      echo -- $__fish_git_cmd
+      return 1
     end
-    set -g __fish_git_cmdline $cmdline
-
-    set -l cmd (commandline -xpc)
-    set -e cmd[1]
-    argparse -s (__fish_git_global_optspecs) -- $cmd 2>/dev/null
-    or return 0
-    # These flags function as commands, effectively.
-    set -q _flag_version; and return 1
-    set -q _flag_html_path; and return 1
-    set -q _flag_man_path; and return 1
-    set -q _flag_info_path; and return 1
-    if set -q argv[1]
-        # Also print the command, so this can be used to figure out what it is.
-        set -g __fish_git_cmd $argv[1]
-        echo $argv[1]
-        return 1
-    end
-    set -g __fish_git_cmd
     return 0
+  end
+  set -g __fish_git_cmdline $cmdline
+
+  set -l cmd (commandline -xpc)
+  set -e cmd[1]
+  argparse -s (__fish_git_global_optspecs) -- $cmd 2>/dev/null
+  or return 0
+  # These flags function as commands, effectively.
+  set -q _flag_version; and return 1
+  set -q _flag_html_path; and return 1
+  set -q _flag_man_path; and return 1
+  set -q _flag_info_path; and return 1
+  if set -q argv[1]
+    # Also print the command, so this can be used to figure out what it is.
+    set -g __fish_git_cmd $argv[1]
+    echo $argv[1]
+    return 1
+  end
+  set -g __fish_git_cmd
+  return 0
 end
 
 function __fish_git_config_keys
-    # Print already defined config values first
-    # Config keys may span multiple lines, so parse using null char
-    # With -z, key and value are separated by space, not "="
-    __fish_git config -lz | while read -lz key value
-        # Print only first line of value(with an ellipsis) if multiline
-        printf '%s\t%s\n' $key (string shorten -N -- $value)
-    end
-    # Print all recognized config keys; duplicates are not shown twice by fish
-    printf '%s\n' (__fish_git help --config)[1..-2] # Last line is a footer; ignore it
+  # Print already defined config values first
+  # Config keys may span multiple lines, so parse using null char
+  # With -z, key and value are separated by space, not "="
+  __fish_git config -lz | while read -lz key value
+    # Print only first line of value(with an ellipsis) if multiline
+    printf '%s\t%s\n' $key (string shorten -N -- $value)
+  end
+  # Print all recognized config keys; duplicates are not shown twice by fish
+  printf '%s\n' (__fish_git help --config)[1..-2] # Last line is a footer; ignore it
 end
 
 # HACK: Aliases
@@ -638,204 +638,204 @@ end
 # Approximately duplicates the logic from https://github.com/git/git/blob/d486ca60a51c9cb1fe068803c3f540724e95e83a/contrib/completion/git-completion.bash#L1130
 # The bash script also finds aliases that reference other aliases via a loop but we handle that separately
 function __fish_git_aliased_command
-    for word in (string split ' ' -- $argv)
-        switch $word
-            case !gitk gitk
-                echo gitk
-                return
-                # Adding " to the list
-            case '!*' '-*' '*=*' git '()' '{' : '\'*' '"*'
-                continue
-            case '*'
-                echo $word
-                return
-        end
+  for word in (string split ' ' -- $argv)
+    switch $word
+      case !gitk gitk
+        echo gitk
+        return
+        # Adding " to the list
+      case '!*' '-*' '*=*' git '()' '{' : '\'*' '"*'
+        continue
+      case '*'
+        echo $word
+        return
     end
+  end
 end
 
 git config -z --get-regexp 'alias\..*' | while read -lz alias cmdline
-    set -l command (__fish_git_aliased_command $cmdline)
-    string match -q --regex '\w+' -- $command; or continue
-    # Git aliases can contain chars that variable names can't - escape them.
-    set -l alias (string replace 'alias.' '' -- $alias | string escape --style=var)
-    set -g __fish_git_alias_$alias $command $cmdline
-    set --append -g __fish_git_aliases $alias
+  set -l command (__fish_git_aliased_command $cmdline)
+  string match -q --regex '\w+' -- $command; or continue
+  # Git aliases can contain chars that variable names can't - escape them.
+  set -l alias (string replace 'alias.' '' -- $alias | string escape --style=var)
+  set -g __fish_git_alias_$alias $command $cmdline
+  set --append -g __fish_git_aliases $alias
 end
 
 # Resolve aliases that call another alias
 for alias in $__fish_git_aliases
-    set -l handled $alias
+  set -l handled $alias
 
-    while true
-        set -l alias_varname __fish_git_alias_$alias
-        set -l aliased_command $$alias_varname[1][1]
-        set -l aliased_escaped (string escape --style=var -- $aliased_command)
-        set -l aliased_varname __fish_git_alias_$aliased_escaped
-        set -q $aliased_varname
-        or break
+  while true
+    set -l alias_varname __fish_git_alias_$alias
+    set -l aliased_command $$alias_varname[1][1]
+    set -l aliased_escaped (string escape --style=var -- $aliased_command)
+    set -l aliased_varname __fish_git_alias_$aliased_escaped
+    set -q $aliased_varname
+    or break
 
-        # stop infinite recursion
-        contains $aliased_escaped $handled
-        and break
+    # stop infinite recursion
+    contains $aliased_escaped $handled
+    and break
 
-        # expand alias in cmdline
-        set -l aliased_cmdline $$alias_varname[1][2]
-        set -l aliased_cmdline (string replace " $aliased_command " " $$aliased_varname[1][2..-1] " -- " $aliased_cmdline ")
-        set -g $alias_varname $$aliased_varname[1][1] (string trim "$aliased_cmdline")
-        set --append handled $aliased_escaped
-    end
+    # expand alias in cmdline
+    set -l aliased_cmdline $$alias_varname[1][2]
+    set -l aliased_cmdline (string replace " $aliased_command " " $$aliased_varname[1][2..-1] " -- " $aliased_cmdline ")
+    set -g $alias_varname $$aliased_varname[1][1] (string trim "$aliased_cmdline")
+    set --append handled $aliased_escaped
+  end
 end
 
 function __fish_git_using_command
-    set -l cmd (__fish_git_needs_command)
-    test -z "$cmd"
-    and return 1
-    contains -- $cmd $argv
-    and return 0
+  set -l cmd (__fish_git_needs_command)
+  test -z "$cmd"
+  and return 1
+  contains -- $cmd $argv
+  and return 0
 
-    # Check aliases.
-    set -l varname __fish_git_alias_(string escape --style=var -- $cmd)
-    set -q $varname
-    and contains -- $$varname[1][1] $argv
-    and return 0
-    return 1
+  # Check aliases.
+  set -l varname __fish_git_alias_(string escape --style=var -- $cmd)
+  set -q $varname
+  and contains -- $$varname[1][1] $argv
+  and return 0
+  return 1
 end
 
 function __fish_git_contains_opt
-    # Check if an option has been given
-    # First check the commandline normally
-    __fish_contains_opt $argv
-    and return
+  # Check if an option has been given
+  # First check the commandline normally
+  __fish_contains_opt $argv
+  and return
 
-    # Now check the alias
-    argparse s= -- $argv
-    set -l cmd (__fish_git_needs_command)
-    set -l varname __fish_git_alias_(string escape --style=var -- $cmd)
-    if set -q $varname
-        echo -- $$varname | read -lat toks
-        set toks (string replace -r '(-.*)=.*' '' -- $toks)
-        for i in $argv
-            if contains -- --$i $toks
-                return 0
-            end
-        end
-
-        for i in $_flag_s
-            if string match -qr -- "^-$i|^-[^-]*$i" $toks
-                return 0
-            end
-        end
+  # Now check the alias
+  argparse s= -- $argv
+  set -l cmd (__fish_git_needs_command)
+  set -l varname __fish_git_alias_(string escape --style=var -- $cmd)
+  if set -q $varname
+    echo -- $$varname | read -lat toks
+    set toks (string replace -r '(-.*)=.*' '' -- $toks)
+    for i in $argv
+      if contains -- --$i $toks
+        return 0
+      end
     end
 
-    return 1
+    for i in $_flag_s
+      if string match -qr -- "^-$i|^-[^-]*$i" $toks
+        return 0
+      end
+    end
+  end
+
+  return 1
 end
 function __fish_git_stash_using_command
-    set -l cmd (commandline -xpc)
-    __fish_git_using_command stash
-    or return 2
-    # The word after the stash command _must_ be the subcommand
-    set cmd $cmd[(contains -i -- "stash" $cmd)..-1]
-    set -e cmd[1]
-    set -q cmd[1]
-    or return 1
-    contains -- $cmd[1] $argv
-    and return 0
-    return 1
+  set -l cmd (commandline -xpc)
+  __fish_git_using_command stash
+  or return 2
+  # The word after the stash command _must_ be the subcommand
+  set cmd $cmd[(contains -i -- "stash" $cmd)..-1]
+  set -e cmd[1]
+  set -q cmd[1]
+  or return 1
+  contains -- $cmd[1] $argv
+  and return 0
+  return 1
 end
 
 function __fish_git_stash_not_using_subcommand
-    set -l cmd (commandline -xpc)
-    __fish_git_using_command stash
-    or return 2
-    set cmd $cmd[(contains -i -- "stash" $cmd)..-1]
-    set -q cmd[2]
-    and return 1
-    return 0
+  set -l cmd (commandline -xpc)
+  __fish_git_using_command stash
+  or return 2
+  set cmd $cmd[(contains -i -- "stash" $cmd)..-1]
+  set -q cmd[2]
+  and return 1
+  return 0
 end
 
 function __fish_git_complete_worktrees
-    __fish_git worktree list --porcelain | string replace --regex --filter '^worktree\s*' ''
+  __fish_git worktree list --porcelain | string replace --regex --filter '^worktree\s*' ''
 end
 
 function __fish_git_complete_stashes
-    __fish_git stash list --format=%gd:%gs 2>/dev/null | string replace ":" \t
+  __fish_git stash list --format=%gd:%gs 2>/dev/null | string replace ":" \t
 end
 
 function __fish_git_aliases
-    __fish_git config -z --get-regexp '^alias\.' 2>/dev/null | while read -lz key value
-        begin
-            set -l name (string replace -r '^.*\.' '' -- $key)
-            set -l val (string shorten --no-newline -m 36 -- $value)
-            printf "%s\t%s\n" $name "alias: $val"
-        end
+  __fish_git config -z --get-regexp '^alias\.' 2>/dev/null | while read -lz key value
+    begin
+      set -l name (string replace -r '^.*\.' '' -- $key)
+      set -l val (string shorten --no-newline -m 36 -- $value)
+      printf "%s\t%s\n" $name "alias: $val"
     end
+  end
 end
 
 function __fish_git_custom_commands
-    # complete all commands starting with git-
-    # however, a few builtin commands are placed into $PATH by git because
-    # they're used by the ssh transport. We could filter them out by checking
-    # if any of these completion results match the name of the builtin git commands,
-    # but it's simpler just to blacklist these names. They're unlikely to change,
-    # and the failure mode is we accidentally complete a plumbing command.
-    for name in (string replace -r "^.*/git-([^/]*)" '$1' $PATH/git-*)
-        switch $name
-            case cvsserver receive-pack shell upload-archive upload-pack
-                # skip these
-            case \*
-                echo $name
-        end
+  # complete all commands starting with git-
+  # however, a few builtin commands are placed into $PATH by git because
+  # they're used by the ssh transport. We could filter them out by checking
+  # if any of these completion results match the name of the builtin git commands,
+  # but it's simpler just to blacklist these names. They're unlikely to change,
+  # and the failure mode is we accidentally complete a plumbing command.
+  for name in (string replace -r "^.*/git-([^/]*)" '$1' $PATH/git-*)
+    switch $name
+      case cvsserver receive-pack shell upload-archive upload-pack
+        # skip these
+      case \*
+        echo $name
     end
+  end
 end
 
 # Suggest branches for the specified remote - returns 1 if no known remote is specified
 function __fish_git_branch_for_remote
-    set -l remotes (__fish_git_remotes)
-    set -l remote
-    set -l cmd (commandline -xpc)
-    for r in $remotes
-        if contains -- $r $cmd
-            set remote $r
-            break
-        end
+  set -l remotes (__fish_git_remotes)
+  set -l remote
+  set -l cmd (commandline -xpc)
+  for r in $remotes
+    if contains -- $r $cmd
+      set remote $r
+      break
     end
-    set -q remote[1]
-    or return 1
-    __fish_git_branches | string replace -f -- "$remote/" ''
+  end
+  set -q remote[1]
+  or return 1
+  __fish_git_branches | string replace -f -- "$remote/" ''
 end
 
 # Return 0 if the current token is a possible commit-hash with at least 3 characters
 function __fish_git_possible_commithash
-    set -q argv[1]
-    and set -l token $argv[1]
-    or set -l token (commandline -ct)
-    if string match -qr '^[0-9a-fA-F]{3,}$' -- $token
-        return 0
-    end
-    return 1
+  set -q argv[1]
+  and set -l token $argv[1]
+  or set -l token (commandline -ct)
+  if string match -qr '^[0-9a-fA-F]{3,}$' -- $token
+    return 0
+  end
+  return 1
 end
 
 function __fish_git_reflog
-    __fish_git reflog --no-decorate 2>/dev/null | string replace -r '[0-9a-f]* (.+@\{[0-9]+\}): (.*)$' '$1\t$2'
+  __fish_git reflog --no-decorate 2>/dev/null | string replace -r '[0-9a-f]* (.+@\{[0-9]+\}): (.*)$' '$1\t$2'
 end
 
 function __fish_git_help_all_concepts
-    git help -g | string match -e -r '^   \w+' | while read -l concept desc
-        printf "%s\tConcept: %s\n" $concept (string trim $desc)
-    end
+  git help -g | string match -e -r '^   \w+' | while read -l concept desc
+    printf "%s\tConcept: %s\n" $concept (string trim $desc)
+  end
 end
 
 function __fish_git_diff_opt -a option
-    switch $option
-        case diff-algorithm
-            printf "%b" "
+  switch $option
+    case diff-algorithm
+      printf "%b" "
 default\tBasic greedy diff algorithm
 myers\tBasic greedy diff algorithm
 minimal\tMake smallest diff possible
 patience\tPatience diff algorithm
 histogram\tPatience algorithm with low-occurrence common elements"
-        case diff-filter
-            printf "%b" "
+    case diff-filter
+      printf "%b" "
 A\tAdded files
 C\tCopied files
 D\tDeleted files
@@ -845,38 +845,38 @@ T\tType changed files
 U\tUnmerged files
 X\tUnknown files
 B\tBroken pairing files"
-        case dirstat
-            printf "%b" "
+    case dirstat
+      printf "%b" "
 changes\tCount lines that have been removed from the source / added to the destination
 lines\tRegular line-based diff analysis
 files\tCount the number of files changed
 cumulative\tCount changes in a child directory for the parent directory as well"
-        case ignore-submodules
-            printf "%b" "
+    case ignore-submodules
+      printf "%b" "
 none\tUntracked/modified files
 untracked\tNot considered dirty when they only contain untracked content
 dirty\tIgnore all changes to the work tree of submodules
 all\tHide all changes to submodules (default)"
-        case submodule
-            printf "%b" "
+    case submodule
+      printf "%b" "
 short\tShow the name of the commits at the beginning and end of the range
 log\tList the commits in the range
 diff\tShow an inline diff of the changes"
-        case ws-error-highlight
-            printf "%b" "
+    case ws-error-highlight
+      printf "%b" "
 context\tcontext lines of the diff
 old\told lines of the diff
 new\tnew lines of the diff
 none\treset previous values
 default\treset the list to 'new'
 all\tShorthand for 'old,new,context'"
-    end
+  end
 end
 
 function __fish_git_show_opt -a option
-    switch $option
-        case format pretty
-            printf "%b" "
+  switch $option
+    case format pretty
+      printf "%b" "
 oneline\t<sha1> <title line>
 short\t<sha1> / <author> / <title line>
 medium\t<sha1> / <author> / <author date> / <title> / <commit msg>
@@ -885,11 +885,11 @@ fuller\t<sha1> / <author> / <author date> / <committer> / <committer date> / <ti
 email\t<sha1> <date> / <author> / <author date> / <title> / <commit msg>
 raw\tShow the entire commit exactly as stored in the commit object
 format:\tSpecify which information to show"
-    end
+  end
 end
 
 function __fish_git_is_rebasing
-    test -e (__fish_git rev-parse --absolute-git-dir)/rebase-merge
+  test -e (__fish_git rev-parse --absolute-git-dir)/rebase-merge
 end
 
 # general options
@@ -1429,11 +1429,11 @@ complete -c git -n '__fish_git_using_command diff' -n '__fish_git_contains_opt c
 ### Function to list available tools for git difftool and mergetool
 
 function __fish_git_diffmerge_tools -a cmd
-    git $cmd --tool-help | while read -l line
-        string match -q 'The following tools are valid, but not currently available:' -- $line
-        and break
-        string replace -f -r '^\t\t(\w+).*$' '$1' -- $line
-    end
+  git $cmd --tool-help | while read -l line
+    string match -q 'The following tools are valid, but not currently available:' -- $line
+    and break
+    string replace -f -r '^\t\t(\w+).*$' '$1' -- $line
+  end
 end
 
 ### difftool
@@ -1669,8 +1669,8 @@ complete -f -c git -n '__fish_git_using_command log' -l abbrev
 complete -f -c git -n '__fish_git_using_command log' -s l
 
 function __fish__git_append_letters_nosep
-    set -l token (commandline -tc)
-    printf "%s\n" $token$argv
+  set -l token (commandline -tc)
+  printf "%s\n" $token$argv
 end
 
 complete -x -c git -n '__fish_git_using_command log' -l diff-filter -a '(__fish__git_append_letters_nosep a\tExclude\ added c\tExclude\ copied d\tExclude\ deleted m\tExclude\ modified r\tExclude\ renamed t\tExclude\ type\ changed u\tExclude\ unmerged x\tExclude\ unknown b\tExclude\ broken A\tAdded C\tCopied D\tDeleted M\tModified R\tRenamed T\tType\ Changed U\tUnmerged X\tUnknown B\tBroken)'
@@ -2370,16 +2370,16 @@ complete -F -c git -n '__fish_git_using_command config' -l blob -d 'Read config 
 
 # For config options that have the user select one from a set, this function completes possible options
 function __fish_git_complete_key_values
-    set -l config_key (__fish_nth_token 2)
+  set -l config_key (__fish_nth_token 2)
 
-    switch $config_key
-        case diff.algorithm
-            printf "%s\n" myers patience histogram minimal
-        case init.defaultBranch
-            printf "%s\n" master main trunk dev next
-        case '*'
-            __fish_complete_path
-    end
+  switch $config_key
+    case diff.algorithm
+      printf "%s\n" myers patience histogram minimal
+    case init.defaultBranch
+      printf "%s\n" master main trunk dev next
+    case '*'
+      __fish_complete_path
+  end
 end
 
 # If no argument is specified, it's as if --get was used
@@ -2416,9 +2416,9 @@ complete -f -c git -n '__fish_git_using_command for-each-ref' -l count -d "Limit
 # Any one of --shell, --perl, --python, or --tcl
 set -l for_each_ref_interpreters shell perl python tcl
 for intr in $for_each_ref_interpreters
-    complete -f -c git -n '__fish_git_using_command for-each-ref' \
-        -n "not __fish_seen_argument --$for_each_ref_interpreters" \
-        -l $intr -d "%(fieldname) placeholders are $intr scripts"
+  complete -f -c git -n '__fish_git_using_command for-each-ref' \
+    -n "not __fish_seen_argument --$for_each_ref_interpreters" \
+    -l $intr -d "%(fieldname) placeholders are $intr scripts"
 end
 complete -f -c git -n '__fish_git_using_command for-each-ref' -x -l format -d "Format string with %(fieldname) placeholders"
 complete -f -c git -n '__fish_git_using_command for-each-ref' -f -l color -d "When to color" -a "always never auto"
@@ -2513,21 +2513,21 @@ set -l sortcommands branch for-each-ref tag
 # A list of keys one could reasonably sort refs by. This isn't the list of all keys that
 # can be used as any git internal key for a ref may be used here, sorted by binary value.
 function __fish_git_sort_keys
-    echo -objectsize\tSize of branch or commit
-    echo -authordate\tWhen the latest commit was actually made
-    echo -committerdate\tWhen the branch was last committed or rebased
-    echo -creatordate\tWhen the latest commit or tag was created
-    echo creator\tThe name of the commit author
-    echo objectname\tThe complete SHA1
-    echo objectname:short\tThe shortest non-ambiguous SHA1
-    echo refname\tThe complete, unambiguous git ref name
-    echo refname:short\tThe shortest non-ambiguous ref name
-    echo author\tThe name of the author of the latest commit
-    echo committer\tThe name of the person who committed latest
-    echo tagger\tThe name of the person who created the tag
-    echo authoremail\tThe email of the author of the latest commit
-    echo committeremail\tThe email of the person who committed last
-    echo taggeremail\tThe email of the person who created the tag
+  echo -objectsize\tSize of branch or commit
+  echo -authordate\tWhen the latest commit was actually made
+  echo -committerdate\tWhen the branch was last committed or rebased
+  echo -creatordate\tWhen the latest commit or tag was created
+  echo creator\tThe name of the commit author
+  echo objectname\tThe complete SHA1
+  echo objectname:short\tThe shortest non-ambiguous SHA1
+  echo refname\tThe complete, unambiguous git ref name
+  echo refname:short\tThe shortest non-ambiguous ref name
+  echo author\tThe name of the author of the latest commit
+  echo committer\tThe name of the person who committed latest
+  echo tagger\tThe name of the person who created the tag
+  echo authoremail\tThe email of the author of the latest commit
+  echo committeremail\tThe email of the person who committed last
+  echo taggeremail\tThe email of the person who created the tag
 end
 complete -f -c git -n "__fish_seen_subcommand_from $sortcommands" -l sort -d 'Sort results by' -a "(__fish_git_sort_keys)"
 
@@ -2535,24 +2535,24 @@ complete -f -c git -n "__fish_seen_subcommand_from $sortcommands" -l sort -d 'So
 complete -c git -n __fish_git_needs_command -a '(__fish_git_custom_commands)' -d 'Custom command'
 
 function __fish_git_complete_custom_command -a subcommand
-    set -l cmd (commandline -xpc)
-    set -e cmd[1] # Drop "git".
-    set -lx subcommand_args
-    if argparse -s (__fish_git_global_optspecs) -- $cmd
-        set subcommand_args $argv[2..] # Drop the subcommand.
-    end
-    complete -C "git-$subcommand \$subcommand_args "(commandline -ct)
+  set -l cmd (commandline -xpc)
+  set -e cmd[1] # Drop "git".
+  set -lx subcommand_args
+  if argparse -s (__fish_git_global_optspecs) -- $cmd
+    set subcommand_args $argv[2..] # Drop the subcommand.
+  end
+  complete -C "git-$subcommand \$subcommand_args "(commandline -ct)
 end
 
 # source git-* commands' autocompletion file if exists
 set -l __fish_git_custom_commands_completion
 for file in (path filter -xZ $PATH/git-* | path basename)
-    # Already seen this command earlier in $PATH.
-    contains -- $file $__fish_git_custom_commands_completion
-    and continue
+  # Already seen this command earlier in $PATH.
+  contains -- $file $__fish_git_custom_commands_completion
+  and continue
 
-    # Running `git foo` ends up running `git-foo`, so we need to ignore the `git-` here.
-    set -l cmd (string replace -r '^git-' '' -- $file | string escape)
-    complete -c git -f -n "__fish_git_using_command $cmd" -a "(__fish_git_complete_custom_command $cmd)"
-    set -a __fish_git_custom_commands_completion $file
+  # Running `git foo` ends up running `git-foo`, so we need to ignore the `git-` here.
+  set -l cmd (string replace -r '^git-' '' -- $file | string escape)
+  complete -c git -f -n "__fish_git_using_command $cmd" -a "(__fish_git_complete_custom_command $cmd)"
+  set -a __fish_git_custom_commands_completion $file
 end

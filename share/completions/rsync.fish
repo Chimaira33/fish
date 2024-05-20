@@ -1,15 +1,15 @@
 function __rsync_remote_target
-    commandline -ct | string match -r '.*::?(?:.*/)?' | string unescape
+  commandline -ct | string match -r '.*::?(?:.*/)?' | string unescape
 end
 
 function __rsync_parse_flags -d "Print info|help FLAGS from help output"
-    set -l helptext $argv[2..-1] # Skips header line
-    for line in $helptext
-        set -l tokens (string match -r "([A-Z]+)(?: {2,})(.+)" $line)
-        if test (count $tokens) -ge 3
-            echo $tokens[2]\t$tokens[3]
-        end
+  set -l helptext $argv[2..-1] # Skips header line
+  for line in $helptext
+    set -l tokens (string match -r "([A-Z]+)(?: {2,})(.+)" $line)
+    if test (count $tokens) -ge 3
+      echo $tokens[2]\t$tokens[3]
     end
+  end
 end
 
 complete -c rsync -s v -l verbose -d "Increase verbosity"
@@ -192,9 +192,9 @@ set -l rsync_ver (rsync --version |
                   string split .)
 
 if test "$rsync_ver[1]" -gt 3 2>/dev/null
-    or test "$rsync_ver[1]" -eq 3 -a "$rsync_ver[2]" -gt 2 2>/dev/null
-    or test "$rsync_ver[1]" -eq 3 -a "$rsync_ver[2]" -eq 2 -a "$rsync_ver[3]" -gt 3 2>/dev/null
-    set new_escaping 1
+  or test "$rsync_ver[1]" -eq 3 -a "$rsync_ver[2]" -gt 2 2>/dev/null
+  or test "$rsync_ver[1]" -eq 3 -a "$rsync_ver[2]" -eq 2 -a "$rsync_ver[3]" -gt 3 2>/dev/null
+  set new_escaping 1
 end
 
 complete -c rsync -d "Remote path" -n "commandline -ct | string match -q '*:*'" -xa "

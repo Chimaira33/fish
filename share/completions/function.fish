@@ -1,30 +1,30 @@
 function __fish_complete_signals
-    __fish_make_completion_signals
-    for sig in $__kill_signals
-        # signal name as completion and signal number as description
-        printf "%s\t%s\n" (string split " " $sig)[-1..1]
-    end
+  __fish_make_completion_signals
+  for sig in $__kill_signals
+    # signal name as completion and signal number as description
+    printf "%s\t%s\n" (string split " " $sig)[-1..1]
+  end
 end
 
 function __fish_complete_variables
-    # Borrowed from completions for set command
-    set -l | string replace ' ' \t'Local Variable: '
-    set -g | string replace ' ' \t'Global Variable: '
-    set -U | string replace ' ' \t'Universal Variable: '
+  # Borrowed from completions for set command
+  set -l | string replace ' ' \t'Local Variable: '
+  set -g | string replace ' ' \t'Global Variable: '
+  set -U | string replace ' ' \t'Universal Variable: '
 end
 
 function __fish_complete_function_event_handlers
-    set -l handlers fish_prompt "When new prompt is about to be displayed" \
-        fish_command_not_found "When command lookup fails" \
-        fish_preexec "Before executing an interactive command" \
-        fish_postexec "After executing an interactive command" \
-        fish_exit "Right before fish exits" \
-        fish_cancel "When commandline is cleared" \
-        fish_posterror "After executing command with syntax errors" \
-        fish_focus_in "When fish's terminal gains focus" \
-        fish_focus_out "When fish's terminal loses focus"
+  set -l handlers fish_prompt "When new prompt is about to be displayed" \
+    fish_command_not_found "When command lookup fails" \
+    fish_preexec "Before executing an interactive command" \
+    fish_postexec "After executing an interactive command" \
+    fish_exit "Right before fish exits" \
+    fish_cancel "When commandline is cleared" \
+    fish_posterror "After executing command with syntax errors" \
+    fish_focus_in "When fish's terminal gains focus" \
+    fish_focus_out "When fish's terminal loses focus"
 
-    printf "%s\t%s\n" $handlers
+  printf "%s\t%s\n" $handlers
 end
 
 complete -c function -s d -l description -d "Set function description" -x

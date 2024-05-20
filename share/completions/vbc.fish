@@ -12,7 +12,7 @@ complete -c vbc -o "preferreduilang:" -d "Specify a language for compiler output
 
 # Optimization
 for bytes in 512 1024 2048 4096 8192
-    complete -c vbc -o "filealign:$bytes" -d "Specifies where to align the sections of the output file"
+  complete -c vbc -o "filealign:$bytes" -d "Specifies where to align the sections of the output file"
 end
 
 complete -c vbc -o optimize -o "optimize+" -d "Enable optimizations"
@@ -51,7 +51,7 @@ complete -c vbc -o "bugreport:" -d "Creates a file that contains information tha
 
 complete -c vbc -o debug -o "debug+" -d "Produces debugging information"
 for arguments in full pdbonly
-    complete -c vbc -o "debug:$arguments" -d "Produces debugging information"
+  complete -c vbc -o "debug:$arguments" -d "Produces debugging information"
 end
 complete -c vbc -o debug- -d "Disable -debug"
 
@@ -71,16 +71,16 @@ complete -c vbc -o "langversion:?" -d "Display the allowed values for language v
 complete -c vbc -o "langversion:default" -d "Specify latest major version as language version"
 complete -c vbc -o "langversion:latest" -d "Specify latest version (including minor releases) as language version"
 for version_number in (seq 9 15)
-    switch $version_number
-        case (seq 9 12) 14
-            complete -c vbc -o "langversion:$version_number" -d "Specify $version_number as language version"
-            complete -c vbc -o "langversion:$version_number.0" -d "Specify $version_number.0 as language version"
-        case 15
-            complete -c vbc -o "langversion:$version_number" -d "Specify $version_number as language version"
-            complete -c vbc -o "langversion:$version_number.0" -d "Specify $version_number.0 as language version"
-            complete -c vbc -o "langversion:$version_number.3" -d "Specify $version_number.3 as language version"
-            complete -c vbc -o "langversion:$version_number.5" -d "Specify $version_number.5 as language version"
-    end
+  switch $version_number
+    case (seq 9 12) 14
+      complete -c vbc -o "langversion:$version_number" -d "Specify $version_number as language version"
+      complete -c vbc -o "langversion:$version_number.0" -d "Specify $version_number.0 as language version"
+    case 15
+      complete -c vbc -o "langversion:$version_number" -d "Specify $version_number as language version"
+      complete -c vbc -o "langversion:$version_number.0" -d "Specify $version_number.0 as language version"
+      complete -c vbc -o "langversion:$version_number.3" -d "Specify $version_number.3 as language version"
+      complete -c vbc -o "langversion:$version_number.5" -d "Specify $version_number.5 as language version"
+  end
 end
 
 complete -c vbc -o optionexplicit -o "optionexplicit+" -d "Enforces explicit declaration of variables"
@@ -89,7 +89,7 @@ complete -c vbc -o optionstrict -o "optionstrict+" -o "optionstrict:" -d "Enforc
 complete -c vbc -o optionstrict- -d "Disable -optionstrict"
 
 for arguments in binary text
-    complete -c vbc -o "optioncompare:$arguments" -d "Specify string comparison mode: text or binary"
+  complete -c vbc -o "optioncompare:$arguments" -d "Specify string comparison mode: text or binary"
 end
 
 complete -c vbc -o optioninfer -o "optioninfer+" -d "Enables the use of local type inference in variable declarations"
@@ -109,7 +109,7 @@ complete -c vbc -o "baseaddress:" -d "Specifies the base address of a DLL"
 complete -c vbc -o "codepage:" -d "Specify the code page for source code files"
 
 for arguments in prompt queue send none
-    complete -c vbc -o "errorreport:$arguments" -d "Specify how to report internal compiler errors"
+  complete -c vbc -o "errorreport:$arguments" -d "Specify how to report internal compiler errors"
 end
 
 complete -c vbc -o highentropyva -o "highentropyva+" -d "Specify if an executable supports high entropy ASLR"
@@ -130,7 +130,7 @@ complete -c vbc -o "sdkpath:" -d "Specifies the location of Mscorlib.dll and Mic
 
 complete -c vbc -o "vbruntime:" -d "Specify reference to VB Runtime Library or disable library referencing"
 for arguments in - + "*"
-    complete -c vbc -o "vbruntime:$arguments" -d "Specify reference to VB Runtime Library or disable library referencing"
+  complete -c vbc -o "vbruntime:$arguments" -d "Specify reference to VB Runtime Library or disable library referencing"
 end
 
 complete -c vbc -o "win32manifest:" -d "Provide application manifest file"

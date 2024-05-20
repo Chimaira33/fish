@@ -1,6 +1,6 @@
 function __fish_toxenvs
-    echo ALL
-    tox --listenvs-all 2>/dev/null
+  echo ALL
+  tox --listenvs-all 2>/dev/null
 end
 
 complete -c tox -l version -d "Report version information to stdout"

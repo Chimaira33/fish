@@ -1,7 +1,7 @@
 set -l _sub_commands 'login login_cli activate logout auth tui whoami whois notifications instance search thread timeline post upload delete favourite unfavourite reblog unreblog reblogged_by pin unpin follow unfollow mute unmute block unblock'
 
 function __fish_complete_toot_accounts
-    toot auth | awk '/^\*/{print $2}'
+  toot auth | awk '/^\*/{print $2}'
 end
 
 # No file completion for most subcomands

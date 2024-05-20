@@ -3,39 +3,39 @@
 # Functions
 
 function __fish_hugo_command
-    set -l tokens (commandline -xpc)
-    test (count $tokens) -le 1; and return 1
-    set -l command ""
-    set -l skip 1
-    for token in $tokens[2..-1]
-        if test $skip -eq 0
-            set skip 1
-        else
-            switch $token
-                case --config --logFile
-                    set skip 0
-                case "-*"
-                case "*"
-                    set command (string trim -l "$command $token")
-            end
-        end
+  set -l tokens (commandline -xpc)
+  test (count $tokens) -le 1; and return 1
+  set -l command ""
+  set -l skip 1
+  for token in $tokens[2..-1]
+    if test $skip -eq 0
+      set skip 1
+    else
+      switch $token
+        case --config --logFile
+          set skip 0
+        case "-*"
+        case "*"
+          set command (string trim -l "$command $token")
+      end
     end
-    test (count $command) -eq 0; and return 1
-    echo $command
+  end
+  test (count $command) -eq 0; and return 1
+  echo $command
 end
 
 function __fish_hugo_using_command
-    set -l command (__fish_hugo_command)
-    test "$command" = "$argv"
+  set -l command (__fish_hugo_command)
+  test "$command" = "$argv"
 end
 
 function __fish_hugo_using_main_like_command
-    set -l command (__fish_hugo_command)
-    switch "$command"
-        case "" benchmark server
-            return 0
-    end
-    return 1
+  set -l command (__fish_hugo_command)
+  switch "$command"
+    case "" benchmark server
+      return 0
+  end
+  return 1
 end
 
 # Global options

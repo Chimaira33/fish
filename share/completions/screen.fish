@@ -1,49 +1,49 @@
 function __fish_detect_screen_socket_dir -d "Detect which folder screen uses"
-    set -l screen_bin screen
-    if not set -q __fish_screen_socket_dir
-        set -g __fish_screen_socket_dir ($screen_bin -ls __fish_i_don_t_think_this_will_be_matched | string match -r "(?<=No Sockets found in ).*(?=\.)")
-    end
+  set -l screen_bin screen
+  if not set -q __fish_screen_socket_dir
+    set -g __fish_screen_socket_dir ($screen_bin -ls __fish_i_don_t_think_this_will_be_matched | string match -r "(?<=No Sockets found in ).*(?=\.)")
+  end
 end
 
 function __fish_complete_screen_general_list_mac -d "Get the socket list on mac"
-    pushd $__fish_screen_socket_dir >/dev/null
-    set -l sockets (ls)
-    if test (count $sockets) -ne 0
-        switch $argv
-            case Detached
-                stat -f "%Lp %SB %N" -t "%D %T" $sockets | string match -r '^6\d{2} .*$' | string replace -r '^6\d{2} (\S+ \S+) (\S+)' '$2\t$1 Detached'
-            case Attached
-                stat -f "%Lp %SB %N" -t "%D %T" $sockets | string match -r '^7\d{2} .*$' | string replace -r '^7\d{2} (\S+ \S+) (\S+)' '$2\t$1 Attached'
-        end
+  pushd $__fish_screen_socket_dir >/dev/null
+  set -l sockets (ls)
+  if test (count $sockets) -ne 0
+    switch $argv
+      case Detached
+        stat -f "%Lp %SB %N" -t "%D %T" $sockets | string match -r '^6\d{2} .*$' | string replace -r '^6\d{2} (\S+ \S+) (\S+)' '$2\t$1 Detached'
+      case Attached
+        stat -f "%Lp %SB %N" -t "%D %T" $sockets | string match -r '^7\d{2} .*$' | string replace -r '^7\d{2} (\S+ \S+) (\S+)' '$2\t$1 Attached'
     end
-    popd >/dev/null
+  end
+  popd >/dev/null
 end
 
 function __fish_complete_screen_general_list -d "Get the socket list"
-    set -l escaped (string escape --style=regex $argv)
-    screen -list | string match -r '^\t.*\('$escaped'\)\s*$' | string replace -r '\t(.*)\s+(\(.*\))?\s*\((.*)\)' '$1\t$3'
+  set -l escaped (string escape --style=regex $argv)
+  screen -list | string match -r '^\t.*\('$escaped'\)\s*$' | string replace -r '\t(.*)\s+(\(.*\))?\s*\((.*)\)' '$1\t$3'
 end
 
 function __fish_complete_screen_detached -d "Print a list of detached screen sessions"
-    switch (uname)
-        case Darwin
-            __fish_complete_screen_general_list_mac Detached
-        case '*'
-            __fish_complete_screen_general_list Detached
-    end
+  switch (uname)
+    case Darwin
+      __fish_complete_screen_general_list_mac Detached
+    case '*'
+      __fish_complete_screen_general_list Detached
+  end
 end
 
 function __fish_complete_screen_attached -d "Print a list of attached screen sessions"
-    switch (uname)
-        case Darwin
-            __fish_complete_screen_general_list_mac Attached
-        case '*'
-            __fish_complete_screen_general_list Attached
-    end
+  switch (uname)
+    case Darwin
+      __fish_complete_screen_general_list_mac Attached
+    case '*'
+      __fish_complete_screen_general_list Attached
+  end
 end
 
 function __fish_complete_screen -d "Print a list of running screen sessions"
-    string join \n (__fish_complete_screen_attached) (__fish_complete_screen_detached)
+  string join \n (__fish_complete_screen_attached) (__fish_complete_screen_detached)
 end
 
 # detect socket directory for mac users

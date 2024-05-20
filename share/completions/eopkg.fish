@@ -3,33 +3,33 @@
 #
 
 function __fish_eopkg_subcommand -a subcommand
-    set -e argv[1]
-    complete -f -c eopkg -n __fish_use_subcommand -a $subcommand $argv
+  set -e argv[1]
+  complete -f -c eopkg -n __fish_use_subcommand -a $subcommand $argv
 end
 
 function __fish_eopkg_subcommand_with_shortcut -a subcommand shortcut
-    set -e argv[1..2]
-    complete -f -c eopkg -n __fish_use_subcommand -a $subcommand $argv
-    complete -f -c eopkg -n __fish_use_subcommand -a $shortcut $argv
+  set -e argv[1..2]
+  complete -f -c eopkg -n __fish_use_subcommand -a $subcommand $argv
+  complete -f -c eopkg -n __fish_use_subcommand -a $shortcut $argv
 end
 
 function __fish_eopkg_option -a subcommand
-    set -e argv[1]
-    complete -f -c eopkg -n "__fish_seen_subcommand_from $subcommand" $argv
+  set -e argv[1]
+  complete -f -c eopkg -n "__fish_seen_subcommand_from $subcommand" $argv
 end
 
 function __fish_eopkg_option_with_shortcut -a subcommand shortcut
-    set -e argv[1..2]
-    complete -f -c eopkg -n "__fish_seen_subcommand_from $subcommand" $argv
-    complete -f -c eopkg -n "__fish_seen_subcommand_from $shortcut" $argv
+  set -e argv[1..2]
+  complete -f -c eopkg -n "__fish_seen_subcommand_from $subcommand" $argv
+  complete -f -c eopkg -n "__fish_seen_subcommand_from $shortcut" $argv
 end
 
 function __fish_eopkg_print_components -d "Print list of components"
-    eopkg list-components -N | string replace -r ' .*' ''
+  eopkg list-components -N | string replace -r ' .*' ''
 end
 
 function __fish_eopkg_print_repos -d "Print list of repositories"
-    eopkg list-repo -N | string match -e active | string replace -r ' .*' ''
+  eopkg list-repo -N | string match -e active | string replace -r ' .*' ''
 end
 
 complete -f -c eopkg -n '__fish_seen_subcommand_from remove-repo rr enable-repo er disable-repo dr list-available la' -a "(__fish_eopkg_print_repos)" -d Repository

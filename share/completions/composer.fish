@@ -1,29 +1,29 @@
 function __fish_composer_needs_command
-    set -l cmd (commandline -xpc)
+  set -l cmd (commandline -xpc)
 
-    if test (count $cmd) -eq 1
-        return 0
-    end
+  if test (count $cmd) -eq 1
+    return 0
+  end
 
-    return 1
+  return 1
 end
 
 function __fish_composer_using_command
-    set -l cmd (commandline -xpc)
+  set -l cmd (commandline -xpc)
 
-    if test (count $cmd) -gt 1
-        if test $argv[1] = $cmd[2]
-            return 0
-        end
+  if test (count $cmd) -gt 1
+    if test $argv[1] = $cmd[2]
+      return 0
     end
+  end
 
-    return 1
+  return 1
 end
 
 function __fish_composer_required_packages
-    test -f composer.json; or return
-    set -l python (__fish_anypython); or return
-    echo "
+  test -f composer.json; or return
+  set -l python (__fish_anypython); or return
+  echo "
 import itertools
 import json
 json_data = open('composer.json')
@@ -35,9 +35,9 @@ print(\"\n\".join(packages))
 end
 
 function __fish_composer_installed_packages
-    test -f composer.lock; or return
-    set -l python (__fish_anypython); or return
-    echo "
+  test -f composer.lock; or return
+  set -l python (__fish_anypython); or return
+  echo "
 import json
 json_data = open('composer.lock')
 data = json.load(json_data)
@@ -52,9 +52,9 @@ print(\"\n\".join(installed_packages))
 end
 
 function __fish_composer_scripts
-    test -f composer.json; or return
-    set -l python (__fish_anypython); or return
-    echo "
+  test -f composer.json; or return
+  set -l python (__fish_anypython); or return
+  echo "
 import json
 json_data = open('composer.json')
 data = json.load(json_data)

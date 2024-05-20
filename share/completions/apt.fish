@@ -3,7 +3,7 @@
 # macOS has a /usr/bin/apt that is something else entirely:
 # (apt - Returns the path to a Java home directory from the current user's settings)
 if [ "$(uname -s)" = Darwin -a "$(command -s apt)" = /usr/bin/apt ]
-    exit 1
+  exit 1
 end
 
 set -l all_subcmds update upgrade full-upgrade search list install show remove edit-sources purge changelog autoremove depends rdepends
@@ -12,23 +12,23 @@ set -l installed_pkg_subcmds remove
 set -l handle_file_pkg_subcmds install
 
 function __fish_apt_subcommand -V all_subcmds
-    set -l subcommand $argv[1]
-    set -e argv[1]
-    complete -f -c apt -n __fish_is_first_token -a $subcommand $argv
+  set -l subcommand $argv[1]
+  set -e argv[1]
+  complete -f -c apt -n __fish_is_first_token -a $subcommand $argv
 end
 
 function __fish_apt_option
-    set -l subcommand $argv[1]
-    set -e argv[1]
-    complete -f -c apt -n "__fish_seen_subcommand_from $subcommand" $argv
+  set -l subcommand $argv[1]
+  set -e argv[1]
+  complete -f -c apt -n "__fish_seen_subcommand_from $subcommand" $argv
 end
 
 function __fish_apt_list_repos
-    # A single `string` invocation can't read from multiple files and so we use `cat`
-    # but /etc/apt/sources.list.d/ may or may not contain any files so using a fish
-    # wildcard glob may complain loudly if no files match the pattern so we use `find`.
-    # The trailing `sort -u` is largely decorative.
-    cat (find /etc/apt/sources.list /etc/apt/sources.list.d/ -name "*.list") | string replace -rf '^\s*deb *(?:\[.*?\])? (?:[^ ]+) +([^ ]+) .*' '$1' | sort -u
+  # A single `string` invocation can't read from multiple files and so we use `cat`
+  # but /etc/apt/sources.list.d/ may or may not contain any files so using a fish
+  # wildcard glob may complain loudly if no files match the pattern so we use `find`.
+  # The trailing `sort -u` is largely decorative.
+  cat (find /etc/apt/sources.list /etc/apt/sources.list.d/ -name "*.list") | string replace -rf '^\s*deb *(?:\[.*?\])? (?:[^ ]+) +([^ ]+) .*' '$1' | sort -u
 end
 
 complete -c apt -f

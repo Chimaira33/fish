@@ -2,34 +2,34 @@
 #complete vim -a - -d 'Read file from stdin, commands from stderr, which should be a tty'
 
 function __fish_vim_find_tags_path
-    set -l max_depth 10
-    set -l tags_path tags
+  set -l max_depth 10
+  set -l tags_path tags
 
-    for depth in (seq $max_depth)
-        if test -f $tags_path
-            echo $tags_path
-            return 0
-        end
-
-        set tags_path ../$tags_path
+  for depth in (seq $max_depth)
+    if test -f $tags_path
+      echo $tags_path
+      return 0
     end
 
-    return 1
+    set tags_path ../$tags_path
+  end
+
+  return 1
 end
 
 # NB: This function is also used by the nvim completions
 function __fish_vim_tags
-    set -l token (commandline -ct)
-    set -l tags_path (__fish_vim_find_tags_path)
-    or return
+  set -l token (commandline -ct)
+  set -l tags_path (__fish_vim_find_tags_path)
+  or return
 
-    # To prevent freezes on a huge tags file (e.g., on one from the Linux
-    # kernel source tree), limit matching tag lines to some reasonable amount
-    set -l limit 10000
+  # To prevent freezes on a huge tags file (e.g., on one from the Linux
+  # kernel source tree), limit matching tag lines to some reasonable amount
+  set -l limit 10000
 
-    # tags file is alphabetically sorted, so it's reasonable to use "look" to
-    # speedup the lookup of strings with known prefix
-    command look $token $tags_path | head -n $limit | cut -f1,2 -d \t
+  # tags file is alphabetically sorted, so it's reasonable to use "look" to
+  # speedup the lookup of strings with known prefix
+  command look $token $tags_path | head -n $limit | cut -f1,2 -d \t
 end
 
 # todo

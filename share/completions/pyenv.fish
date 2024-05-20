@@ -1,39 +1,39 @@
 # fish completion for pyenv
 
 function __fish_pyenv_needs_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -eq 1
-        return 0
-    end
-    return 1
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -eq 1
+    return 0
+  end
+  return 1
 end
 
 function __fish_pyenv_using_command
-    set -l cmd (commandline -xpc)
-    if test (count $cmd) -gt 1
-        if test $argv[1] = $cmd[2]
-            return 0
-        end
+  set -l cmd (commandline -xpc)
+  if test (count $cmd) -gt 1
+    if test $argv[1] = $cmd[2]
+      return 0
     end
-    return 1
+  end
+  return 1
 end
 
 function __fish_pyenv_executables
-    pyenv exec --complete
+  pyenv exec --complete
 end
 
 function __fish_pyenv_installed_versions
-    pyenv versions --bare
+  pyenv versions --bare
 end
 
 function __fish_pyenv_available_versions
-    # Remove trailing spaces, otherwise completion options appear like
-    # "\ \ option"
-    pyenv install --list | sed "s/^[[:space:]]*//"
+  # Remove trailing spaces, otherwise completion options appear like
+  # "\ \ option"
+  pyenv install --list | sed "s/^[[:space:]]*//"
 end
 
 function __fish_pyenv_prefixes
-    pyenv prefix --complete
+  pyenv prefix --complete
 end
 
 ### commands

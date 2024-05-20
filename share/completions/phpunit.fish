@@ -1,21 +1,21 @@
 # Lists PHPUnit test suites
 function __fish_phpunit_list_suites
-    __fish_phpunit_list --list-suites
+  __fish_phpunit_list --list-suites
 end
 
 # Lists PHPUnit test groups
 function __fish_phpunit_list_groups
-    __fish_phpunit_list --list-groups
+  __fish_phpunit_list --list-groups
 end
 
 # Lists PHPUnit objects corresponding to the given option
 function __fish_phpunit_list --argument-names option
-    # Use the same PHPUnit binary as in the command being completed
-    set -l phpunit (commandline -xpc)[1]
-    test -x $phpunit
-    or return
+  # Use the same PHPUnit binary as in the command being completed
+  set -l phpunit (commandline -xpc)[1]
+  test -x $phpunit
+  or return
 
-    $phpunit $option | tail -n +4 | string trim -c ' -'
+  $phpunit $option | tail -n +4 | string trim -c ' -'
 end
 
 # Code Coverage Options:

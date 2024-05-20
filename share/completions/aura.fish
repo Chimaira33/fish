@@ -56,45 +56,45 @@ complete -c aura -l noconfirm -d 'Bypass any question'
 
 # Transaction options (sync, remove, upgrade)
 for condition in sync remove upgrade
-    complete -c aura -n $$condition -s d -l nodeps -d 'Skip [all] dependency checks'
-    complete -c aura -n $$condition -l dbonly -d 'Modify database entry only'
-    complete -c aura -n $$condition -l noprogressbar -d 'Do not display progress bar'
-    complete -c aura -n $$condition -l noscriptlet -d 'Do not execute install script'
-    complete -c aura -n $$condition -s p -l print -d 'Dry run, only print targets'
-    complete -c aura -n $$condition -l print-format -x -d 'Specify printf-like format'
+  complete -c aura -n $$condition -s d -l nodeps -d 'Skip [all] dependency checks'
+  complete -c aura -n $$condition -l dbonly -d 'Modify database entry only'
+  complete -c aura -n $$condition -l noprogressbar -d 'Do not display progress bar'
+  complete -c aura -n $$condition -l noscriptlet -d 'Do not execute install script'
+  complete -c aura -n $$condition -s p -l print -d 'Dry run, only print targets'
+  complete -c aura -n $$condition -l print-format -x -d 'Specify printf-like format'
 end
 
 # Database and upgrade options (database, sync, upgrade)
 for condition in database sync upgrade
-    complete -c aura -n $$condition -l asdeps -d 'Mark PACKAGE as dependency'
-    complete -c aura -n $$condition -l asexplicit -d 'Mark PACKAGE as explicitly installed'
+  complete -c aura -n $$condition -l asdeps -d 'Mark PACKAGE as dependency'
+  complete -c aura -n $$condition -l asexplicit -d 'Mark PACKAGE as explicitly installed'
 end
 
 # Upgrade options (sync, upgrade)
 for condition in sync upgrade
-    complete -c aura -n $$condition -s f -l force -d 'Bypass file conflict checks'
-    complete -c aura -n $$condition -l ignore -d 'Ignore upgrade of PACKAGE' -xa "$listinstalled"
-    complete -c aura -n $$condition -l ignoregroup -d 'Ignore upgrade of GROUP' -xa "$listgroups"
-    complete -c aura -n $$condition -l needed -d 'Do not reinstall up-to-date targets'
-    complete -c aura -n $$condition -l recursive -d 'Recursively reinstall all dependencies'
+  complete -c aura -n $$condition -s f -l force -d 'Bypass file conflict checks'
+  complete -c aura -n $$condition -l ignore -d 'Ignore upgrade of PACKAGE' -xa "$listinstalled"
+  complete -c aura -n $$condition -l ignoregroup -d 'Ignore upgrade of GROUP' -xa "$listgroups"
+  complete -c aura -n $$condition -l needed -d 'Do not reinstall up-to-date targets'
+  complete -c aura -n $$condition -l recursive -d 'Recursively reinstall all dependencies'
 end
 
 # Query and sync options
 for condition in query sync
-    complete -c aura -n $$condition -s g -l groups -d 'Display all packages in GROUP' -xa "$listgroups"
-    complete -c aura -n $$condition -s i -l info -d 'Display information on PACKAGE'
-    complete -c aura -n $$condition -s q -l quiet -d 'Show less information'
-    complete -c aura -n $$condition -s s -l search -r -d 'Search packages for regexp'
+  complete -c aura -n $$condition -s g -l groups -d 'Display all packages in GROUP' -xa "$listgroups"
+  complete -c aura -n $$condition -s i -l info -d 'Display information on PACKAGE'
+  complete -c aura -n $$condition -s q -l quiet -d 'Show less information'
+  complete -c aura -n $$condition -s s -l search -r -d 'Search packages for regexp'
 end
 
 for condition in aur
-    complete -c aura -n $$condition -s a -l delmakedeps -d 'Remove packages only needed during installation'
-    complete -c aura -n $$condition -s d -l deps -d 'View package dependencies'
-    complete -c aura -n $$condition -s i -l info -d 'View package information'
-    complete -c aura -n $$condition -s k -l diff -d 'Show PKGBUILD diffs'
-    complete -c aura -n $$condition -s p -l pkgbuild -d 'View the packages\'s PKGBUILD'
-    complete -c aura -n $$condition -s x -l unsuppress -d 'Show makepkg output'
-    complete -c aura -n $$condition -l absdeps -d 'Build dependencies from ABS'
+  complete -c aura -n $$condition -s a -l delmakedeps -d 'Remove packages only needed during installation'
+  complete -c aura -n $$condition -s d -l deps -d 'View package dependencies'
+  complete -c aura -n $$condition -s i -l info -d 'View package information'
+  complete -c aura -n $$condition -s k -l diff -d 'Show PKGBUILD diffs'
+  complete -c aura -n $$condition -s p -l pkgbuild -d 'View the packages\'s PKGBUILD'
+  complete -c aura -n $$condition -s x -l unsuppress -d 'Show makepkg output'
+  complete -c aura -n $$condition -l absdeps -d 'Build dependencies from ABS'
 end
 
 # AUR options

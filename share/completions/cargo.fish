@@ -10,14 +10,14 @@ complete -c cargo -f -c cargo -n __fish_use_subcommand -a "$__fish_cargo_subcomm
 complete -c cargo -x -c cargo -n '__fish_seen_subcommand_from help' -a "$__fish_cargo_subcommands"
 
 for x in bench b build c check rustc t test
-    complete -c cargo -x -n "__fish_seen_subcommand_from $x" -l bench -a "(cargo bench --bench 2>&1 | string replace -rf '^\s+' '')"
-    complete -c cargo -n "__fish_seen_subcommand_from $x" -l lib -d 'Only this package\'s library'
-    complete -c cargo -x -n "__fish_seen_subcommand_from $x" -l test -a "(cargo test --test 2>&1 | string replace -rf '^\s+' '')"
+  complete -c cargo -x -n "__fish_seen_subcommand_from $x" -l bench -a "(cargo bench --bench 2>&1 | string replace -rf '^\s+' '')"
+  complete -c cargo -n "__fish_seen_subcommand_from $x" -l lib -d 'Only this package\'s library'
+  complete -c cargo -x -n "__fish_seen_subcommand_from $x" -l test -a "(cargo test --test 2>&1 | string replace -rf '^\s+' '')"
 end
 
 for x in bench b build c check r run rustc t test
-    complete -c cargo -x -n "__fish_seen_subcommand_from $x" -l bin -a "(cargo run --bin 2>&1 | string replace -rf '^\s+' '')"
-    complete -c cargo -x -n "__fish_seen_subcommand_from $x" -l example -a "(cargo run --example 2>&1 | string replace -rf '^\s+' '')"
+  complete -c cargo -x -n "__fish_seen_subcommand_from $x" -l bin -a "(cargo run --bin 2>&1 | string replace -rf '^\s+' '')"
+  complete -c cargo -x -n "__fish_seen_subcommand_from $x" -l example -a "(cargo run --example 2>&1 | string replace -rf '^\s+' '')"
 end
 
 # If using rustup, get the list of installed targets from there. Otherwise print all targets.
@@ -31,48 +31,48 @@ end
 # Ideally, we'd use rustup's "installed targets" but fall back to completions from rustc's "all targets" list, but we don't
 # have an easy way to do that in the `complete` machinery at this time.
 function __fish_cargo_targets
-    if command -q rustup
-        functions -q __rustup_installed_targets || source (path dirname (status current-filename))/rustup.fish
-        __rustup_installed_targets
-    else
-        rustc --print target-list
-    end
+  if command -q rustup
+    functions -q __rustup_installed_targets || source (path dirname (status current-filename))/rustup.fish
+    __rustup_installed_targets
+  else
+    rustc --print target-list
+  end
 end
 
 function __fish_cargo_features
-    if command -q jq
-        cargo read-manifest | jq -r '.features | keys | .[]' | __fish_concat_completions
-    else if set -l python (__fish_anypython)
-        cargo read-manifest | command $python -Sc "import sys, json"\n"print(*json.load(sys.stdin)['features'].keys(), sep='\n')" | __fish_concat_completions
-    end
+  if command -q jq
+    cargo read-manifest | jq -r '.features | keys | .[]' | __fish_concat_completions
+  else if set -l python (__fish_anypython)
+    cargo read-manifest | command $python -Sc "import sys, json"\n"print(*json.load(sys.stdin)['features'].keys(), sep='\n')" | __fish_concat_completions
+  end
 end
 
 function __fish_cargo_packages
-    find . -name Cargo.toml | string replace -rf '.*/([^/]+)/?Cargo.toml' '$1'
+  find . -name Cargo.toml | string replace -rf '.*/([^/]+)/?Cargo.toml' '$1'
 end
 complete -c cargo -n '__fish_seen_subcommand_from run test build debug check' -l package \
-    -xa "(__fish_cargo_packages)"
+  -xa "(__fish_cargo_packages)"
 
 # Look up crates.io crates matching the single argument provided to this function
 function __fish_cargo_search
-    if test (string length -- "$argv[1]") -le 2
-        # Don't waste time searching for strings with too many results to realistically
-        # provide a meaningful completion within our results limit.
-        return
-    end
+  if test (string length -- "$argv[1]") -le 2
+    # Don't waste time searching for strings with too many results to realistically
+    # provide a meaningful completion within our results limit.
+    return
+  end
 
-    # This doesn't do a prefix search, so bump up the limit a tiny bit to try and
-    # get enough results to show something.
-    cargo search --color never --quiet --limit 20 -- $argv[1] 2>/dev/null |
-        # Filter out placeholders and "... and xxx more crates"
-        string match -rvi '^\.\.\.|= "0.0.0"|# .*(reserved|yanked)' |
-        # Remove the version number and map the description
-        string replace -rf '^([^ ]+).*# (.*)' '$1\t$2'
+  # This doesn't do a prefix search, so bump up the limit a tiny bit to try and
+  # get enough results to show something.
+  cargo search --color never --quiet --limit 20 -- $argv[1] 2>/dev/null |
+    # Filter out placeholders and "... and xxx more crates"
+    string match -rvi '^\.\.\.|= "0.0.0"|# .*(reserved|yanked)' |
+    # Remove the version number and map the description
+    string replace -rf '^([^ ]+).*# (.*)' '$1\t$2'
 end
 
 # Complete possible crate names by search the crates.io index
 complete -c cargo -n '__fish_seen_subcommand_from add install' -n '__fish_is_nth_token 2' \
-    -a "(__fish_cargo_search (commandline -ct))"
+  -a "(__fish_cargo_search (commandline -ct))"
 
 ## --- AUTO-GENERATED WITH `cargo complete fish` ---
 # Manually massaged to improve some descriptions
@@ -845,32 +845,32 @@ complete -c cargo -n "__fish_seen_subcommand_from help" -l offline -d 'Run witho
 # Add completions for popular cargo addon `cargo-asm` (that at least one fish dev uses)
 if command -q cargo-asm
 
-    # Flags (no parameters)
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -l comments -d "Print asm comments"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -l debug-info -d "Generate asm w/ debug info even if not required"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -l debug-mode -d "Print output useful for debugging"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -l directives -d "Print asm directives"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -l help -s h -d "Print cargo-asm help info"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -l json -d "Serialize asm AST to JSON"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -l lib -d "Build only the lib target"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -l no-color -d "Disable color output"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -l no-default-features -d "Disable all cargo features on build"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -l rust -d "Interleave asm output w/ rust code"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -l version -s V -d "Print cargo-asm version info"
+  # Flags (no parameters)
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -l comments -d "Print asm comments"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -l debug-info -d "Generate asm w/ debug info even if not required"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -l debug-mode -d "Print output useful for debugging"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -l directives -d "Print asm directives"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -l help -s h -d "Print cargo-asm help info"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -l json -d "Serialize asm AST to JSON"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -l lib -d "Build only the lib target"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -l no-color -d "Disable color output"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -l no-default-features -d "Disable all cargo features on build"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -l rust -d "Interleave asm output w/ rust code"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -l version -s V -d "Print cargo-asm version info"
 
-    # Options (require a parameter)
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -rl target -d "Build for target" -xa "(__fish_cargo_targets)"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -rl asm-style -d "ASM style (default: intel)" -xa "intel att"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -rl build-type -d "Build type (default: release)" -xa "debug release"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -rl features -d "Cargo features to enable" -xa "(__fish_cargo_features)"
-    complete -c cargo -n "__fish_seen_subcommand_from asm" -rl manifest-path -d "Run cargo-asm in a different directory"
+  # Options (require a parameter)
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -rl target -d "Build for target" -xa "(__fish_cargo_targets)"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -rl asm-style -d "ASM style (default: intel)" -xa "intel att"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -rl build-type -d "Build type (default: release)" -xa "debug release"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -rl features -d "Cargo features to enable" -xa "(__fish_cargo_features)"
+  complete -c cargo -n "__fish_seen_subcommand_from asm" -rl manifest-path -d "Run cargo-asm in a different directory"
 
-    # Dynamically generate completions for the function/impl path to translate to asm (the reason these completions exist)
-    # Warning: this will build the project and can take time! We make sure to only call it if it's not a switch so completions
-    # for --foo will always be fast.
-    if command -q timeout
-        complete -c cargo -n "__fish_seen_subcommand_from asm; and not __fish_is_switch" -xa "(timeout 1 cargo asm)"
-    else
-        complete -c cargo -n "__fish_seen_subcommand_from asm; and not __fish_is_switch" -xa "(cargo asm)"
-    end
+  # Dynamically generate completions for the function/impl path to translate to asm (the reason these completions exist)
+  # Warning: this will build the project and can take time! We make sure to only call it if it's not a switch so completions
+  # for --foo will always be fast.
+  if command -q timeout
+    complete -c cargo -n "__fish_seen_subcommand_from asm; and not __fish_is_switch" -xa "(timeout 1 cargo asm)"
+  else
+    complete -c cargo -n "__fish_seen_subcommand_from asm; and not __fish_is_switch" -xa "(cargo asm)"
+  end
 end

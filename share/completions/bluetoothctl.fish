@@ -3,17 +3,17 @@
 set -l cmds list show select devices paired-devices system-alias reset-alias power pairable discoverable discoverable-timeout agent default-agent advertise set-alias scan info pair cancel-pairing trust untrust block unblock remove connect disconnect scan.uuids scan.service scan.manufacturer scan.data scan.discoverable scan.discoverable-timeout scan.tx-power scan.name scan.appearance scan.duration scan.timeout scan.secondary scan.clear gatt.list-attributes gatt.select-attribute gatt.attribute-info gatt.read gatt.write gatt.acquire-write gatt.release-write gatt.acquire-notify gatt.release-notify gatt.notify gatt.clone gatt.register-application gatt.unregister-application gatt.register-service gatt.unregister-service gatt.register-includes gatt.unregister-includes gatt.register-characteristic gatt.unregister-characteristic gatt.register-descriptor gatt.unregister-descriptor advertise.uuids advertise.service advertise.manufacturer advertise.data advertise.discoverable advertise.discoverable-timeout advertise.tx-power advertise.name advertise.appearance advertise.duration advertise.timeout advertise.secondary advertise.clear
 
 function __fish_list_bluetoothctl_devices
-    # Output of `bluetoothctl devices`:
-    # Device 01:23:34:56:89:AB Name1
-    # Device 01:23:34:56:89:AC Name2
-    bluetoothctl devices 2>/dev/null | string replace -r "^Device " "" | string replace " " \t
+  # Output of `bluetoothctl devices`:
+  # Device 01:23:34:56:89:AB Name1
+  # Device 01:23:34:56:89:AC Name2
+  bluetoothctl devices 2>/dev/null | string replace -r "^Device " "" | string replace " " \t
 end
 
 function __fish_list_bluetoothctl_controllers
-    # Output of `bluetoothctl list`:
-    # Controller 01:23:34:56:89:AB Name1 [default]
-    # Controller 01:23:34:56:89:AC Name2
-    bluetoothctl list 2>/dev/null | string replace -r "^Controller " "" | string replace " " \t
+  # Output of `bluetoothctl list`:
+  # Controller 01:23:34:56:89:AB Name1 [default]
+  # Controller 01:23:34:56:89:AC Name2
+  bluetoothctl list 2>/dev/null | string replace -r "^Controller " "" | string replace " " \t
 end
 
 complete -f -c bluetoothctl -n "not __fish_seen_subcommand_from $cmds" -a list -d "List available controllers"

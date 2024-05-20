@@ -1,23 +1,23 @@
 # Fish completion for gnome-extensions
 
 function __fish_gnome-extensions_complete_all_extensions
-    gnome-extensions list
+  gnome-extensions list
 end
 
 function __fish_gnome-extensions_complete_enabled_extensions
-    gnome-extensions list --enabled
+  gnome-extensions list --enabled
 end
 
 function __fish_gnome-extensions_complete_disabled_extensions
-    gnome-extensions list --disabled
+  gnome-extensions list --disabled
 end
 
 function __fish_gnome-extensions_complete_enabled_extensions_with_preferences
-    gnome-extensions list --enabled --prefs
+  gnome-extensions list --enabled --prefs
 end
 
 function __fish_gnome-extensions_complete_disabled_extensions_with_preferences
-    gnome-extensions list --disabled --prefs
+  gnome-extensions list --disabled --prefs
 end
 
 set -l commands_with_quiet enable disable reset uninstall list info show prefs create pack install

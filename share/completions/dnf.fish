@@ -3,43 +3,43 @@
 #
 
 function __dnf_list_installed_packages
-    dnf repoquery --cacheonly "$cur*" --qf "%{name}" --installed </dev/null
+  dnf repoquery --cacheonly "$cur*" --qf "%{name}" --installed </dev/null
 end
 
 function __dnf_list_available_packages
-    set -l tok (commandline -ct | string collect)
-    set -l files (__fish_complete_suffix .rpm)
-    if string match -q -- '*/*' $tok
-        # Fast path - package names can't contain slashes, so show files.
-        string join -- \n $files
-        return
-    end
-    set -l results
-    # dnf --cacheonly list --available gives a list of non-installed packages dnf is aware of,
-    # but it is slow as molasses. Unfortunately, sqlite3 is not available oob (Fedora Server 32).
-    if type -q sqlite3
-        # This schema is bad, there is only a "pkg" field with the full
-        #    packagename-version-release.fedorarelease.architecture
-        # tuple. We are only interested in the packagename.
-        set results (sqlite3 /var/cache/dnf/packages.db "SELECT pkg FROM available WHERE pkg LIKE '$tok%'" 2>/dev/null |
+  set -l tok (commandline -ct | string collect)
+  set -l files (__fish_complete_suffix .rpm)
+  if string match -q -- '*/*' $tok
+    # Fast path - package names can't contain slashes, so show files.
+    string join -- \n $files
+    return
+  end
+  set -l results
+  # dnf --cacheonly list --available gives a list of non-installed packages dnf is aware of,
+  # but it is slow as molasses. Unfortunately, sqlite3 is not available oob (Fedora Server 32).
+  if type -q sqlite3
+    # This schema is bad, there is only a "pkg" field with the full
+    #    packagename-version-release.fedorarelease.architecture
+    # tuple. We are only interested in the packagename.
+    set results (sqlite3 /var/cache/dnf/packages.db "SELECT pkg FROM available WHERE pkg LIKE '$tok%'" 2>/dev/null |
             string replace -r -- '-[^-]*-[^-]*$' '')
-    else
-        # In some cases dnf will ask for input (e.g. to accept gpg keys).
-        # Connect it to /dev/null to try to stop it.
-        set results (dnf repoquery --cacheonly "$tok*" --qf "%{name}" --available </dev/null 2>/dev/null)
-    end
-    if set -q results[1]
-        set results (string match -r -- '.*\\.rpm$' $files) $results
-    else
-        set results $files
-    end
-    string join \n $results
+  else
+    # In some cases dnf will ask for input (e.g. to accept gpg keys).
+    # Connect it to /dev/null to try to stop it.
+    set results (dnf repoquery --cacheonly "$tok*" --qf "%{name}" --available </dev/null 2>/dev/null)
+  end
+  if set -q results[1]
+    set results (string match -r -- '.*\\.rpm$' $files) $results
+  else
+    set results $files
+  end
+  string join \n $results
 end
 
 function __dnf_list_transactions
-    if type -q sqlite3
-        sqlite3 /var/lib/dnf/history.sqlite "SELECT id, cmdline FROM trans" 2>/dev/null | string replace "|" \t
-    end
+  if type -q sqlite3
+    sqlite3 /var/lib/dnf/history.sqlite "SELECT id, cmdline FROM trans" 2>/dev/null | string replace "|" \t
+  end
 end
 
 # Alias
@@ -114,7 +114,7 @@ complete -c dnf -n "__fish_seen_subcommand_from history" -xa undo -d "Undoes the
 complete -c dnf -n "__fish_seen_subcommand_from history" -xa userinstalled -d "Lists all user installed packages"
 
 for i in info redo rollback undo
-    complete -c dnf -n "__fish_seen_subcommand_from history; and  __fish_seen_subcommand_from $i" -xa "(__dnf_list_transactions)"
+  complete -c dnf -n "__fish_seen_subcommand_from history; and  __fish_seen_subcommand_from $i" -xa "(__dnf_list_transactions)"
 end
 
 # Info
@@ -195,9 +195,9 @@ complete -c dnf -n __fish_use_subcommand -xa repoinfo -d "Verbose repolist"
 complete -c dnf -n __fish_use_subcommand -xa repolist -d "Lists all enabled repositories"
 
 for i in repolist repoinfo
-    complete -c dnf -n "__fish_seen_subcommand_from $i" -l enabled -d "Lists all enabled repositories"
-    complete -c dnf -n "__fish_seen_subcommand_from $i" -l disabled -d "Lists all disabled repositories"
-    complete -c dnf -n "__fish_seen_subcommand_from $i" -l all -d "Lists all repositories"
+  complete -c dnf -n "__fish_seen_subcommand_from $i" -l enabled -d "Lists all enabled repositories"
+  complete -c dnf -n "__fish_seen_subcommand_from $i" -l disabled -d "Lists all disabled repositories"
+  complete -c dnf -n "__fish_seen_subcommand_from $i" -l all -d "Lists all repositories"
 end
 
 # Repoquery
@@ -302,26 +302,26 @@ complete -c dnf -n "__fish_seen_subcommand_from upgrade-minimal" -xa "(__dnf_lis
 
 # Versionlock
 if test -f /etc/dnf/plugins/versionlock.conf
-    function __dnf_current_versionlock_list
-        dnf versionlock list | grep -v metadata
-    end
+  function __dnf_current_versionlock_list
+    dnf versionlock list | grep -v metadata
+  end
 
-    complete -c dnf -n __fish_use_subcommand -xa versionlock -d "DNF versionlock plugin"
-    # - add
-    complete -c dnf -n "__fish_seen_subcommand_from versionlock" -xa add -d "Add  a versionlock for all available packages matching the spec"
-    complete -c dnf -n "__fish_seen_subcommand_from versionlock; and  __fish_seen_subcommand_from add" -xa "(__dnf_list_installed_packages)"
-    # - exclude
-    complete -c dnf -n "__fish_seen_subcommand_from versionlock" -xa exclude -d "Add an exclude (within  versionlock) for the available packages matching the spec"
-    complete -c dnf -n "__fish_seen_subcommand_from versionlock; and  __fish_seen_subcommand_from exclude" -xa "(__dnf_list_installed_packages)"
-    # - delete
-    complete -c dnf -n "__fish_seen_subcommand_from versionlock" -xa delete -d "Remove any matching versionlock entries"
-    complete -c dnf -n "__fish_seen_subcommand_from versionlock; and  __fish_seen_subcommand_from delete" -xa "(__dnf_current_versionlock_list)"
-    # - list
-    complete -c dnf -n "__fish_seen_subcommand_from versionlock" -xa list -d "List the current versionlock entries"
-    complete -c dnf -n "__fish_seen_subcommand_from versionlock; and  __fish_seen_subcommand_from list" -xa "(false)"
-    # - clear
-    complete -c dnf -n "__fish_seen_subcommand_from versionlock" -xa clear -d "Remove all versionlock entries"
-    complete -c dnf -n "__fish_seen_subcommand_from versionlock; and  __fish_seen_subcommand_from clear" -xa "(false)"
+  complete -c dnf -n __fish_use_subcommand -xa versionlock -d "DNF versionlock plugin"
+  # - add
+  complete -c dnf -n "__fish_seen_subcommand_from versionlock" -xa add -d "Add  a versionlock for all available packages matching the spec"
+  complete -c dnf -n "__fish_seen_subcommand_from versionlock; and  __fish_seen_subcommand_from add" -xa "(__dnf_list_installed_packages)"
+  # - exclude
+  complete -c dnf -n "__fish_seen_subcommand_from versionlock" -xa exclude -d "Add an exclude (within  versionlock) for the available packages matching the spec"
+  complete -c dnf -n "__fish_seen_subcommand_from versionlock; and  __fish_seen_subcommand_from exclude" -xa "(__dnf_list_installed_packages)"
+  # - delete
+  complete -c dnf -n "__fish_seen_subcommand_from versionlock" -xa delete -d "Remove any matching versionlock entries"
+  complete -c dnf -n "__fish_seen_subcommand_from versionlock; and  __fish_seen_subcommand_from delete" -xa "(__dnf_current_versionlock_list)"
+  # - list
+  complete -c dnf -n "__fish_seen_subcommand_from versionlock" -xa list -d "List the current versionlock entries"
+  complete -c dnf -n "__fish_seen_subcommand_from versionlock; and  __fish_seen_subcommand_from list" -xa "(false)"
+  # - clear
+  complete -c dnf -n "__fish_seen_subcommand_from versionlock" -xa clear -d "Remove all versionlock entries"
+  complete -c dnf -n "__fish_seen_subcommand_from versionlock; and  __fish_seen_subcommand_from clear" -xa "(false)"
 end
 
 # Options:

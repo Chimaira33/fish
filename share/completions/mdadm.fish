@@ -10,110 +10,110 @@
 #     as their absence has already been checked, because this absence caused evaluation of __fish_not_contain_opt
 
 function __fish_mdadm_metadata_options
-    echo -e "0\tUse original 0.90 format superblock"
-    echo -e "0.90\tUse original 0.90 format superblock"
-    echo -e "1\tUse last 1.x format superblock"
-    echo -e "default\tUse last 1.x format superblock"
-    echo -e "1.0\tUse 1.0 format superblock"
-    echo -e "1.1\tUse 1.1 format superblock"
-    echo -e "1.2\tUse 1.2 format superblock"
-    echo -e "ddf\tUse DDF (Disk Data Format) format"
-    echo -e "imsm\tUse Intel(R) Matrix Storage Manager format"
+  echo -e "0\tUse original 0.90 format superblock"
+  echo -e "0.90\tUse original 0.90 format superblock"
+  echo -e "1\tUse last 1.x format superblock"
+  echo -e "default\tUse last 1.x format superblock"
+  echo -e "1.0\tUse 1.0 format superblock"
+  echo -e "1.1\tUse 1.1 format superblock"
+  echo -e "1.2\tUse 1.2 format superblock"
+  echo -e "ddf\tUse DDF (Disk Data Format) format"
+  echo -e "imsm\tUse Intel(R) Matrix Storage Manager format"
 end
 
 function __fish_mdadm_level_options
-    echo -e "linear\tJBOD"
-    echo -e "raid0\tStripped volume (RAID 0)"
-    echo -e "0\tStripped volume (RAID 0)"
-    echo -e "stripe\tStripped volume (RAID 0)"
-    echo -e "raid1\tMirrored volume (RAID 1)"
-    echo -e "1\tMirrored volume (RAID 1)"
-    echo -e "mirror\tMirrored volume (RAID 1)"
-    echo -e "raid4\tStripped volume with parity disk (RAID 4)"
-    echo -e "4\tStripped volume with parity disk (RAID 4)"
-    echo -e "raid5\tStripped volume with distributed parity (RAID 5)"
-    echo -e "5\tStripped volume with distributed parity (RAID 5)"
-    echo -e "raid6\tStripped volume with double distributed parity (RAID 5)"
-    echo -e "6\tStripped volume with double distributed parity (RAID 5)"
-    echo -e "raid10\tMirrored stripped volume (RAID 10)"
-    echo -e "10\tMirrored stripped volume (RAID 10)"
-    echo -e "multipath\tMultiple access device, AKA multipath (deprecated)"
-    echo -e "mp\tMultiple access device, AKA multipath (deprecated)"
-    echo -e "faulty\tPseudo RAID layer for single device (akin faulty RAID 1)"
-    echo -e "container\tContainer" # To be clarified
+  echo -e "linear\tJBOD"
+  echo -e "raid0\tStripped volume (RAID 0)"
+  echo -e "0\tStripped volume (RAID 0)"
+  echo -e "stripe\tStripped volume (RAID 0)"
+  echo -e "raid1\tMirrored volume (RAID 1)"
+  echo -e "1\tMirrored volume (RAID 1)"
+  echo -e "mirror\tMirrored volume (RAID 1)"
+  echo -e "raid4\tStripped volume with parity disk (RAID 4)"
+  echo -e "4\tStripped volume with parity disk (RAID 4)"
+  echo -e "raid5\tStripped volume with distributed parity (RAID 5)"
+  echo -e "5\tStripped volume with distributed parity (RAID 5)"
+  echo -e "raid6\tStripped volume with double distributed parity (RAID 5)"
+  echo -e "6\tStripped volume with double distributed parity (RAID 5)"
+  echo -e "raid10\tMirrored stripped volume (RAID 10)"
+  echo -e "10\tMirrored stripped volume (RAID 10)"
+  echo -e "multipath\tMultiple access device, AKA multipath (deprecated)"
+  echo -e "mp\tMultiple access device, AKA multipath (deprecated)"
+  echo -e "faulty\tPseudo RAID layer for single device (akin faulty RAID 1)"
+  echo -e "container\tContainer" # To be clarified
 end
 
 function __fish_mdadm_layout_options # To be clarified
-    echo -e left-asymmetric
-    echo -e left-symmetric
-    echo -e right-asymmetric
-    echo -e right-symmetric
-    echo -e "la\tAlias of left-asymmetric"
-    echo -e "ra\tAlias of right-asymmetric"
-    echo -e "ls\tAlias of left-symmetric"
-    echo -e "rs\tAlias of right-symmetric"
-    echo -e parity-first
-    echo -e parity-last
-    echo -e ddf-zero-restart
-    echo -e ddf-N-restart
-    echo -e ddf-N-continue
-    echo -e left-symmetric-6
-    echo -e right-symmetric-6
-    echo -e left-asymmetric-6
-    echo -e right-asymmetric-6
-    echo -e parity-first-6
-    echo -e write-transient
-    echo -e "wt\tAlias of write-transient"
-    echo -e read-transient
-    echo -e "rt\tAlias of read-transient"
-    echo -e write-persistent
-    echo -e "wp\tAlias of write-persistent"
-    echo -e read-persistent
-    echo -e "rp\tAlias of read-persistent"
-    echo -e write-all
-    echo -e read-fixable
-    echo -e "rf\tAlias of read-fixable"
-    echo -e clear
-    echo -e flush
-    echo -e none
-    echo -e n
-    echo -e o
-    echo -e f
-    echo -e normalise
-    echo -e preserve
+  echo -e left-asymmetric
+  echo -e left-symmetric
+  echo -e right-asymmetric
+  echo -e right-symmetric
+  echo -e "la\tAlias of left-asymmetric"
+  echo -e "ra\tAlias of right-asymmetric"
+  echo -e "ls\tAlias of left-symmetric"
+  echo -e "rs\tAlias of right-symmetric"
+  echo -e parity-first
+  echo -e parity-last
+  echo -e ddf-zero-restart
+  echo -e ddf-N-restart
+  echo -e ddf-N-continue
+  echo -e left-symmetric-6
+  echo -e right-symmetric-6
+  echo -e left-asymmetric-6
+  echo -e right-asymmetric-6
+  echo -e parity-first-6
+  echo -e write-transient
+  echo -e "wt\tAlias of write-transient"
+  echo -e read-transient
+  echo -e "rt\tAlias of read-transient"
+  echo -e write-persistent
+  echo -e "wp\tAlias of write-persistent"
+  echo -e read-persistent
+  echo -e "rp\tAlias of read-persistent"
+  echo -e write-all
+  echo -e read-fixable
+  echo -e "rf\tAlias of read-fixable"
+  echo -e clear
+  echo -e flush
+  echo -e none
+  echo -e n
+  echo -e o
+  echo -e f
+  echo -e normalise
+  echo -e preserve
 end
 
 function __fish_mdadm_level_options
-    echo -e "yes\tUse standard format (default)"
-    echo -e "md\tUse a non-partitionable array"
-    echo -e "mdp\tUse a partitionable array"
-    echo -e "part\tUse a partitionable array"
-    echo -e "p\tUse a partitionable array"
+  echo -e "yes\tUse standard format (default)"
+  echo -e "md\tUse a non-partitionable array"
+  echo -e "mdp\tUse a partitionable array"
+  echo -e "part\tUse a partitionable array"
+  echo -e "p\tUse a partitionable array"
 end
 
 function __fish_mdadm_update_options
-    echo -e "sparc2.2\tRemove superblock misalignement from SPARC kernel 2.2"
-    echo -e "summaries\tCorrect superblock summaries"
-    echo -e "uuid\tUpdate array UUID"
-    echo -e "name\tUpdate array name"
-    echo -e "nodes\tUpdate array nodes"
-    echo -e "homehost\tUpdate array homehost"
-    echo -e "home-cluster\tUpdate array cluster name"
-    echo -e "resync\tMark the array as dirty, thus forcing resync"
-    echo -e "byteorder\tReverse superblock endianness"
-    echo -e "devicesize\tRefresh device size"
-    echo -e "no-bitmap\tAssume bitmap absence"
-    echo -e "bbl\tReserve space for bad block list"
-    echo -e "no-bbl\tFree reserved space for bad block list"
-    echo -e "metadata\tConvert 0.90 metadata to 1.0"
-    echo -e "super-minor\tReset preferred minor to current one"
+  echo -e "sparc2.2\tRemove superblock misalignement from SPARC kernel 2.2"
+  echo -e "summaries\tCorrect superblock summaries"
+  echo -e "uuid\tUpdate array UUID"
+  echo -e "name\tUpdate array name"
+  echo -e "nodes\tUpdate array nodes"
+  echo -e "homehost\tUpdate array homehost"
+  echo -e "home-cluster\tUpdate array cluster name"
+  echo -e "resync\tMark the array as dirty, thus forcing resync"
+  echo -e "byteorder\tReverse superblock endianness"
+  echo -e "devicesize\tRefresh device size"
+  echo -e "no-bitmap\tAssume bitmap absence"
+  echo -e "bbl\tReserve space for bad block list"
+  echo -e "no-bbl\tFree reserved space for bad block list"
+  echo -e "metadata\tConvert 0.90 metadata to 1.0"
+  echo -e "super-minor\tReset preferred minor to current one"
 end
 
 function __fish_mdadm_action_options
-    echo -e "idle\tAbort currently running actions"
-    echo -e "frozen\tAbort currently running actions, prevent their restart"
-    echo -e "check\tScrub the array (i.e. check constistency)"
-    echo -e "repair\tCheck, then resync"
+  echo -e "idle\tAbort currently running actions"
+  echo -e "frozen\tAbort currently running actions, prevent their restart"
+  echo -e "check\tScrub the array (i.e. check constistency)"
+  echo -e "repair\tCheck, then resync"
 end
 
 # In the next 7 lines, the tested option is maintained into the search list to prevent suggesting it if it has already been used, as they cannot be used twice

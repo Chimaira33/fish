@@ -9,7 +9,7 @@ complete -c pzstd -s d -l decompress -d Decompress -k -x -a "
 complete -c pzstd -s t -l test -d "Test the integrity"
 
 for level in (seq 1 19)
-    complete -c pzstd -o $level -d "Set compression level"
+  complete -c pzstd -o $level -d "Set compression level"
 end
 
 complete -c pzstd -l ultra -d "Enable compression level beyond 19"

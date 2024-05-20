@@ -1,14 +1,14 @@
 function __fish_lxc_no_subcommand -d 'Test if lxc has yet to be given the command'
-    for i in (commandline --tokens-expanded --cut-at-cursor --current-process)
-        if contains -- $i config console copy delete exec file help image info launch list move network pause profile publish remote rename restart restore shell snapshot start stop
-            return 1
-        end
+  for i in (commandline --tokens-expanded --cut-at-cursor --current-process)
+    if contains -- $i config console copy delete exec file help image info launch list move network pause profile publish remote rename restart restore shell snapshot start stop
+      return 1
     end
-    return 0
+  end
+  return 0
 end
 
 function __fish_lxc_list_containers
-    lxc list -c n | string match -r '\| [a-zA-Z0-9_-]+' | string replace -r '\| ' ''
+  lxc list -c n | string match -r '\| [a-zA-Z0-9_-]+' | string replace -r '\| ' ''
 end
 
 complete --condition __fish_lxc_no_subcommand --command lxc --no-files --arguments config -d 'Manage configuration.'

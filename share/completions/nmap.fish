@@ -71,26 +71,26 @@ complete -c nmap -l max-os-tries -d 'Set the maximum number of OS detection trie
 # NMAP SCRIPTING ENGINE (NSE)
 complete -c nmap -o sC -d 'Scan: Scripts (default)'
 function __fish_complete_nmap_script
-    set -l now (date "+%s")
+  set -l now (date "+%s")
 
-    # cache completion for 5 minutes (`nmap --script-help all` is slow)
-    # must use `math` because of differences between BSD and GNU `date`
-    if test -z "$__fish_nmap_script_completion_cache" -o (math $now - 5 "*" 60) -gt "$__fish_nmap_script_completion_cache_time"
-        set -g __fish_nmap_script_completion_cache_time $now
-        set -g __fish_nmap_script_completion_cache ""
-        set -l cmd
-        for l in (nmap --script-help all 2> /dev/null | grep -A2 -B1 Categories: | grep -v '^\\(--\\|Categories:\\|https:\\)')
-            if string match -q -v --regex "^ " $l
-                set cmd $l
-            else
-                set __fish_nmap_script_completion_cache $__fish_nmap_script_completion_cache\n$cmd\t(string trim -l $l)
-            end
-        end
-        for cat in all auth broadcast brute default discovery dos exploit external fuzzer intrusive malware safe version vuln
-            set __fish_nmap_script_completion_cache $__fish_nmap_script_completion_cache\n$cat\tCategory\n
-        end
+  # cache completion for 5 minutes (`nmap --script-help all` is slow)
+  # must use `math` because of differences between BSD and GNU `date`
+  if test -z "$__fish_nmap_script_completion_cache" -o (math $now - 5 "*" 60) -gt "$__fish_nmap_script_completion_cache_time"
+    set -g __fish_nmap_script_completion_cache_time $now
+    set -g __fish_nmap_script_completion_cache ""
+    set -l cmd
+    for l in (nmap --script-help all 2> /dev/null | grep -A2 -B1 Categories: | grep -v '^\\(--\\|Categories:\\|https:\\)')
+      if string match -q -v --regex "^ " $l
+        set cmd $l
+      else
+        set __fish_nmap_script_completion_cache $__fish_nmap_script_completion_cache\n$cmd\t(string trim -l $l)
+      end
     end
-    echo -e $__fish_nmap_script_completion_cache
+    for cat in all auth broadcast brute default discovery dos exploit external fuzzer intrusive malware safe version vuln
+      set __fish_nmap_script_completion_cache $__fish_nmap_script_completion_cache\n$cat\tCategory\n
+    end
+  end
+  echo -e $__fish_nmap_script_completion_cache
 end
 complete -c nmap -l script -r -a "(__fish_complete_list , __fish_complete_nmap_script)"
 complete -c nmap -l script -r -d 'Runs a script scan'
@@ -114,12 +114,12 @@ complete -c nmap -l defeat-rst-ratelimit -d 'ignore ICMP-RST rate limits'
 complete -c nmap -l defeat-icmp-ratelimit -d 'ignore ICMP unreachable in UDP'
 complete -c nmap -l nsock-engine -x -d 'Enforce use of a given nsock IO multiplexing engine' -a "epoll kqueue poll select"
 function __fish_complete_nmap_timing-template
-    set -l i 0
-    for t in paranoid sneaky polite normal aggressive insane
-        printf "%i\t%s timing\n" $i $t
-        printf "%s\tTemplate %i\n" $t $i
-        set i (math $i + 1)
-    end
+  set -l i 0
+  for t in paranoid sneaky polite normal aggressive insane
+    printf "%i\t%s timing\n" $i $t
+    printf "%s\tTemplate %i\n" $t $i
+    set i (math $i + 1)
+  end
 end
 complete -c nmap -s T -x -a "(__fish_complete_nmap_timing-template)" -d 'Set a timing template'
 
@@ -135,11 +135,11 @@ complete -c nmap -l data -x -d 'Append custom binary data to sent packets'
 complete -c nmap -l data-string -x -d 'Append custom string to sent packets'
 complete -c nmap -l data-length -x -d 'Append random data to sent packets'
 function __fish_complete_nmap_ip-options
-    printf "S\tstrict source routing\n" # may be followed by ip addresses
-    printf "R\trecord route\n" # may be followed by ip addresses
-    printf "L\tloose source routing\n" # may be followed by ip addresses
-    printf "T\trecord internet timestamps\n"
-    printf "U\trecord timestamps and ip addresses\n"
+  printf "S\tstrict source routing\n" # may be followed by ip addresses
+  printf "R\trecord route\n" # may be followed by ip addresses
+  printf "L\tloose source routing\n" # may be followed by ip addresses
+  printf "T\trecord internet timestamps\n"
+  printf "U\trecord timestamps and ip addresses\n"
 end
 complete -c nmap -l ip-options -x -a "(__fish_complete_nmap_ip-options)" -d 'Send packets with specified ip options'
 complete -c nmap -l ttl -x -d 'Set IP time-to-live field'

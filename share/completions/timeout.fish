@@ -7,7 +7,7 @@ complete -c timeout -l preserve-status -d 'Exit with same status as COMMAND'
 
 # GNU coreutils ver
 if timeout --version &>/dev/null
-    complete -c timeout -l help -d 'Display this help and exit'
-    complete -c timeout -l version -d 'Output version and exit'
-    complete -c timeout -s v -l verbose -d 'Send diagnostic info to stderr'
+  complete -c timeout -l help -d 'Display this help and exit'
+  complete -c timeout -l version -d 'Output version and exit'
+  complete -c timeout -s v -l verbose -d 'Send diagnostic info to stderr'
 end

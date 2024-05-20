@@ -1,5 +1,5 @@
 function __fish_complete_tcpdump_interfaces --description "Complete network interfaces available on the system and on which tcpdump can capture packets"
-    tcpdump --list-interfaces | string replace -r '\d+\.(\S+( \(.*\))?).*' '$1' | string replace -r ' \((.*)\)' '\t$1'
+  tcpdump --list-interfaces | string replace -r '\d+\.(\S+( \(.*\))?).*' '$1' | string replace -r ' \((.*)\)' '\t$1'
 end
 
 complete -c tcpdump -f

@@ -1,7 +1,7 @@
 complete -c isatty -x
 
 if test -d /dev/fd
-    complete -c isatty -k -a "(string replace /dev/fd/ '' /dev/fd/*)"
+  complete -c isatty -k -a "(string replace /dev/fd/ '' /dev/fd/*)"
 end
 
 complete -c isatty -k -a stderr -d 2

@@ -1,73 +1,73 @@
 set -l runtime config_cache_reload \
-    housekeeper_execute \
-    trigger_housekeeper_execute \
-    log_level_increase \
-    "log_level_increase=" \
-    log_level_decrease \
-    "log_level_decrease=" \
-    snmp_cache_reload \
-    secrets_reload \
-    diaginfo \
-    "diaginfo=" \
-    prof_enable \
-    prof_enable= \
-    prof_disable \
-    prof_disable= \
-    service_cache_reload \
-    ha_status \
-    "ha_remove_node=" \
-    ha_set_failover_delay
+  housekeeper_execute \
+  trigger_housekeeper_execute \
+  log_level_increase \
+  "log_level_increase=" \
+  log_level_decrease \
+  "log_level_decrease=" \
+  snmp_cache_reload \
+  secrets_reload \
+  diaginfo \
+  "diaginfo=" \
+  prof_enable \
+  prof_enable= \
+  prof_disable \
+  prof_disable= \
+  service_cache_reload \
+  ha_status \
+  "ha_remove_node=" \
+  ha_set_failover_delay
 
 set -l scope rwlock mutex processing
 
 function __fish_string_in_command -a ch
-    string match -rq $ch (commandline)
+  string match -rq $ch (commandline)
 end
 
 function __fish_prepend -a prefix
-    set -l log_target alerter \
-        "alert manager" \
-        "configuration syncer" \
-        discoverer \
-        escalator \
-        "history syncer" \
-        housekeeper \
-        "http poller" \
-        "icmp pinger" \
-        "ipmi manager" \
-        "ipmi poller" \
-        "java poller" \
-        poller \
-        "preprocessing manager" \
-        "preprocessing worker" \
-        "proxy poller" \
-        self-monitoring \
-        "snmp trapper" \
-        "task manager" \
-        timer \
-        trapper \
-        "unreachable poller" \
-        "vmware collector" \
-        "history poller" \
-        "availability manager" \
-        "service manager" \
-        "odbc poller"
+  set -l log_target alerter \
+    "alert manager" \
+    "configuration syncer" \
+    discoverer \
+    escalator \
+    "history syncer" \
+    housekeeper \
+    "http poller" \
+    "icmp pinger" \
+    "ipmi manager" \
+    "ipmi poller" \
+    "java poller" \
+    poller \
+    "preprocessing manager" \
+    "preprocessing worker" \
+    "proxy poller" \
+    self-monitoring \
+    "snmp trapper" \
+    "task manager" \
+    timer \
+    trapper \
+    "unreachable poller" \
+    "vmware collector" \
+    "history poller" \
+    "availability manager" \
+    "service manager" \
+    "odbc poller"
 
-    if string match -rq 'log_level_(in|de)crease' $prefix
-        set var $log_target
-    else if string match -rq 'prof_(en|dis)able' $prefix
-        set var $log_target 'ha manager'
-    else if string match -rq diaginfo $prefix
-        set var historycache preprocessing alerting lld valuecache locks
-    end
+  if string match -rq 'log_level_(in|de)crease' $prefix
+    set var $log_target
+  else if string match -rq 'prof_(en|dis)able' $prefix
+    set var $log_target 'ha manager'
+  else if string match -rq diaginfo $prefix
+    set var historycache preprocessing alerting lld valuecache locks
+  end
 
-    for i in $var
-        echo $prefix="$i"
-    end
+  for i in $var
+    echo $prefix="$i"
+  end
 end
 
 function __fish_list_nodes
-    zabbix_server -R ha_status | tail -n+4 | awk '{print "ha_remove_node="$3}'
+  zabbix_server -R ha_status | tail -n+4 | awk '{print "ha_remove_node="$3}'
 end
 
 # General

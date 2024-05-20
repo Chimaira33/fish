@@ -2,11 +2,11 @@
 
 set -l skin tool
 if valgrind --version 2>/dev/null | string match -qr -- '-2\.[012]\.'
-    # In older versions of Valgrind, the skin selection option was
-    # '--skin'
-    # But someone decided that it would be fun to change this to
-    # '--tool' for no good reason
-    set skin skin
+  # In older versions of Valgrind, the skin selection option was
+  # '--skin'
+  # But someone decided that it would be fun to change this to
+  # '--tool' for no good reason
+  set skin skin
 end
 
 complete -xc valgrind -l $skin -d Skin -a "
@@ -18,14 +18,14 @@ complete -xc valgrind -l $skin -d Skin -a "
 "
 
 function __fish_valgrind_skin --argument-names tool -V skin
-    set -l cmd (commandline -cpx)
-    # Quote $cmd so the tokens are separated with a space
-    if string match -qr -- "--$skin(=| )$tool" "$cmd"
-        return 0
-    end
-    # memcheck is the default tool/skin
-    test $tool = memcheck
-    and not string match -- $skin $cmd
+  set -l cmd (commandline -cpx)
+  # Quote $cmd so the tokens are separated with a space
+  if string match -qr -- "--$skin(=| )$tool" "$cmd"
+    return 0
+  end
+  # memcheck is the default tool/skin
+  test $tool = memcheck
+  and not string match -- $skin $cmd
 end
 
 complete -c valgrind -l help -d "Display help and exit"
@@ -70,10 +70,10 @@ complete -n "__fish_valgrind_skin cachegrind" -xc valgrind -l D1 -d "Type of L1 
 complete -n "__fish_valgrind_skin cachegrind" -xc valgrind -l L2 -d "Type of L2 cache"
 
 function __fish_print_function_prototypes -d "Prints the names of all function prototypes found in the headers in the current directory"
-    set -l headers *.h *.hh *.hpp *.hxx
-    if set -q headers[1]
-        sed -n "s/^\(.*[^[a-zA-Z_0-9]\|\)\([a-zA-Z_][a-zA-Z_0-9]*\) *(.*);.*\$/\2/p" $headers
-    end
+  set -l headers *.h *.hh *.hpp *.hxx
+  if set -q headers[1]
+    sed -n "s/^\(.*[^[a-zA-Z_0-9]\|\)\([a-zA-Z_][a-zA-Z_0-9]*\) *(.*);.*\$/\2/p" $headers
+  end
 end
 
 # Massif-specific options

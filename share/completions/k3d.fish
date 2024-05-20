@@ -1,18 +1,18 @@
 function __fish_k3d_no_subcommand --description 'Test if k3d has yet to be given subcommands'
-    for i in (commandline -xpc)
-        if contains -- $i cluster image kubeconfig node version
-            return 1
-        end
+  for i in (commandline -xpc)
+    if contains -- $i cluster image kubeconfig node version
+      return 1
     end
-    return 0
+  end
+  return 0
 end
 
 function __fish_k3d_print_clusters --description 'Print a list of k3d clusters'
-    k3d cluster list --no-headers | awk '{print $1}'
+  k3d cluster list --no-headers | awk '{print $1}'
 end
 
 function __fish_k3d_print_nodes --description 'Print a list of k3d nodes'
-    k3d node list --no-headers | awk '{print $1}'
+  k3d node list --no-headers | awk '{print $1}'
 end
 
 complete -f -c k3d -n __fish_k3d_no_subcommand -s h -l help -d "More information about a command"

@@ -10,9 +10,9 @@ set -l datadir $HOME/.pandoc
 # Only suggest installed engines
 set -l pdfengines
 for engine in pdflatex lualatex xelatex latexmk tectonic wkhtmltopdf weasyprint pagedjs-cli prince context pdfroff
-    if type -q $engine
-        set pdfengines $pdfengines $engine
-    end
+  if type -q $engine
+    set pdfengines $pdfengines $engine
+  end
 end
 
 # options that take no arguments

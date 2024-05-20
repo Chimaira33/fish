@@ -10,43 +10,43 @@ set -l cmds list start stop switch-to enable disable enable-all disable-all is-a
 # For example, if you only want the enabled profiles, call it with
 # the arguments active and other.
 function __fish_print_netctl-auto_profile
-    set -l show_active false
-    set -l show_disabled false
-    set -l show_other false
+  set -l show_active false
+  set -l show_disabled false
+  set -l show_other false
 
-    for arg in $argv
-        switch $arg
-            case other
-                set show_other true
-            case disabled
-                set show_disabled true
-            case active
-                set show_active true
-        end
-    end
-
-    if not count $argv >/dev/null
-        set show_active true
-        set show_disabled true
+  for arg in $argv
+    switch $arg
+      case other
         set show_other true
+      case disabled
+        set show_disabled true
+      case active
+        set show_active true
     end
+  end
 
-    for line in (netctl-auto list)
-        set -l profile (string sub -s 3 $line)
-        if string match -q '\**' -- $line
-            if test $show_active = true
-                printf "%s\t%s\n" $profile "Active profile"
-            end
-        else if string match -q "!*" -- $line
-            if test $show_disabled = true
-                printf "%s\t%s\n" $profile "Disabled profile"
-            end
-        else
-            if test $show_other = true
-                printf "%s\t%s\n" $profile Profile
-            end
-        end
+  if not count $argv >/dev/null
+    set show_active true
+    set show_disabled true
+    set show_other true
+  end
+
+  for line in (netctl-auto list)
+    set -l profile (string sub -s 3 $line)
+    if string match -q '\**' -- $line
+      if test $show_active = true
+        printf "%s\t%s\n" $profile "Active profile"
+      end
+    else if string match -q "!*" -- $line
+      if test $show_disabled = true
+        printf "%s\t%s\n" $profile "Disabled profile"
+      end
+    else
+      if test $show_other = true
+        printf "%s\t%s\n" $profile Profile
+      end
     end
+  end
 end
 
 complete -c netctl-auto -n "not __fish_seen_subcommand_from $cmds" -l help -d "Show help"

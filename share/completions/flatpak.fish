@@ -1,9 +1,9 @@
 # Completions for flatpak, an "Application deployment framework for desktop apps"
 # (http://flatpak.org)
 set -l commands install update uninstall list info config repair create-usb search run override make-current enter ps \
-    documents document-{export,unexport,info} permissions permission-{show,reset} remotes remote-{add,modify,delete,ls,info} \
-    build build-{init,finish,export,bundle,import-bundle,sign,update-repo,commit-from} repo \
-    history kill mask permission-{remove,set}
+  documents document-{export,unexport,info} permissions permission-{show,reset} remotes remote-{add,modify,delete,ls,info} \
+  build build-{init,finish,export,bundle,import-bundle,sign,update-repo,commit-from} repo \
+  history kill mask permission-{remove,set}
 
 complete -f -c flatpak -n "not __fish_seen_subcommand_from $commands" -a install -d 'Install an application or runtime from a remote'
 complete -f -c flatpak -n "not __fish_seen_subcommand_from $commands" -a update -d 'Update an installed application or runtime'

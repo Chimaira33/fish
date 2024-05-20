@@ -16,7 +16,7 @@ complete -c xz -s C -l check -x -d 'Specify type of integrity check' -a "none cr
 complete -c xz -l ignore-check -d 'Don\'t verify the integrity check'
 
 for level in (seq 1 9)
-    complete -c xz -s $level -d "Select compression level"
+  complete -c xz -s $level -d "Select compression level"
 end
 
 complete -c xz -s e -l extreme -d 'Use slower variant'
@@ -34,7 +34,7 @@ complete -c xz -l lsam1 -d 'Add LZMA1 filter to filter chain' -f
 complete -c xz -l lzma2 -d 'Add LZMA2 filter to filter chain' -f
 
 for op in x86 powerpc ia64 arm armthumb sparc
-    complete -c xz -l $op -d 'Add a branch/call/jump filter to filter chain' -f
+  complete -c xz -l $op -d 'Add a branch/call/jump filter to filter chain' -f
 end
 
 complete -c xz -l delta -d 'Add Delta filter to filter chain'

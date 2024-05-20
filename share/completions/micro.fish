@@ -6,7 +6,7 @@ complete -c micro -o version -d 'Show version information'
 complete -c micro -o help -d 'Show help message'
 
 for option in (micro -options | string replace -f -r '^-(\S+)\s.*' '$1')
-    complete -c micro -o $option -x
+  complete -c micro -o $option -x
 end
 
 complete -c micro -o plugin -xa "

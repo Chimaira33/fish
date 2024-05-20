@@ -2,96 +2,96 @@
 # See: https://libvirt.org/virshcmdref.html
 
 set -l cmds attach-device attach-disk attach-interface autostart blkdeviotune blkiotune \
-    blockcommit blockcopy blockjob blockpull blockresize change-media console cpu-baseline \
-    cpu-compare cpu-stats create define desc destroy detach-device detach-disk detach-interface \
-    domdisplay domfsfreeze domfsthaw domfsinfo domfstrim domhostname domid domif-setlink domiftune \
-    domjobabort domjobinfo domname domrename dompmsuspend dompmwakeup domuuid domxml-from-native \
-    domxml-to-native dump dumpxml edit event inject-nmi iothreadinfo iothreadpin iothreadadd \
-    iothreaddel send-key send-process-signal lxc-enter-namespace managedsave managedsave-remove \
-    managedsave-edit managedsave-dumpxml managedsave-define memtune perf metadata migrate \
-    migrate-setmaxdowntime migrate-getmaxdowntime migrate-compcache migrate-setspeed \
-    migrate-getspeed migrate-postcopy numatune qemu-attach qemu-monitor-command \
-    qemu-monitor-event qemu-agent-command reboot reset restore resume save save-image-define \
-    save-image-dumpxml save-image-edit schedinfo screenshot set-lifecycle-action set-user-password \
-    setmaxmem setmem setvcpus shutdown start suspend ttyconsole undefine update-device vcpucount \
-    vcpuinfo vcpupin emulatorpin vncdisplay guestvcpus setvcpu domblkthreshold domblkerror \
-    domblkinfo domblklist domblkstat domcontrol domif-getlink domifaddr domiflist domifstat \
-    dominfo dommemstat domstate domstats domtime list allocpages capabilities cpu-models \
-    domcapabilities freecell freepages hostname maxvcpus node-memory-tune nodecpumap nodecpustats \
-    nodeinfo nodememstats nodesuspend sysinfo uri version iface-begin iface-bridge iface-commit \
-    iface-define iface-destroy iface-dumpxml iface-edit iface-list iface-mac iface-name \
-    iface-rollback iface-start iface-unbridge iface-undefine nwfilter-define nwfilter-dumpxml \
-    nwfilter-edit nwfilter-list nwfilter-undefine net-autostart net-create net-define net-destroy \
-    net-dhcp-leases net-dumpxml net-edit net-event net-info net-list net-name net-start \
-    net-undefine net-update net-uuid nodedev-create nodedev-destroy nodedev-detach nodedev-dumpxml \
-    nodedev-list nodedev-reattach nodedev-reset nodedev-event secret-define secret-dumpxml \
-    secret-event secret-get-value secret-list secret-set-value secret-undefine snapshot-create \
-    snapshot-create-as snapshot-current snapshot-delete snapshot-dumpxml snapshot-edit snapshot-info \
-    snapshot-list snapshot-parent snapshot-revert find-storage-pool-sources-as \
-    find-storage-pool-sources pool-autostart pool-build pool-create-as pool-create pool-define-as \
-    pool-define pool-delete pool-destroy pool-dumpxml pool-edit pool-info pool-list pool-name \
-    pool-refresh pool-start pool-undefine pool-uuid pool-event vol-clone vol-create-as vol-create \
-    vol-create-from vol-delete vol-download vol-dumpxml vol-info vol-key vol-list \
-    vol-name vol-path vol-pool vol-resize vol-upload vol-wipe
+  blockcommit blockcopy blockjob blockpull blockresize change-media console cpu-baseline \
+  cpu-compare cpu-stats create define desc destroy detach-device detach-disk detach-interface \
+  domdisplay domfsfreeze domfsthaw domfsinfo domfstrim domhostname domid domif-setlink domiftune \
+  domjobabort domjobinfo domname domrename dompmsuspend dompmwakeup domuuid domxml-from-native \
+  domxml-to-native dump dumpxml edit event inject-nmi iothreadinfo iothreadpin iothreadadd \
+  iothreaddel send-key send-process-signal lxc-enter-namespace managedsave managedsave-remove \
+  managedsave-edit managedsave-dumpxml managedsave-define memtune perf metadata migrate \
+  migrate-setmaxdowntime migrate-getmaxdowntime migrate-compcache migrate-setspeed \
+  migrate-getspeed migrate-postcopy numatune qemu-attach qemu-monitor-command \
+  qemu-monitor-event qemu-agent-command reboot reset restore resume save save-image-define \
+  save-image-dumpxml save-image-edit schedinfo screenshot set-lifecycle-action set-user-password \
+  setmaxmem setmem setvcpus shutdown start suspend ttyconsole undefine update-device vcpucount \
+  vcpuinfo vcpupin emulatorpin vncdisplay guestvcpus setvcpu domblkthreshold domblkerror \
+  domblkinfo domblklist domblkstat domcontrol domif-getlink domifaddr domiflist domifstat \
+  dominfo dommemstat domstate domstats domtime list allocpages capabilities cpu-models \
+  domcapabilities freecell freepages hostname maxvcpus node-memory-tune nodecpumap nodecpustats \
+  nodeinfo nodememstats nodesuspend sysinfo uri version iface-begin iface-bridge iface-commit \
+  iface-define iface-destroy iface-dumpxml iface-edit iface-list iface-mac iface-name \
+  iface-rollback iface-start iface-unbridge iface-undefine nwfilter-define nwfilter-dumpxml \
+  nwfilter-edit nwfilter-list nwfilter-undefine net-autostart net-create net-define net-destroy \
+  net-dhcp-leases net-dumpxml net-edit net-event net-info net-list net-name net-start \
+  net-undefine net-update net-uuid nodedev-create nodedev-destroy nodedev-detach nodedev-dumpxml \
+  nodedev-list nodedev-reattach nodedev-reset nodedev-event secret-define secret-dumpxml \
+  secret-event secret-get-value secret-list secret-set-value secret-undefine snapshot-create \
+  snapshot-create-as snapshot-current snapshot-delete snapshot-dumpxml snapshot-edit snapshot-info \
+  snapshot-list snapshot-parent snapshot-revert find-storage-pool-sources-as \
+  find-storage-pool-sources pool-autostart pool-build pool-create-as pool-create pool-define-as \
+  pool-define pool-delete pool-destroy pool-dumpxml pool-edit pool-info pool-list pool-name \
+  pool-refresh pool-start pool-undefine pool-uuid pool-event vol-clone vol-create-as vol-create \
+  vol-create-from vol-delete vol-download vol-dumpxml vol-info vol-key vol-list \
+  vol-name vol-path vol-pool vol-resize vol-upload vol-wipe
 
 function __fish_virsh_get_domains --argument-names state --description "Prints the list of virtlib domains with the given state (running, shutoff, paused or transient)."
-    set -l filter
-    switch "$state"
-        case running paused shutoff
-            set filter --state-$state
-        case inactive transient
-            set filter --$state
-        case '*'
-            set filter --all
-    end
+  set -l filter
+  switch "$state"
+    case running paused shutoff
+      set filter --state-$state
+    case inactive transient
+      set filter --$state
+    case '*'
+      set filter --all
+  end
 
-    set -l desc (test -n "$state"; and echo (string sub -s1 -l1 -- $state | string upper)(string sub -s2 -- $state) domain; or echo Domain)
-    set -l domains (virsh list --name $filter | string match -v -r '^$')
-    set -q domains[1]
-    and printf "%s\t$desc\n" $domains
+  set -l desc (test -n "$state"; and echo (string sub -s1 -l1 -- $state | string upper)(string sub -s2 -- $state) domain; or echo Domain)
+  set -l domains (virsh list --name $filter | string match -v -r '^$')
+  set -q domains[1]
+  and printf "%s\t$desc\n" $domains
 end
 
 function __fish_virsh_get_networks
-    # Example of `virsh net-list --all` output:
-    #
-    #  Name                 State      Autostart     Persistent
-    # ----------------------------------------------------------
-    #  default              active     yes           yes
-    #  mynet                active     yes           yes
-    #
+  # Example of `virsh net-list --all` output:
+  #
+  #  Name                 State      Autostart     Persistent
+  # ----------------------------------------------------------
+  #  default              active     yes           yes
+  #  mynet                active     yes           yes
+  #
 
-    set -l header 'Name State Autostart Persistent'
-    set -l networks (virsh net-list --all | string replace -ar '[ \t]+' ' ' | string trim | string match -rv -- ---)
+  set -l header 'Name State Autostart Persistent'
+  set -l networks (virsh net-list --all | string replace -ar '[ \t]+' ' ' | string trim | string match -rv -- ---)
 
-    if not string match -q -- $header $networks[1]
-        return 1
+  if not string match -q -- $header $networks[1]
+    return 1
+  end
+
+  set -l networks (string match -v -- $header $networks | string match -rv '^$')
+  for network in $networks
+    set -l network (string split ' ' $network)
+    set -l network_name $network[1]
+    set -l network_state $network[2]
+    set -l network_autostart $network[3]
+    set -l network_persistent $network[4]
+
+    set -l network_qualities $network_state (test $network_autostart = 'yes'; and echo 'autostart') (test $network_persistent = 'yes'; and echo 'persistant')
+    set -l show true
+    if set -q argv[1]
+      for filter in $argv
+        if not string match -q -- $filter $network_qualities
+          set show false
+          continue
+        end
+      end
     end
 
-    set -l networks (string match -v -- $header $networks | string match -rv '^$')
-    for network in $networks
-        set -l network (string split ' ' $network)
-        set -l network_name $network[1]
-        set -l network_state $network[2]
-        set -l network_autostart $network[3]
-        set -l network_persistent $network[4]
-
-        set -l network_qualities $network_state (test $network_autostart = 'yes'; and echo 'autostart') (test $network_persistent = 'yes'; and echo 'persistant')
-        set -l show true
-        if set -q argv[1]
-            for filter in $argv
-                if not string match -q -- $filter $network_qualities
-                    set show false
-                    continue
-                end
-            end
-        end
-
-        if not test $show = true
-            continue
-        end
-
-        printf '%s\tNetwork (%s)\n' $network_name (string join ' ' $network_qualities)
+    if not test $show = true
+      continue
     end
+
+    printf '%s\tNetwork (%s)\n' $network_name (string join ' ' $network_qualities)
+  end
 end
 
 # virsh

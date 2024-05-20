@@ -12,7 +12,7 @@ complete -r -c zstdmt -l train -d "Create a dictionary from specified file(s)"
 complete -c zstdmt -s l -l list -d "List information about .zst file(s)"
 
 for level in (seq 1 19)
-    complete -c zstdmt -o $level -d "Set compression level"
+  complete -c zstdmt -o $level -d "Set compression level"
 end
 
 complete -c zstdmt -l fast -d "Ultra-fast compression"
@@ -37,7 +37,7 @@ complete -c zstdmt -l filelist -d "Read a list of files"
 complete -c zstdmt -l output-dir-flat -d "Specify a directory to output all files"
 
 for format in zstd gzip xz lzma lz4
-    complete -c zstdmt -l format="$format" -d "Specify the format to use for compression"
+  complete -c zstdmt -l format="$format" -d "Specify the format to use for compression"
 end
 
 complete -c zstdmt -s h -l help -d "Show help"

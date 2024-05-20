@@ -3,26 +3,26 @@
 #
 
 function __fish_doas_print_remaining_args
-    set -l tokens (commandline -xpc) (commandline -ct)
-    set -e tokens[1]
-    # These are all the options mentioned in the man page for openbsd's "doas" (in that order).
-    set -l opts a= C= L n s u=
-    argparse -s $opts -- $tokens 2>/dev/null
-    # The remaining argv is the subcommand with all its options, which is what
-    # we want.
-    if test -n "$argv"
-        and not string match -qr '^-' $argv[1]
-        string join0 -- $argv
-        return 0
-    else
-        return 1
-    end
+  set -l tokens (commandline -xpc) (commandline -ct)
+  set -e tokens[1]
+  # These are all the options mentioned in the man page for openbsd's "doas" (in that order).
+  set -l opts a= C= L n s u=
+  argparse -s $opts -- $tokens 2>/dev/null
+  # The remaining argv is the subcommand with all its options, which is what
+  # we want.
+  if test -n "$argv"
+    and not string match -qr '^-' $argv[1]
+    string join0 -- $argv
+    return 0
+  else
+    return 1
+  end
 end
 
 function __fish_complete_doas_subcommand
-    set -l args (__fish_doas_print_remaining_args | string split0)
-    set -lx -a PATH /usr/local/sbin /sbin /usr/sbin
-    __fish_complete_subcommand --commandline $args
+  set -l args (__fish_doas_print_remaining_args | string split0)
+  set -lx -a PATH /usr/local/sbin /sbin /usr/sbin
+  __fish_complete_subcommand --commandline $args
 end
 
 complete -c doas -n "not __fish_doas_print_remaining_args" -s a -d "Choose auth method on systems using /etc/login.conf"
