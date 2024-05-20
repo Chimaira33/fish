@@ -17,16 +17,16 @@ IFS="$(printf "\n\b")"
 # The first argument is the path to the script to launch; all remaining arguments are forwarded to
 # the script.
 if test $# -gt 0; then
-    target="$1"
-    shift 1
-    target_args="${@}"
+  target="$1"
+  shift 1
+  target_args="${@}"
 fi
 
 die() {
-    if test "$#" -ge 0; then
-        printf "%s\n" "$@" 1>&2
-    fi
-    exit 1
+  if test "$#" -ge 0; then
+    printf "%s\n" "$@" 1>&2
+  fi
+  exit 1
 }
 
 # Set up a test environment to run the specified target under. We do not share environments
@@ -68,8 +68,8 @@ export TMPDIR
 # TODO: set LANG to en_US.UTF-8 so we test the locale message conversions (i.e., gettext).
 unset LANGUAGE
 # Remove "LC_" env vars from the test environment
-for key in $(env | grep -E "^LC_"| grep -oE "^[^=]+"); do
-    unset "$key"
+for key in $(env | grep -E "^LC_" | grep -oE "^[^=]+"); do
+  unset "$key"
 done
 # Set the desired lang/locale tests are hard-coded against
 export LANG="C"
@@ -93,7 +93,7 @@ unset XTERM_VERSION
 
 # If we are sourced, return without executing
 if test -z ${target}; then
-    return 0
+  return 0
 fi
 echo "Proceeding with target execution"
 

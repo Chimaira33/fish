@@ -53,12 +53,12 @@ path=${FISH_ARTEFACT_PATH:-~/fish_built}/$prefix.tar
 rm -f "$path" "$path".xz
 
 # git starts the archive
-git archive --format=tar --prefix="$prefix"/ HEAD > "$path"
+git archive --format=tar --prefix="$prefix"/ HEAD >"$path"
 
 # tarball out the documentation, generate a version file
 PREFIX_TMPDIR=$(mktemp -d)
 cd "$PREFIX_TMPDIR"
-echo "$VERSION" > version
+echo "$VERSION" >version
 cmake -G "$BUILD_GENERATOR" "$wd"
 $BUILD_TOOL doc
 

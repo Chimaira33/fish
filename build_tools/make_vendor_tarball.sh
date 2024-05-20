@@ -43,7 +43,7 @@ PREFIX_TMPDIR=$(mktemp -d)
 cd "$PREFIX_TMPDIR"
 
 mkdir .cargo
-cargo vendor --manifest-path "$wd/Cargo.toml" > .cargo/config
+cargo vendor --manifest-path "$wd/Cargo.toml" >.cargo/config
 
 # vendoring drags in a lot of Windows dependencies, which makes the resulting tarball enormous
 # cargo can't be told only to support a particular platform

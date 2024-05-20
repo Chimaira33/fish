@@ -21,10 +21,10 @@ script_args="${@}"
 shift $# 2>/dev/null
 
 die() {
-    if test "$#" -ge 0; then
-        printf "%s\n" "$@" 1>&2
-    fi
-    exit 1
+  if test "$#" -ge 0; then
+    printf "%s\n" "$@" 1>&2
+  fi
+  exit 1
 }
 
 # To keep things sane and to make error messages comprehensible, do not use relative paths anywhere
@@ -33,8 +33,8 @@ TESTS_ROOT="$(cd $(dirname "$0") && pwd -P)"
 BUILD_ROOT="$(cd $(dirname "$TESTS_ROOT") && pwd -P)"
 
 if ! test -z "$__fish_is_running_tests"; then
-    echo "Recursive test invocation detected!" 1>&2
-    exit 10
+  echo "Recursive test invocation detected!" 1>&2
+  exit 10
 fi
 
 # Set up the test environment. Does not change the current working directory.
@@ -53,28 +53,28 @@ export __fish_is_running_tests
 
 # Set a marker to indicate whether colored output should be suppressed (used in `test_util.fish`)
 suppress_color=""
-if ! tty 0>&1 > /dev/null; then
-    suppress_color="yes"
+if ! tty 0>&1 >/dev/null; then
+  suppress_color="yes"
 fi
 export suppress_color
 
 # Source test util functions at startup
-fish_init_cmd="${fish_init_cmd} && source ${TESTS_ROOT}/test_util.fish";
+fish_init_cmd="${fish_init_cmd} && source ${TESTS_ROOT}/test_util.fish"
 
 # Run the test script, but don't exec so we can clean up after it succeeds/fails. Each test is
 # launched directly within its TMPDIR, so that the fish tests themselves do not need to refer to
 # TMPDIR (to ensure their output as displayed in case of failure by littlecheck is reproducible).
 (cd $TMPDIR && env HOME="$homedir" "${BUILD_ROOT}/test/root/bin/fish" \
-    --init-command "${fish_init_cmd}" "$fish_script" "$script_args")
+  --init-command "${fish_init_cmd}" "$fish_script" "$script_args")
 test_status="$?"
 
 # CMake less than 3.9.0 "fully supports" setting an exit code to denote a skipped test, but then
 # it just goes ahead and reports them as failed anyway. Really?
 if test -n $CMAKE_SKIPPED_HACK; then
-    if test $test_status -eq 125; then
-        echo "Overriding SKIPPED return code from test" 1>&2
-        test_status=0
-    fi
+  if test $test_status -eq 125; then
+    echo "Overriding SKIPPED return code from test" 1>&2
+    test_status=0
+  fi
 fi
 
 rm -rf "$homedir"

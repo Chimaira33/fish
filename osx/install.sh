@@ -6,8 +6,8 @@ set -e
 # Make sure we're run as root
 scriptname=$(basename "$0")
 if [ "$UID" -ne 0 ]; then
-     echo "${scriptname} must be run as root"
-     exit 1
+  echo "${scriptname} must be run as root"
+  exit 1
 fi
 
 # Set the prefix for installation
