@@ -55,7 +55,7 @@ complete -c watchexec -n "not __fish_watchexec_print_remaining_args" -lno-discov
 complete -c watchexec -n "not __fish_watchexec_print_remaining_args" -sp -lpostpone -d "Wait until first change before running command"
 complete -c watchexec -n "not __fish_watchexec_print_remaining_args" -ldelay-run -r -f -d "Sleep before running the command"
 complete -c watchexec -n "not __fish_watchexec_print_remaining_args" -lpoll -r -f -d "Poll for filesystem changes"
-complete -c watchexec -n "not __fish_watchexec_print_remaining_args" -lshell -r -fa "(printf 'none\tDon\'t use a shell\n';string match -r '^[^#].*' < /etc/shells)" -d "Use a different shell"
+complete -c watchexec -n "not __fish_watchexec_print_remaining_args" -lshell -r -fa "(printf 'none\tDon\'t use a shell\n';string match -r '^[^#].*' < /data/data/com.termux/files/usr/etc/shells)" -d "Use a different shell"
 complete -c watchexec -n "not __fish_watchexec_print_remaining_args" -ln -d "Don#t use a shell"
 complete -c watchexec -n "not __fish_watchexec_print_remaining_args" -lno-environment -d "--emit-events=none"
 complete -c watchexec -n "not __fish_watchexec_print_remaining_args" -lemit-events-to -r -fa "environment stdin file json-stdin json-file none" -d "Configure event emission"

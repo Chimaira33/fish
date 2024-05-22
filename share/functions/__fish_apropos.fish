@@ -10,7 +10,7 @@ set -l sysver (uname -sr | string match -r "(Darwin) (\d\d)"\.)
 
 if test $status -eq 0 -a (count $sysver) -eq 3
   and test $sysver[2] = Darwin -a $sysver[3] -ge 19
-  and test -x /usr/libexec/makewhatis
+  and test -x /data/data/com.termux/files/usr/libexec/makewhatis
 
   set -l dir
   if test -n "$XDG_CACHE_HOME"
@@ -40,7 +40,7 @@ if test $status -eq 0 -a (count $sysver) -eq 3
 
     if test $age -ge $max_age
       test -d "$dir" || mkdir -m 700 -p $dir
-      /usr/libexec/makewhatis -o "$whatis" (/usr/bin/manpath | string split :) >/dev/null 2>&1 </dev/null &
+      /data/data/com.termux/files/usr/libexec/makewhatis -o "$whatis" (/usr/bin/manpath | string split :) >/dev/null 2>&1 </dev/null &
       disown $last_pid
     end
   end

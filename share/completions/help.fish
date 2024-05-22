@@ -3,7 +3,7 @@ if test -d "$__fish_data_dir/man/man1/"
 end
 
 # Help topics in index.html
-# This was semi-automated with `grep 'class="anchor"' -A1 /usr/share/doc/fish/index.html
+# This was semi-automated with `grep 'class="anchor"' -A1 /data/data/com.termux/files/usr/share/doc/fish/index.html
 # It's not fully automated since that requires parsing html with regex,
 # and since this is by definition in sync - we ship the html, and we ship these completions.
 complete -c help -x -a autosuggestions -d Autosuggestions

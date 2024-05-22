@@ -12,7 +12,7 @@ function __fish_complete_macos_java_home_exec
 
   # parse the java_home argv to get $JAVA_HOME/bin
   argparse v/version= a/arch= -- "$cmds[1]"
-  set -l get_java_home /usr/libexec/java_home
+  set -l get_java_home /data/data/com.termux/files/usr/libexec/java_home
   if test -n "$_flag_v"
     set get_java_home "$get_java_home -v $_flag_v"
   end

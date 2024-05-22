@@ -3,8 +3,8 @@ function prompt_login --description "display user name for the prompt"
     set -g __fish_machine
     set -l debian_chroot $debian_chroot
 
-    if test -r /etc/debian_chroot
-      set debian_chroot (cat /etc/debian_chroot)
+    if test -r /data/data/com.termux/files/usr/etc/debian_chroot
+      set debian_chroot (cat /data/data/com.termux/files/usr/etc/debian_chroot)
     end
 
     if set -q debian_chroot[1]

@@ -40,9 +40,9 @@ function __fish_set_locale
 
   # Now read the config files we know are used by various OS distros.
   #
-  # /etc/sysconfig/i18n is for old Red Hat derivatives (and possibly of no use anymore).
+  # /data/data/com.termux/files/usr/etc/sysconfig/i18n is for old Red Hat derivatives (and possibly of no use anymore).
   #
-  # /etc/env.d/02locale is from OpenRC.
+  # /data/data/com.termux/files/usr/etc/env.d/02locale is from OpenRC.
   #
   # The rest are systemd inventions but also used elsewhere (e.g. Void Linux). systemd's
   # documentation is a bit unclear on this. We merge all the config files (and the commandline),
@@ -50,10 +50,10 @@ function __fish_set_locale
   # the highest-precedence source) We read the systemd files first since they are a newer
   # invention and therefore the rest are likely to be accumulated cruft.
   #
-  # NOTE: Slackware puts the locale in /etc/profile.d/lang.sh, which we can't use because it's a
+  # NOTE: Slackware puts the locale in /data/data/com.termux/files/usr/etc/profile.d/lang.sh, which we can't use because it's a
   # full POSIX-shell script.
   set -l user_cfg_dir (set -q XDG_CONFIG_HOME; and echo $XDG_CONFIG_HOME; or echo ~/.config)
-  for f in $user_cfg_dir/locale.conf /etc/locale.conf /etc/env.d/02locale /etc/sysconfig/i18n /etc/default/locale
+  for f in $user_cfg_dir/locale.conf /data/data/com.termux/files/usr/etc/locale.conf /data/data/com.termux/files/usr/etc/env.d/02locale /data/data/com.termux/files/usr/etc/sysconfig/i18n /data/data/com.termux/files/usr/etc/default/locale
     if test -r $f
       while read -l kv
         set kv (string split '=' -- $kv)

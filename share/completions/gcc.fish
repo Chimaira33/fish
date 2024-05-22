@@ -454,7 +454,7 @@ complete -c gcc -s H -d 'Print the name of each header file used, in addition to
 complete -c gcc -o version -d 'Print out GNU CPP’s version number'
 complete -c gcc -l version -d 'Print out GNU CPP’s version number'
 complete -c gcc -o Xassembler -d 'Pass option as an option to the assembler'
-complete -c gcc -s l -d 'Search the library named library when linking' -xa '(path basename /usr/lib/lib*.so* | string match -r -g "^lib(.*?)\.so.*")'
+complete -c gcc -s l -d 'Search the library named library when linking' -xa '(path basename /data/data/com.termux/files/usr/lib/lib*.so* | string match -r -g "^lib(.*?)\.so.*")'
 complete -c gcc -o ldl -d 'Search the dynamic loader library when linking'
 complete -c gcc -o lm -d 'Search the math library when linking'
 complete -c gcc -o lz -d 'Search the zlib library when linking'

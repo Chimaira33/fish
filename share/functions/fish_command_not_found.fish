@@ -1,13 +1,13 @@
 ### Command-not-found handlers
 # This can be overridden by defining a new fish_command_not_found function
 
-# Read the OS/Distro from /etc/os-release.
+# Read the OS/Distro from /data/data/com.termux/files/usr/etc/os-release.
 # This has a "ID=" line that defines the exact distribution,
 # and an "ID_LIKE=" line that defines what it is derived from or otherwise like.
 # For our purposes, we use both.
 set -l os
-if test -r /etc/os-release
-  set os (string match -r '^ID(?:_LIKE)?\s*=.*' < /etc/os-release | \
+if test -r /data/data/com.termux/files/usr/etc/os-release
+  set os (string match -r '^ID(?:_LIKE)?\s*=.*' < /data/data/com.termux/files/usr/etc/os-release | \
     string replace -r '^ID(?:_LIKE)?\s*=(.*)' '$1' | string trim -c '\'"' | string split " ")
 end
 
@@ -30,14 +30,14 @@ else if contains -- suse $os || contains -- sles $os && type -q command-not-foun
     command-not-found $argv[1]
   end
   # Check for Fedora's handler
-else if test -f /usr/libexec/pk-command-not-found
+else if test -f /data/data/com.termux/files/usr/libexec/pk-command-not-found
   function fish_command_not_found
-    /usr/libexec/pk-command-not-found $argv
+    /data/data/com.termux/files/usr/libexec/pk-command-not-found $argv
   end
-  # Check in /usr/lib, where Ubuntu places this command
-else if test -f /usr/lib/command-not-found
+  # Check in /data/data/com.termux/files/usr/lib, where Ubuntu places this command
+else if test -f /data/data/com.termux/files/usr/lib/command-not-found
   function fish_command_not_found
-    /usr/lib/command-not-found -- $argv[1]
+    /data/data/com.termux/files/usr/lib/command-not-found -- $argv[1]
   end
   # Check for NixOS handler
 else if test -f /run/current-system/sw/bin/command-not-found

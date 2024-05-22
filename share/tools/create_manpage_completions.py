@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Run me like this: ./create_manpage_completions.py /usr/share/man/man{1,8}/* > man_completions.fish
+# Run me like this: ./create_manpage_completions.py /data/data/com.termux/files/usr/share/man/man{1,8}/* > man_completions.fish
 
 """
 <OWNER> = Siteshwar Vashisht
@@ -1021,7 +1021,7 @@ def get_paths_from_man_locations():
     # Fallback: With mandoc (OpenBSD, embedded Linux) and NetBSD man, the only way to get the default manpath is by reading /etc.
     if not parent_paths:
         try:
-            with open("/etc/man.conf", "r") as file:
+            with open("/data/data/com.termux/files/usr/etc/man.conf", "r") as file:
                 data = file.read()
                 for key in ["MANPATH", "_default"]:
                     for match in re.findall(r"^%s\s+(.*)$" % key, data, re.I | re.M):

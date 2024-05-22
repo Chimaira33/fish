@@ -21,7 +21,7 @@ function __dnf_list_available_packages
     # This schema is bad, there is only a "pkg" field with the full
     #    packagename-version-release.fedorarelease.architecture
     # tuple. We are only interested in the packagename.
-    set results (sqlite3 /var/cache/dnf/packages.db "SELECT pkg FROM available WHERE pkg LIKE '$tok%'" 2>/dev/null |
+    set results (sqlite3 /data/data/com.termux/files/usr/var/cache/dnf/packages.db "SELECT pkg FROM available WHERE pkg LIKE '$tok%'" 2>/dev/null |
             string replace -r -- '-[^-]*-[^-]*$' '')
   else
     # In some cases dnf will ask for input (e.g. to accept gpg keys).
@@ -38,7 +38,7 @@ end
 
 function __dnf_list_transactions
   if type -q sqlite3
-    sqlite3 /var/lib/dnf/history.sqlite "SELECT id, cmdline FROM trans" 2>/dev/null | string replace "|" \t
+    sqlite3 /data/data/com.termux/files/usr/var/lib/dnf/history.sqlite "SELECT id, cmdline FROM trans" 2>/dev/null | string replace "|" \t
   end
 end
 
@@ -301,7 +301,7 @@ complete -c dnf -n __fish_use_subcommand -xa upgrade-minimal -d "Updates package
 complete -c dnf -n "__fish_seen_subcommand_from upgrade-minimal" -xa "(__dnf_list_installed_packages)"
 
 # Versionlock
-if test -f /etc/dnf/plugins/versionlock.conf
+if test -f /data/data/com.termux/files/usr/etc/dnf/plugins/versionlock.conf
   function __dnf_current_versionlock_list
     dnf versionlock list | grep -v metadata
   end

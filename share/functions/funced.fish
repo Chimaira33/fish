@@ -65,7 +65,7 @@ function funced --description 'Edit function definition'
   # Create a directory so we can use a ".fish" suffix for the file - makes editors pick up that
   # it's a fish file.
   set -q TMPDIR
-  or set -l TMPDIR /tmp
+  or set -l TMPDIR /data/data/com.termux/files/usr/tmp
   set -l tmpdir (mktemp -d $TMPDIR/fish.XXXXXX)
   or return 1
   set -l tmpname $tmpdir/$funcname.fish

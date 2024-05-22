@@ -2,11 +2,11 @@
 
 complete -c mount -a '(__fish_complete_blockdevice)'
 # In case `mount UUID=` and similar also works
-complete -c mount -a "(test -r /etc/fstab; and string replace -r '#.*' '' < /etc/fstab | string match -r '.+' | string replace -r ' (\S*) .*' '\tMount point \$1' | string replace -a '\040' ' ')"
-complete -c mount -a "(test -r /etc/fstab; and string replace -r '#.*' '' < /etc/fstab | string match -r '.+' | string replace -r '(\S*) (\S*) .*' '\$2\tDevice \$1' | string replace -a '\040' ' ')"
+complete -c mount -a "(test -r /data/data/com.termux/files/usr/etc/fstab; and string replace -r '#.*' '' < /data/data/com.termux/files/usr/etc/fstab | string match -r '.+' | string replace -r ' (\S*) .*' '\tMount point \$1' | string replace -a '\040' ' ')"
+complete -c mount -a "(test -r /data/data/com.termux/files/usr/etc/fstab; and string replace -r '#.*' '' < /data/data/com.termux/files/usr/etc/fstab | string match -r '.+' | string replace -r '(\S*) (\S*) .*' '\$2\tDevice \$1' | string replace -a '\040' ' ')"
 # In case it doesn't
-# complete -x -c mount -a "(test -r /etc/fstab; and string match -r '^/.*' < /etc/fstab | string replace -r ' ([^\s]*) .*' '\tMount point \$1')"
-# complete -x -c mount -a "(test -r /etc/fstab; and string match -r '^/.*' < /etc/fstab | string replace -r '(^/[^\s]*) ([^\s]*) .*' '\$2\tDevice \$1')"
+# complete -x -c mount -a "(test -r /data/data/com.termux/files/usr/etc/fstab; and string match -r '^/.*' < /data/data/com.termux/files/usr/etc/fstab | string replace -r ' ([^\s]*) .*' '\tMount point \$1')"
+# complete -x -c mount -a "(test -r /data/data/com.termux/files/usr/etc/fstab; and string match -r '^/.*' < /data/data/com.termux/files/usr/etc/fstab | string replace -r '(^/[^\s]*) ([^\s]*) .*' '\$2\tDevice \$1')"
 complete -c mount -s V -d 'Display version and exit'
 complete -c mount -s h -d 'Display help and exit'
 complete -c mount -s v -d 'Verbose mode'

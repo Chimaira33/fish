@@ -6,7 +6,7 @@ function __fish_print_xdg_applications_directories --description 'Print director
 
   set -l data_dirs $XDG_DATA_DIRS
   if test -z "$data_dirs"
-    set data_dirs /usr/local/share/:/usr/share/
+    set data_dirs /data/data/com.termux/files/usr/local/share/:/data/data/com.termux/files/usr/share/
   end
 
   set data_dirs $data_home:$data_dirs

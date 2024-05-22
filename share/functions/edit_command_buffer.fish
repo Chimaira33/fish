@@ -9,7 +9,7 @@ function edit_command_buffer --description 'Edit the command buffer in an extern
     if set -q TMPDIR
       set f $TMPDIR/fish.$fish_pid.fish
     else
-      set f /tmp/fish.$fish_pid.fish
+      set f /data/data/com.termux/files/usr/tmp/fish.$fish_pid.fish
     end
     command touch $f
     or return 1

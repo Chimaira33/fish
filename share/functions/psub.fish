@@ -17,7 +17,7 @@ function psub --description "Read from stdin into a file and output the filename
     return 1
   end
 
-  set -l tmpdir /tmp
+  set -l tmpdir /data/data/com.termux/files/usr/tmp
   set -q TMPDIR
   and set tmpdir $TMPDIR
 

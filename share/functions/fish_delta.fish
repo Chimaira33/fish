@@ -134,7 +134,7 @@ function fish_delta
       end
     end
     # config.fish is special - it's a single file, not a directory,
-    # and it's not precedenced - *both* ~/.config/fish/config.fish and /etc/fish/config.fish
+    # and it's not precedenced - *both* ~/.config/fish/config.fish and /data/data/com.termux/files/usr/etc/fish/config.fish
     # are executed.
     if not set -ql _flag_C[1]; and begin
         not set -q argv[1]

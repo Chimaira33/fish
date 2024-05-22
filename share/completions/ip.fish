@@ -180,8 +180,8 @@ function __fish_ip_device
 end
 
 function __fish_ip_scope
-  if test -r /etc/iproute2/rt_scopes
-    string replace -r '#.*' '' </etc/iproute2/rt_scopes \
+  if test -r /data/data/com.termux/files/usr/etc/iproute2/rt_scopes
+    string replace -r '#.*' '' </data/data/com.termux/files/usr/etc/iproute2/rt_scopes \
       | string match -v '^\s*$' \
       | string replace -r '(\S+)\s*(\S+)' '$1\t$2\n$2\t$1' \
       | string match -rv '^(global|link|host).*' # Ignore scopes with better descriptions
