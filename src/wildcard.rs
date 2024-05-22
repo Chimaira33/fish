@@ -6,8 +6,7 @@ use std::collections::HashSet;
 use std::fs;
 
 use crate::common::{
-    char_offset, is_windows_subsystem_for_linux, unescape_string, UnescapeFlags,
-    UnescapeStringStyle, WILDCARD_RESERVED_BASE, WSL,
+    char_offset, unescape_string, UnescapeFlags, UnescapeStringStyle, WILDCARD_RESERVED_BASE,
 };
 use crate::complete::{CompleteFlags, Completion, CompletionReceiver, PROG_COMPLETE_SEP};
 use crate::expand::ExpandFlags;
@@ -15,9 +14,7 @@ use crate::fallback::wcscasecmp;
 use crate::future_feature_flags::feature_test;
 use crate::future_feature_flags::FeatureFlag;
 use crate::wchar::prelude::*;
-use crate::wcstringutil::{
-    string_fuzzy_match_string, string_suffixes_string_case_insensitive, CaseFold,
-};
+use crate::wcstringutil::{string_fuzzy_match_string, CaseFold};
 use crate::wutil::dir_iter::DirEntryType;
 use crate::wutil::{dir_iter::DirEntry, lwstat, waccess};
 use once_cell::sync::Lazy;
@@ -369,13 +366,6 @@ fn wildcard_test_flags_then_complete(
     }
 
     if need_directory && !entry.is_dir() {
-        return false;
-    }
-
-    if executables_only
-        && is_windows_subsystem_for_linux(WSL::Any)
-        && string_suffixes_string_case_insensitive(L!(".dll"), filename)
-    {
         return false;
     }
 
@@ -1035,11 +1025,11 @@ mod expander {
 /// executables_only
 /// \param output The list in which to put the output
 ///
-pub fn wildcard_expand_string<'closure>(
+pub fn wildcard_expand_string(
     wc: &wstr,
     working_directory: &wstr,
     flags: ExpandFlags,
-    mut cancel_checker: impl FnMut() -> bool + 'closure,
+    mut cancel_checker: impl FnMut() -> bool,
     output: &mut CompletionReceiver,
 ) -> WildcardResult {
     // Fuzzy matching only if we're doing completions.

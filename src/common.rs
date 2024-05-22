@@ -1073,20 +1073,6 @@ pub static PROFILING_ACTIVE: RelaxedAtomicBool = RelaxedAtomicBool::new(false);
 /// Name of the current program. Should be set at startup. Used by the debug function.
 pub static PROGRAM_NAME: OnceCell<&'static wstr> = OnceCell::new();
 
-/// MS Windows tty devices do not currently have either a read or write timestamp - those respective
-/// fields of `struct stat` are always set to the current time, which means we can't rely on them.
-/// In this case, we assume no external program has written to the terminal behind our back, making
-/// the multiline prompt usable. See #2859 and https://github.com/Microsoft/BashOnWindows/issues/545
-pub fn has_working_tty_timestamps() -> bool {
-    if cfg!(target_os = "windows") {
-        false
-    } else if cfg!(target_os = "linux") {
-        !is_windows_subsystem_for_linux(WSL::V1)
-    } else {
-        true
-    }
-}
-
 /// A global, empty string. This is useful for functions which wish to return a reference to an
 /// empty string.
 pub static EMPTY_STRING: WString = WString::new();
@@ -1462,12 +1448,7 @@ pub fn fish_setlocale() {
         ELLIPSIS_STRING.store(LL!("\u{200b}"));
     }
 
-    if is_windows_subsystem_for_linux(WSL::Any) {
-        // neither of \u23CE and \u25CF can be displayed in the default fonts on Windows, though
-        // they can be *encoded* just fine. Use alternative glyphs.
-        OMITTED_NEWLINE_STR.store(LL!("\u{00b6}")); // "pilcrow"
-        OBFUSCATION_READ_CHAR.store(u32::from('\u{2022}'), Ordering::Relaxed); // "bullet"
-    } else if is_console_session() {
+    if is_console_session() {
         OMITTED_NEWLINE_STR.store(LL!("^J"));
         OBFUSCATION_READ_CHAR.store(u32::from('*'), Ordering::Relaxed);
     } else {
@@ -1673,103 +1654,6 @@ pub fn subslice_position<T: Eq>(a: &[T], b: &[T]) -> Option<usize> {
         return Some(0);
     }
     a.windows(b.len()).position(|aw| aw == b)
-}
-
-#[derive(Copy, Debug, Clone, PartialEq, Eq)]
-pub enum WSL {
-    Any,
-    V1,
-    V2,
-}
-
-/// Determines if we are running under Microsoft's Windows Subsystem for Linux to work around
-/// some known limitations and/or bugs.
-///
-/// See https://github.com/Microsoft/WSL/issues/423 and Microsoft/WSL#2997
-#[inline(always)]
-#[cfg(not(target_os = "linux"))]
-pub fn is_windows_subsystem_for_linux(_: WSL) -> bool {
-    false
-}
-
-/// Determines if we are running under Microsoft's Windows Subsystem for Linux to work around
-/// some known limitations and/or bugs.
-///
-/// See https://github.com/Microsoft/WSL/issues/423 and Microsoft/WSL#2997
-#[cfg(target_os = "linux")]
-pub fn is_windows_subsystem_for_linux(v: WSL) -> bool {
-    use std::sync::OnceLock;
-    static RESULT: OnceLock<Option<WSL>> = OnceLock::new();
-
-    // This is called post-fork from [`report_setpgid_error()`], so the fast path must not involve
-    // any allocations or mutexes. We can't rely on all the std functions to be alloc-free in both
-    // Debug and Release modes, so we just mandate that the result already be available.
-    //
-    // is_wsl() is called by has_working_timestamps() which is called by `screen.cpp` in the main
-    // process. If that's not good enough, we can call is_wsl() manually at shell startup.
-    if crate::threads::is_forked_child() {
-        debug_assert!(
-            RESULT.get().is_some(),
-            "is_wsl() should be called by main before forking!"
-        );
-    }
-
-    let wsl = RESULT.get_or_init(|| {
-        let mut info: libc::utsname = unsafe { mem::zeroed() };
-        let release: &[u8] = unsafe {
-            libc::uname(&mut info);
-            std::mem::transmute(&info.release[..])
-        };
-
-        // Sample utsname.release under WSLv2, testing for something like `4.19.104-microsoft-standard`
-        // or `5.10.16.3-microsoft-standard-WSL2`
-        if slice_contains_slice(release, b"microsoft-standard") {
-            return Some(WSL::V2);
-        }
-        // Sample utsname.release under WSL, testing for something like `4.4.0-17763-Microsoft`
-        if !slice_contains_slice(release, b"Microsoft") {
-            return None;
-        }
-
-        let release: Vec<_> = release
-            .iter()
-            .copied()
-            .skip_while(|c| *c != b'-')
-            .skip(1) // the dash itself
-            .take_while(|c| c.is_ascii_digit())
-            .collect();
-        let build: Result<u32, _> = std::str::from_utf8(&release).unwrap().parse();
-        match build {
-            Ok(17763..) => return Some(WSL::V1),
-            Ok(_) => (),      // return true, but first warn (see below)
-            _ => return None, // if parsing fails, assume this isn't WSL
-        };
-
-        // #5298, #5661: There are acknowledged, published, and (later) fixed issues with
-        // job control under early WSL releases that prevent fish from running correctly,
-        // with unexpected failures when piping. Fish 3.0 nightly builds worked around this
-        // issue with some needlessly complicated code that was later stripped from the
-        // fish 3.0 release, so we just bail. Note that fish 2.0 was also broken, but we
-        // just didn't warn about it.
-
-        // #6038 & 5101bde: It's been requested that there be some sort of way to disable
-        // this check: if the environment variable FISH_NO_WSL_CHECK is present, this test
-        // is bypassed. We intentionally do not include this in the error message because
-        // it'll only allow fish to run but not to actually work. Here be dragons!
-        use crate::flog::FLOG;
-        if env::var_os("FISH_NO_WSL_CHECK").is_none() {
-            FLOG!(
-                error,
-                concat!(
-                    "This version of WSL has known bugs that prevent fish from working.\n",
-                    "Please upgrade to Windows 10 1809 (17763) or higher to use fish!"
-                )
-            );
-        }
-        Some(WSL::V1)
-    });
-
-    wsl.map(|wsl| v == WSL::Any || wsl == v).unwrap_or(false)
 }
 
 /// Return true if the character is in a range reserved for fish's private use.

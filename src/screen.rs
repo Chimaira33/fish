@@ -19,8 +19,7 @@ use libc::{ONLCR, STDERR_FILENO, STDOUT_FILENO};
 
 use crate::common::{
     fish_reserved_codepoint, get_ellipsis_char, get_omitted_newline_str, get_omitted_newline_width,
-    has_working_tty_timestamps, shell_modes, str2wcstring, wcs2string, write_loop, ScopeGuard,
-    ScopeGuarding,
+    shell_modes, str2wcstring, wcs2string, write_loop, ScopeGuard, ScopeGuarding,
 };
 use crate::curses::{term, tparm0, tparm1};
 use crate::env::{Environment, TERM_HAS_XN};
@@ -581,13 +580,6 @@ impl Screen {
     fn check_status(&mut self) {
         let _ = std::io::stdout().flush();
         let _ = std::io::stderr().flush();
-        if !has_working_tty_timestamps() {
-            // We can't reliably determine if the terminal has been written to behind our back so we
-            // just assume that hasn't happened and hope for the best. This is important for multi-line
-            // prompts to work correctly.
-            return;
-        }
-
         let mut post_buff_1: libc::stat = unsafe { std::mem::zeroed() };
         let mut post_buff_2: libc::stat = unsafe { std::mem::zeroed() };
         unsafe { libc::fstat(STDOUT_FILENO, &mut post_buff_1) };
@@ -599,11 +591,6 @@ impl Screen {
             || self.prev_buff_1.st_mtime_nsec != post_buff_1.st_mtime_nsec
             || self.prev_buff_2.st_mtime != post_buff_2.st_mtime
             || self.prev_buff_2.st_mtime_nsec != post_buff_2.st_mtime_nsec;
-        #[cfg(target_os = "netbsd")]
-        let changed = self.prev_buff_1.st_mtime != post_buff_1.st_mtime
-            || self.prev_buff_1.st_mtimensec != post_buff_1.st_mtimensec
-            || self.prev_buff_2.st_mtime != post_buff_2.st_mtime
-            || self.prev_buff_2.st_mtimensec != post_buff_2.st_mtimensec;
 
         if changed {
             // Ok, someone has been messing with our screen. We will want to repaint. However, we do not
