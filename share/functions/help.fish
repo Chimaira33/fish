@@ -25,7 +25,6 @@ function help --description 'Show help for the fish shell'
   # A list of graphical browsers we know about.
   set -l graphical_browsers htmlview x-www-browser firefox galeon mozilla xdg-open
   set -a graphical_browsers konqueror epiphany opera netscape rekonq google-chrome chromium-browser
-
   # On mac we may have to write a temporary file that redirects to the desired
   # help page, since `open` will drop fragments from file URIs (issue #4480).
   set -l need_trampoline
