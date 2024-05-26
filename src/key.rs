@@ -241,12 +241,7 @@ pub(crate) fn parse_keys(value: &wstr) -> Result<Vec<Key>, WString> {
     if value.len() == 1 {
         // Hack: allow singular comma.
         res.push(canonicalize_key(Key::from_raw(first)).unwrap());
-    } else if ((2..=3).contains(&value.len())
-        && !value.contains('-')
-        && !value.contains(KEY_SEPARATOR)
-        && !KEY_NAMES.iter().any(|(_codepoint, name)| name == value)
-        && value.as_char_slice()[0] != 'F'
-        && !(value.as_char_slice()[0] == 'f' && value.char_at(1).is_ascii_digit()))
+    } else if !(!(2..=3).contains(&value.len()) || value.contains('-') || value.contains(KEY_SEPARATOR) || KEY_NAMES.iter().any(|(_codepoint, name)| name == value) || value.as_char_slice()[0] == 'F' || value.as_char_slice()[0] == 'f' && value.char_at(1).is_ascii_digit())
         || first < ' '
     {
         // Hack: treat as legacy syntax (meaning: not comma separated) if
