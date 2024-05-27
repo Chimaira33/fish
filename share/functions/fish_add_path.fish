@@ -42,7 +42,10 @@ function fish_add_path --description "Add paths to the PATH"
   for path in $argv
     # Realpath allows us to canonicalize the path, which is needed for deduplication.
     # We could add a non-canonical version of the given path if no duplicate exists, but tbh that's a recipe for disaster.
-
+    # Enable verbose mode if we're interactively used
+    status current-command | string match -rq '^fish_add_path$'
+    and isatty stdout
+    and set -l _flag_verbose yes
     # realpath complains if a parent directory does not exist, so we silence stderr.
     set -l p (builtin realpath -s -- $path 2>/dev/null)
 
