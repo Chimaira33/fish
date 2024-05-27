@@ -27,19 +27,19 @@ complete -c rustc -s C -l codegen -xa "(rustc -C help 2>/dev/null | string match
 
 # rustc -Z is only available with the nightly toolchain, which may not be installed
 function __fish_rustc_z_completions
-    # This function takes a little over one second to run, so let's cache it. (It's ok if the first run is slow
-    # since this is only run when specifically completing `rustc -Z<TAB>` and not when the completion is loaded.)
-    if set -q __fish_cached_rustc_z_completions
-        printf '%s\n' $__fish_cached_rustc_z_completions
-        return
-    end
+  # This function takes a little over one second to run, so let's cache it. (It's ok if the first run is slow
+  # since this is only run when specifically completing `rustc -Z<TAB>` and not when the completion is loaded.)
+  if set -q __fish_cached_rustc_z_completions
+    printf '%s\n' $__fish_cached_rustc_z_completions
+    return
+  end
 
-    set -l rust_docs (rustc +nightly -Z help 2>/dev/null |
+  set -l rust_docs (rustc +nightly -Z help 2>/dev/null |
         string replace -r '^\s+' '' | string replace -ar ' +' ' ' | string replace -r '=val +-- +' '=\t')
 
-    set -f flag
-    set -f docs
-    set -g __fish_cached_rustc_z_completions (for line in $rust_docs
+  set -f flag
+  set -f docs
+  set -g __fish_cached_rustc_z_completions (for line in $rust_docs
         # Handle multi-line completions for options with values, e.g.
         #    -Z                                      unpretty=val -- present the input source, unstable (and less-pretty) variants;
         # `normal`, `identified`,
@@ -66,20 +66,20 @@ function __fish_rustc_z_completions
             end
         end
     end)
-    __fish_rustc_z_completions
+  __fish_rustc_z_completions
 end
 complete -c rustc -x -s Z -ka "(__fish_rustc_z_completions)"
 
 function __fish_rustc_lint_completions
-    rustc -W help 2>/dev/null  \
-        | string match -r \
-            '(?:\s+)(?:.+)(?:\s+)(?:allow|warn|deny|forbid)(?:\s+){2}(?:[^\n]+)' \
-        | string replace -r -i \
-            '(\s+)(.+)(\s+)(allow|warn|deny|forbid)(\s+){2}([^\n]+)' '$2 $6' \
-        | string match -r '^.*[^:]$' \
-        | string match -r -v '^(allow|warn|deny|forbid)$' \
-        | string match -r -v '^([a-z\-]+)(\s+)(allow|warn|deny|forbid)' \
-        | string replace ' ' ,\t
+  rustc -W help 2>/dev/null \
+    | string match -r \
+    '(?:\s+)(?:.+)(?:\s+)(?:allow|warn|deny|forbid)(?:\s+){2}(?:[^\n]+)' \
+    | string replace -r -i \
+    '(\s+)(.+)(\s+)(allow|warn|deny|forbid)(\s+){2}([^\n]+)' '$2 $6' \
+    | string match -r '^.*[^:]$' \
+    | string match -r -v '^(allow|warn|deny|forbid)$' \
+    | string match -r -v '^([a-z\-]+)(\s+)(allow|warn|deny|forbid)' \
+    | string replace ' ' ,\t
 end
 
 # Support multiple arguments in one parameter as comma-separated values with `__fish_concat_completions`,
