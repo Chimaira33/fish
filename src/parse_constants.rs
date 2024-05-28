@@ -440,11 +440,6 @@ pub fn parse_error_offset_source_start(errors: &mut ParseErrorList, amt: usize) 
 /// Maximum number of function calls.
 pub const FISH_MAX_STACK_DEPTH: usize = 128;
 
-/// Maximum number of nested string substitutions (in lieu of evals)
-/// Reduced under TSAN: our CI test creates 500 jobs and this is very slow with TSAN.
-#[cfg(feature = "tsan")]
-pub const FISH_MAX_EVAL_DEPTH: usize = 250;
-#[cfg(not(feature = "tsan"))]
 pub const FISH_MAX_EVAL_DEPTH: usize = 500;
 
 /// Error message on a function that calls itself immediately.
@@ -465,7 +460,7 @@ pub const FAILED_EXPANSION_VARIABLE_NAME_ERR_MSG: &str = "Unable to expand varia
 pub const ILLEGAL_FD_ERR_MSG: &str = "Illegal file descriptor in redirection '%ls'";
 
 /// Error message for wildcards with no matches.
-pub const WILDCARD_ERR_MSG: &str = "No matches for wildcard '%ls'. See `help wildcards-globbing`.";
+pub const WILDCARD_ERR_MSG: &str = "No matches for wildcard '%ls'.";
 
 /// Error when using break outside of loop.
 pub const INVALID_BREAK_ERR_MSG: &str = "'break' while not inside of loop";
