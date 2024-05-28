@@ -19,7 +19,9 @@ errno = "0.2.8"
 fast-float = { git = "https://github.com/fish-shell/fast-float-rust", branch = "fish" }
 lazy_static = "1.4.0"
 libc = "0.2.151"
-pcre2 = { git = "https://github.com/fish-shell/rust-pcre2", branch = "master", default-features = false, features = [ "utf32" ] }
+pcre2 = { git = "https://github.com/fish-shell/rust-pcre2", branch = "master", default-features = false, features = [
+  "utf32",
+] }
 # lru pulls in hashbrown by default, which uses a faster (though less DoS resistant) hashing algo.
 # disabling default features uses the stdlib instead, but it doubles the time to rewrite the history
 # files as of 22 April 2024.
@@ -74,8 +76,8 @@ rust.unknown_lints            = "allow"
 rust.unstable_name_collisions = "allow"
 
 [profile.dev]
-codegen-units = 256
-incremental   = true
+codegen-units = 64
+incremental   = false
 lto           = "off"
 opt-level     = 1
 
