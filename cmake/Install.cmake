@@ -83,7 +83,7 @@ fish_create_dirs(${rel_datadir}/fish ${rel_datadir}/fish/completions
                  ${rel_datadir}/fish/tools/web_config/themes
                  )
 
-configure_file(share/__fish_build_paths.fish.in share/__fish_build_paths.fish)
+# configure_file(share/__fish_build_paths.fish.in share/__fish_build_paths.fish)
 install(FILES share/config.fish
               ${CMAKE_CURRENT_BINARY_DIR}/share/__fish_build_paths.fish
         DESTINATION ${rel_datadir}/fish)

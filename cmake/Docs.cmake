@@ -16,8 +16,7 @@ set(SPHINX_MANPAGE_DIR "${SPHINX_ROOT_DIR}/man")
 # Prepend the output dir of fish_indent to PATH.
 add_custom_target(sphinx-docs
     mkdir -p ${SPHINX_HTML_DIR}/_static/
-    COMMAND env PATH="${CMAKE_BINARY_DIR}:$$PATH"
-        ${SPHINX_EXECUTABLE}
+    COMMAND ${SPHINX_EXECUTABLE}
         -j auto
         -q -b html
         -c "${SPHINX_SRC_DIR}"
@@ -29,7 +28,6 @@ add_custom_target(sphinx-docs
 
 # sphinx-manpages needs the fish_indent binary for the version number
 add_custom_target(sphinx-manpages
-    env PATH="${CMAKE_BINARY_DIR}:$$PATH"
         ${SPHINX_EXECUTABLE}
         -j auto
         -q -b man
