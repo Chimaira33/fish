@@ -32,7 +32,7 @@ use std::{
 };
 
 use bitflags::bitflags;
-use libc::{fchmod, fchown, flock, fstat, LOCK_EX, LOCK_SH, LOCK_UN};
+use libc::{fchmod, fchown, flock, fstat, strftime, LOCK_EX, LOCK_SH, LOCK_UN};
 use lru::LruCache;
 use nix::{fcntl::OFlag, sys::stat::Mode};
 use rand::Rng;
@@ -1410,14 +1410,6 @@ fn format_history_record(
         if !unsafe { libc::localtime_r(&seconds, &mut timestamp).is_null() } {
             const max_tstamp_length: usize = 100;
             let mut timestamp_str = [0_u8; max_tstamp_length];
-            extern "C" {
-                fn strftime(
-                    buf: *mut libc::c_char,
-                    maxsize: usize,
-                    format: *const libc::c_char,
-                    timeptr: *const libc::tm,
-                ) -> usize;
-            }
             if unsafe {
                 strftime(
                     &mut timestamp_str[0] as *mut u8 as *mut libc::c_char,

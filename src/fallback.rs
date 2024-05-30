@@ -2,7 +2,7 @@
 //! or broken by the configuration scripts.
 //!
 //! Many of these functions are more or less broken and incomplete.
-
+use crate::libc::mkostemp;
 use crate::widecharwidth::{WcLookupTable, WcWidth};
 use crate::{common::is_console_session, wchar::prelude::*};
 use errno::{errno, Errno};
@@ -107,23 +107,8 @@ pub fn fish_mkstemp_cloexec(name_template: CString) -> Result<(File, CString), E
     let name = name_template.into_raw();
     #[cfg(not(target_os = "macos"))]
     let fd = {
-        extern "C" {
-            fn mkostemp(
-                __template: *mut ::std::os::raw::c_char,
-                __flags: ::std::os::raw::c_int,
-            ) -> ::std::os::raw::c_int;
-        }
         use libc::O_CLOEXEC;
         unsafe { mkostemp(name, O_CLOEXEC) }
-    };
-    #[cfg(target_os = "macos")]
-    let fd = {
-        use libc::{FD_CLOEXEC, F_SETFD};
-        let fd = unsafe { libc::mkstemp(name) };
-        if fd != -1 {
-            unsafe { libc::fcntl(fd, F_SETFD, FD_CLOEXEC) };
-        }
-        fd
     };
     if fd == -1 {
         Err(errno())

@@ -120,7 +120,7 @@ impl PosixSpawner {
         let reset_sigmask = true;
 
         // Set our flags.
-        let mut flags: u32 = 0;
+        let mut flags: i32 = 0;
         if reset_signal_handlers {
             flags |= POSIX_SPAWN_SETSIGDEF;
         }

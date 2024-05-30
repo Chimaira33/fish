@@ -1,8 +1,8 @@
 [package]
-name = "printf"
 edition = "2021"
+name    = "printf"
 version = "0.1.0"
 
 [dependencies]
-libc = "= 0.2.151"
+libc       = "0.2.155"
 widestring = "1.0.2"
