@@ -34,22 +34,25 @@
 set(FBVF FISH-BUILD-VERSION-FILE)
 
 # TODO: find a cleaner way to do this.
-IF (${CMAKE_GENERATOR} STREQUAL Ninja)
+if(${CMAKE_GENERATOR} STREQUAL Ninja)
   set(FBVF-OUTPUT fish-build-version-witness.txt)
   set(CFBVF-BYPRODUCTS ${FBVF})
-else(${CMAKE_GENERATOR} STREQUAL Ninja)
+else()
   set(FBVF-OUTPUT ${FBVF})
   set(CFBVF-BYPRODUCTS)
-endif(${CMAKE_GENERATOR} STREQUAL Ninja)
+endif()
 
 # Set up the version targets
-add_custom_target(CHECK-FISH-BUILD-VERSION-FILE
-                  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/build_tools/git_version_gen.sh ${CMAKE_CURRENT_BINARY_DIR}
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                  BYPRODUCTS ${CFBVF-BYPRODUCTS})
+add_custom_target(
+  CHECK-FISH-BUILD-VERSION-FILE
+  COMMAND
+    ${CMAKE_CURRENT_SOURCE_DIR}/build_tools/git_version_gen.sh
+    ${CMAKE_CURRENT_BINARY_DIR}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  BYPRODUCTS ${CFBVF-BYPRODUCTS}
+)
 
-add_custom_command(OUTPUT ${FBVF-OUTPUT}
-                    DEPENDS CHECK-FISH-BUILD-VERSION-FILE)
+add_custom_command(OUTPUT ${FBVF-OUTPUT} DEPENDS CHECK-FISH-BUILD-VERSION-FILE)
 
 # Abbreviation for the target.
 set(CFBVF CHECK-FISH-BUILD-VERSION-FILE)

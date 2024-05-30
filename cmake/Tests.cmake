@@ -23,11 +23,12 @@ set(SKIP_RETURN_CODE 125)
 #    `foo` as an argument, e.g. `ctest -R ^foo$`... which is really crazy.
 
 # The top-level test target is "fish_run_tests".
-add_custom_target(fish_run_tests
-  COMMAND env FISH_FORCE_COLOR=1
-          FISH_SOURCE_DIR=${CMAKE_SOURCE_DIR}
-          ${CMAKE_CTEST_COMMAND} --force-new-ctest-process # --verbose
-          --output-on-failure --progress
+add_custom_target(
+  fish_run_tests
+  COMMAND
+    env FISH_FORCE_COLOR=1 FISH_SOURCE_DIR=${CMAKE_SOURCE_DIR}
+    ${CMAKE_CTEST_COMMAND} --force-new-ctest-process # --verbose
+    --output-on-failure --progress
   DEPENDS tests_dir funcs_dir tests_buildroot_target
   USES_TERMINAL
 )
@@ -53,20 +54,26 @@ set(TEST_ROOT_DIR ${TEST_DIR}/root)
 # Copy needed directories for out-of-tree builds
 if(NOT FISH_IN_TREE_BUILD)
   add_custom_target(funcs_dir)
-  add_custom_command(TARGET funcs_dir
+  add_custom_command(
+    TARGET funcs_dir
     COMMAND mkdir -p ${CMAKE_BINARY_DIR}/share
     # Don't run ln twice or it will create a new link in the link.
-    COMMAND test -e ${CMAKE_BINARY_DIR}/share/functions || ln -sf
-                          ${CMAKE_SOURCE_DIR}/share/functions/ ${CMAKE_BINARY_DIR}/share/functions
-                       COMMENT "Symlinking fish functions to binary dir"
-                       VERBATIM)
+    COMMAND
+      test -e ${CMAKE_BINARY_DIR}/share/functions || ln -sf
+      ${CMAKE_SOURCE_DIR}/share/functions/ ${CMAKE_BINARY_DIR}/share/functions
+    COMMENT "Symlinking fish functions to binary dir"
+    VERBATIM
+  )
 
   add_custom_target(tests_dir DEPENDS tests)
-  add_custom_command(TARGET tests_dir
-                       COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_SOURCE_DIR}/tests/ ${CMAKE_BINARY_DIR}/tests/
-                       COMMENT "Copying test files to binary dir"
-                       VERBATIM)
+  add_custom_command(
+    TARGET tests_dir
+    COMMAND
+      ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/tests/
+      ${CMAKE_BINARY_DIR}/tests/
+    COMMENT "Copying test files to binary dir"
+    VERBATIM
+  )
 endif()
 
 # Copy littlecheck.py
@@ -84,68 +91,94 @@ set(CMAKE_XCODE_GENERATE_SCHEME 0)
 # prerequisites to our entire top-level `test` target.
 function(add_test_target NAME)
   string(REPLACE "/" "-" NAME ${NAME})
-  add_custom_target("test_${NAME}" COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -R "^${NAME}$$"
-    DEPENDS tests_dir funcs_dir tests_buildroot_target USES_TERMINAL )
+  add_custom_target(
+    "test_${NAME}"
+    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -R "^${NAME}$$"
+    DEPENDS tests_dir funcs_dir tests_buildroot_target
+    USES_TERMINAL
+  )
 endfunction()
 
-add_custom_target(tests_buildroot_target
-                  # Make the directory in which to run tests:
-                  COMMAND ${CMAKE_COMMAND} -E make_directory ${TEST_INSTALL_DIR}
-                  COMMAND env DESTDIR=${TEST_INSTALL_DIR} ${CMAKE_COMMAND}
-                          --build ${CMAKE_CURRENT_BINARY_DIR} --target install
-                  # Put fish_test_helper there too:
-                  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/fish_test_helper
-                          ${TEST_INSTALL_DIR}/${CMAKE_INSTALL_PREFIX}/bin
-                  # Also symlink fish to where the tests expect it to be:
-                  COMMAND ${CMAKE_COMMAND} -E create_symlink
-                          ${TEST_INSTALL_DIR}/${CMAKE_INSTALL_PREFIX}
-                          ${TEST_ROOT_DIR}
-                  DEPENDS fish fish_test_helper)
+add_custom_target(
+  tests_buildroot_target
+  # Make the directory in which to run tests:
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${TEST_INSTALL_DIR}
+  COMMAND
+    env DESTDIR=${TEST_INSTALL_DIR} ${CMAKE_COMMAND} --build
+    ${CMAKE_CURRENT_BINARY_DIR} --target install
+  # Put fish_test_helper there too:
+  COMMAND
+    ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/fish_test_helper
+    ${TEST_INSTALL_DIR}/${CMAKE_INSTALL_PREFIX}/bin
+  # Also symlink fish to where the tests expect it to be:
+  COMMAND
+    ${CMAKE_COMMAND} -E create_symlink
+    ${TEST_INSTALL_DIR}/${CMAKE_INSTALL_PREFIX} ${TEST_ROOT_DIR}
+  DEPENDS fish fish_test_helper
+)
 
-FILE(GLOB FISH_CHECKS CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/tests/checks/*.fish)
+file(GLOB FISH_CHECKS CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/tests/checks/*.fish)
 foreach(CHECK ${FISH_CHECKS})
   get_filename_component(CHECK_NAME ${CHECK} NAME)
   get_filename_component(CHECK ${CHECK} NAME_WE)
-  add_test(NAME ${CHECK_NAME}
-    COMMAND sh ${CMAKE_CURRENT_BINARY_DIR}/tests/test_driver.sh
-               ${CMAKE_CURRENT_BINARY_DIR}/tests/test.fish ${CHECK}
+  add_test(
+    NAME ${CHECK_NAME}
+    COMMAND
+      sh ${CMAKE_CURRENT_BINARY_DIR}/tests/test_driver.sh
+      ${CMAKE_CURRENT_BINARY_DIR}/tests/test.fish ${CHECK}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests
   )
-  set_tests_properties(${CHECK_NAME} PROPERTIES SKIP_RETURN_CODE ${SKIP_RETURN_CODE})
+  set_tests_properties(
+    ${CHECK_NAME}
+    PROPERTIES SKIP_RETURN_CODE ${SKIP_RETURN_CODE}
+  )
   set_tests_properties(${CHECK_NAME} PROPERTIES ENVIRONMENT FISH_FORCE_COLOR=1)
   add_test_target("${CHECK_NAME}")
-endforeach(CHECK)
+endforeach()
 
-FILE(GLOB PEXPECTS CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/tests/pexpects/*.py)
+file(GLOB PEXPECTS CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/tests/pexpects/*.py)
 foreach(PEXPECT ${PEXPECTS})
   get_filename_component(PEXPECT ${PEXPECT} NAME)
-  add_test(NAME ${PEXPECT}
-    COMMAND sh ${CMAKE_CURRENT_BINARY_DIR}/tests/test_driver.sh
+  add_test(
+    NAME ${PEXPECT}
+    COMMAND
+      sh ${CMAKE_CURRENT_BINARY_DIR}/tests/test_driver.sh
       ${CMAKE_CURRENT_BINARY_DIR}/tests/interactive.fish ${PEXPECT}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests
   )
-  set_tests_properties(${PEXPECT} PROPERTIES SKIP_RETURN_CODE ${SKIP_RETURN_CODE})
+  set_tests_properties(
+    ${PEXPECT}
+    PROPERTIES SKIP_RETURN_CODE ${SKIP_RETURN_CODE}
+  )
   set_tests_properties(${PEXPECT} PROPERTIES ENVIRONMENT FISH_FORCE_COLOR=1)
   add_test_target("${PEXPECT}")
-endforeach(PEXPECT)
+endforeach()
 
 set(cargo_test_flags)
 # Rust stuff.
 if(DEFINED ASAN)
-    # Rust w/ -Zsanitizer=address requires explicitly specifying the --target triple or else linker
-    # errors pertaining to asan symbols will ensue.
-    if(NOT DEFINED Rust_CARGO_TARGET)
-        message(FATAL_ERROR "ASAN requires defining the CMake variable Rust_CARGO_TARGET to the
-            intended target triple")
-    endif()
-    list(APPEND cargo_test_flags "--target" ${Rust_CARGO_TARGET})
-    list(APPEND cargo_test_flags "--lib")
+  # Rust w/ -Zsanitizer=address requires explicitly specifying the --target triple or else linker
+  # errors pertaining to asan symbols will ensue.
+  if(NOT DEFINED Rust_CARGO_TARGET)
+    message(
+      FATAL_ERROR
+      "ASAN requires defining the CMake variable Rust_CARGO_TARGET to the
+            intended target triple"
+    )
+  endif()
+  list(APPEND cargo_test_flags "--target" ${Rust_CARGO_TARGET})
+  list(APPEND cargo_test_flags "--lib")
 endif()
 
 add_test(
-    NAME "cargo-test"
-    COMMAND env ${VARS_FOR_CARGO} cargo test ${CARGO_FLAGS} --workspace --target-dir ${rust_target_dir} ${cargo_test_flags}
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  NAME "cargo-test"
+  COMMAND
+    env ${VARS_FOR_CARGO} cargo test ${CARGO_FLAGS} --workspace --target-dir
+    ${rust_target_dir} ${cargo_test_flags}
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
 )
-set_tests_properties("cargo-test" PROPERTIES SKIP_RETURN_CODE ${SKIP_RETURN_CODE})
+set_tests_properties(
+  "cargo-test"
+  PROPERTIES SKIP_RETURN_CODE ${SKIP_RETURN_CODE}
+)
 add_test_target("cargo-test")

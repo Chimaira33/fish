@@ -1,4 +1,13 @@
-set(languages de en fr pl pt_BR sv zh_CN)
+set(
+  languages
+  de
+  en
+  fr
+  pl
+  pt_BR
+  sv
+  zh_CN
+)
 
 include(FeatureSummary)
 
@@ -15,8 +24,7 @@ if(GETTEXT_FOUND)
   foreach(lang ${languages})
     # Our translations aren't set up entirely as CMake expects, so installation is done in
     # cmake/Install.cmake instead of using INSTALL_DESTINATION
-    gettext_process_po_files(${lang} ALL
-                             PO_FILES po/${lang}.po)
+    gettext_process_po_files(${lang} ALL PO_FILES po/${lang}.po)
   endforeach()
   set(CMAKE_FOLDER)
 endif()
