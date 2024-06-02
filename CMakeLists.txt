@@ -22,7 +22,7 @@ endif()
 include(GNUInstallDirs)
 add_definitions(-D_UNICODE=1)
 
-include(cmake/gettext.cmake)
+# include(cmake/gettext.cmake)
 
 # Set up PCRE2
 # This sets an environment variable that needs to be available before the Rust stanzas
