@@ -19,7 +19,7 @@ errno = "0.2.8"
 fast-float = { git = "https://github.com/fish-shell/fast-float-rust", branch = "fish" }
 lazy_static = "1.4.0"
 libc = "0.2.155"
-pcre2 = { git = "https://github.com/fish-shell/rust-pcre2", branch = "master", default-features = false, features = [
+pcre2 = { git = "https://github.com/Chimaira33/rust-pcre2", branch = "master", default-features = false, features = [
   "utf32",
 ] }
 # lru pulls in hashbrown by default, which uses a faster (though less DoS resistant) hashing algo.
@@ -46,18 +46,22 @@ rsconf = "0.2.2"
 [lib]
 crate-type = ["rlib"]
 path       = "src/lib.rs"
+test       = false
 
 [[bin]]
 name = "fish"
 path = "src/bin/fish.rs"
+test = false
 
 [[bin]]
 name = "fish_indent"
 path = "src/bin/fish_indent.rs"
+test = false
 
 [[bin]]
 name = "fish_key_reader"
 path = "src/bin/fish_key_reader.rs"
+test = false
 
 [features]
 benchmark = []

@@ -285,7 +285,7 @@ dependencies = [
 [[package]]
 name = "pcre2"
 version = "0.2.3"
-source = "git+https://github.com/fish-shell/rust-pcre2?branch=master#813a4267546e5ca8ff349c9c67d65e52a82172d2"
+source = "git+https://github.com/Chimaira33/rust-pcre2?branch=master#7035ff19989bf847e46e4bcc260da61a8473017e"
 dependencies = [
  "libc",
  "log",
@@ -296,7 +296,7 @@ dependencies = [
 [[package]]
 name = "pcre2-sys"
 version = "0.2.4"
-source = "git+https://github.com/fish-shell/rust-pcre2?branch=master#813a4267546e5ca8ff349c9c67d65e52a82172d2"
+source = "git+https://github.com/Chimaira33/rust-pcre2?branch=master#7035ff19989bf847e46e4bcc260da61a8473017e"
 dependencies = [
  "cc",
  "libc",
