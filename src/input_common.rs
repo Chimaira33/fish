@@ -7,11 +7,13 @@ use crate::key::{
     Key, Modifiers,
 };
 use crate::reader::{reader_current_data, reader_test_and_clear_interrupted};
-use crate::threads::{iothread_port, iothread_service_main};
+use crate::threads::{iothread_port, iothread_service_main, MainThread};
 use crate::universal_notifier::default_notifier;
 use crate::wchar::{encode_byte_to_char, prelude::*};
 use crate::wutil::encoding::{mbrtowc, mbstate_t, zero_mbstate};
-use crate::wutil::fish_wcstol;
+use crate::wutil::{fish_wcstol, write_to_fd};
+use libc::STDOUT_FILENO;
+use std::cell::RefCell;
 use std::collections::VecDeque;
 use std::ops::ControlFlow;
 use std::os::fd::RawFd;
@@ -419,6 +421,70 @@ pub fn update_wait_on_sequence_key_ms(vars: &EnvStack) {
                 sequence_key_time_ms
             )
         }
+    }
+}
+
+static TERMINAL_PROTOCOLS: MainThread<RefCell<Option<TerminalProtocols>>> =
+    MainThread::new(RefCell::new(None));
+
+pub(crate) fn terminal_protocols_enable_ifn() {
+    let mut term_protocols = TERMINAL_PROTOCOLS.get().borrow_mut();
+    if term_protocols.is_some() {
+        return;
+    }
+    *term_protocols = Some(TerminalProtocols::new());
+}
+
+pub(crate) fn terminal_protocols_disable_ifn() {
+    TERMINAL_PROTOCOLS.get().replace(None);
+}
+
+pub(crate) fn terminal_protocols_try_disable_ifn() {
+    if let Ok(mut term_protocols) = TERMINAL_PROTOCOLS.get().try_borrow_mut() {
+        *term_protocols = None;
+    }
+}
+
+struct TerminalProtocols {}
+
+impl TerminalProtocols {
+    fn new() -> Self {
+        let sequences = concat!(
+            "\x1b[?2004h", // Bracketed paste
+            "\x1b[>4;1m",  // XTerm's modifyOtherKeys
+            "\x1b[>5u",    // CSI u with kitty progressive enhancement
+            "\x1b=",       // set application keypad mode, so the keypad keys send unique codes
+        );
+        FLOG!(
+            term_protocols,
+            format!(
+                "Enabling extended keys and bracketed paste: {:?}",
+                sequences
+            )
+        );
+        let _ = write_to_fd(sequences.as_bytes(), STDOUT_FILENO);
+        reader_current_data().map(|data| data.save_screen_state());
+        Self {}
+    }
+}
+
+impl Drop for TerminalProtocols {
+    fn drop(&mut self) {
+        let sequences = concat!(
+            "\x1b[?2004l",
+            "\x1b[>4;0m",
+            "\x1b[<1u", // Konsole breaks unless we pass an explicit number of entries to pop.
+            "\x1b>",
+        );
+        FLOG!(
+            term_protocols,
+            format!(
+                "Disabling extended keys and bracketed paste: {:?}",
+                sequences
+            )
+        );
+        let _ = write_to_fd(sequences.as_bytes(), STDOUT_FILENO);
+        reader_current_data().map(|data| data.save_screen_state());
     }
 }
 
@@ -929,6 +995,7 @@ pub trait InputEventQueuer {
         if let Some(evt) = self.try_pop() {
             return Some(evt);
         }
+        terminal_protocols_enable_ifn();
 
         // We are not prepared to handle a signal immediately; we only want to know if we get input on
         // our fd before the timeout. Use pselect to block all signals; we will handle signals
