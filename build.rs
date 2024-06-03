@@ -67,7 +67,6 @@ fn detect_cfgs(target: &mut Target) {
             "",
             &(|_: &Target| Ok(false)) as &dyn Fn(&Target) -> Result<bool, Box<dyn Error>>,
         ),
-        ("bsd", &detect_bsd),
         ("gettext", &have_gettext),
         ("small_main_stack", &has_small_stack),
         // See if libc supports the thread-safe localeconv_l(3) alternative to localeconv(3).
@@ -95,30 +94,6 @@ fn detect_cfgs(target: &mut Target) {
             Ok(enabled) => rsconf::declare_cfg(name, enabled),
         }
     }
-}
-
-/// Detect if we're being compiled for a BSD-derived OS, allowing targeting code conditionally with
-/// `#[cfg(bsd)]`.
-///
-/// Rust offers fine-grained conditional compilation per-os for the popular operating systems, but
-/// doesn't necessarily include less-popular forks nor does it group them into families more
-/// specific than "windows" vs "unix" so we can conditionally compile code for BSD systems.
-fn detect_bsd(_: &Target) -> Result<bool, Box<dyn Error>> {
-    // Instead of using `uname`, we can inspect the TARGET env variable set by Cargo. This lets us
-    // support cross-compilation scenarios.
-    let mut target = std::env::var("TARGET").unwrap();
-    if !target.chars().all(|c| c.is_ascii_lowercase()) {
-        target = target.to_ascii_lowercase();
-    }
-    let is_bsd = target.ends_with("bsd") || target.ends_with("dragonfly");
-    #[cfg(any(
-        target_os = "dragonfly",
-        target_os = "freebsd",
-        target_os = "netbsd",
-        target_os = "openbsd",
-    ))]
-    assert!(is_bsd, "Target incorrectly detected as not BSD!");
-    Ok(is_bsd)
 }
 
 /// Detect libintl/gettext and its needed symbols to enable internationalization/localization
@@ -175,94 +150,19 @@ fn have_gettext(target: &Target) -> Result<bool, Box<dyn Error>> {
 fn has_small_stack(_: &Target) -> Result<bool, Box<dyn Error>> {
     #[cfg(not(target_os = "macos"))]
     return Ok(false);
-
-    #[cfg(target_os = "macos")]
-    {
-        use core::ffi;
-
-        extern "C" {
-            fn pthread_get_stacksize_np(thread: *const ffi::c_void) -> usize;
-            fn pthread_self() -> *const ffi::c_void;
-        }
-
-        // build.rs is executed on the main thread, so we are getting the main thread's stack size.
-        // Modern macOS versions default to an 8 MiB main stack but legacy OS X have a 0.5 MiB one.
-        let stack_size = unsafe { pthread_get_stacksize_np(pthread_self()) };
-        const TWO_MIB: usize = 2 * 1024 * 1024 - 1;
-        match stack_size {
-            0..=TWO_MIB => Ok(true),
-            _ => Ok(false),
-        }
-    }
 }
 
 fn setup_paths() {
-    // fn get_path(name: &str, default: &str, onvar: PathBuf) -> PathBuf {
-    //     let mut var = PathBuf::from(env::var(name).unwrap_or(default.to_string()));
-    //     if var.is_relative() {
-    //         var = onvar.join(var);
-    //     }
-    //     var
-    // }
-
     const PRE: &str = "/data/data/com.termux/files/usr";
     const DATA: &str = "/data/data/com.termux/files/home/.local/share";
     const DOC: &str = "/data/data/com.termux/files/home/.local/share/doc";
     const BIN: &str = "/data/data/com.termux/files/home/.local/bin";
     const SYS: &str = "/data/data/com.termux/files/home/.local/etc";
     const LOC: &str = "/data/data/com.termux/files/home/.local/share/locale";
-    // let prefix = PathBuf::from(env::var("PREFIX").unwrap_or("/data/data/com.termux/files/usr".to_string()));
-    // if prefix.is_relative() {
-    //     panic!("Can't have relative prefix");
-    // }
-    // rsconf::rebuild_if_env_changed("PREFIX");
-    // let prefix = PRE;
     rsconf::set_env_value("PREFIX", PRE);
-
-    // let datadir = get_path("DATADIR", "share/", prefix.clone());
-    // let datadir = DATA;
     rsconf::set_env_value("DATADIR", DATA);
-    // rsconf::rebuild_if_env_changed("DATADIR");
-
-    // let bindir = get_path("BINDIR", "bin/", prefix.clone());
-    // let bindir = BIN;
     rsconf::set_env_value("BINDIR", BIN);
-    // rsconf::rebuild_if_env_changed("BINDIR");
-
-    // let sysconfdir = get_path("SYSCONFDIR", "etc/", datadir.clone());
-    // let sysconfdir = SYS;
     rsconf::set_env_value("SYSCONFDIR", SYS);
-    // rsconf::rebuild_if_env_changed("SYSCONFDIR");
-
-    // let localedir = LOC;
     rsconf::set_env_value("LOCALEDIR", LOC);
-    // rsconf::rebuild_if_env_changed("LOCALEDIR");
-
-    // let docdir = DOC;
     rsconf::set_env_value("DOCDIR", DOC);
-    // rsconf::rebuild_if_env_changed("DOCDIR");
 }
-
-/* fn get_version(src_dir: &Path) -> String {
-    use std::fs::read_to_string;
-    use std::process::Command;
-
-    if let Ok(var) = std::env::var("FISH_BUILD_VERSION") {
-        return var;
-    }
-
-    let path = PathBuf::from(src_dir).join("version");
-    if let Ok(strver) = read_to_string(path) {
-        return strver.to_string();
-    }
-
-    let args = &["describe", "--always", "--dirty=-dirty"];
-    if let Ok(output) = Command::new("git").args(args).output() {
-        let rev = String::from_utf8_lossy(&output.stdout).trim().to_string();
-        if !rev.is_empty() {
-            return rev;
-        }
-    }
-
-    "unknown".to_string()
-} */
