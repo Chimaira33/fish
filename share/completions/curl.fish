@@ -1,7 +1,7 @@
 # Complete paths after @ in options:
 function __curl_complete_data
-    string match -qr '^(?<prefix>.*@)(?<path>.*)' -- (commandline -ct)
-    printf '%s\n' -- $prefix(__fish_complete_path $path)
+  string match -qr '^(?<prefix>.*@)(?<path>.*)' -- (commandline -ct)
+  printf '%s\n' -- $prefix(__fish_complete_path $path)
 end
 complete -c curl -n 'string match -qr "@" -- (commandline -ct)' -kxa "(__curl_complete_data)"
 
