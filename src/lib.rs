@@ -1,4 +1,3 @@
-// #![cfg_attr(feature = "benchmark", feature(test))]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 #![allow(unknown_lints)]
@@ -107,7 +106,3 @@ pub mod wutil;
 #[cfg(test)]
 mod tests;
 
-use mimalloc::MiMalloc;
-
-#[global_allocator]
-static GLOBAL: MiMalloc = MiMalloc;

@@ -99,7 +99,6 @@ dependencies = [
  "lazy_static",
  "libc",
  "lru",
- "mimalloc",
  "nix",
  "num-traits",
  "once_cell",
@@ -167,16 +166,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "97b3888a4aecf77e811145cadf6eef5901f4782c53886191b2f693f24761847c"
 
 [[package]]
-name = "libmimalloc-sys"
-version = "0.1.38"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e7bb23d733dfcc8af652a78b7bf232f0e967710d044732185e561e47c0336b6"
-dependencies = [
- "cc",
- "libc",
-]
-
-[[package]]
 name = "lock_api"
 version = "0.4.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -206,15 +195,6 @@ name = "memchr"
 version = "2.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c8640c5d730cb13ebd907d8d04b52f55ac9a2eec55b440c8892f40d56c76c1d"
-
-[[package]]
-name = "mimalloc"
-version = "0.1.42"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9186d86b79b52f4a77af65604b51225e8db1d6ee7e3f41aec1e40829c71a176"
-dependencies = [
- "libmimalloc-sys",
-]
 
 [[package]]
 name = "minimal-lexical"
@@ -285,7 +265,7 @@ dependencies = [
 [[package]]
 name = "pcre2"
 version = "0.2.3"
-source = "git+https://github.com/Chimaira33/rust-pcre2?branch=master#7035ff19989bf847e46e4bcc260da61a8473017e"
+source = "git+https://github.com/fish-shell/rust-pcre2?branch=master#813a4267546e5ca8ff349c9c67d65e52a82172d2"
 dependencies = [
  "libc",
  "log",
@@ -296,7 +276,7 @@ dependencies = [
 [[package]]
 name = "pcre2-sys"
 version = "0.2.4"
-source = "git+https://github.com/Chimaira33/rust-pcre2?branch=master#7035ff19989bf847e46e4bcc260da61a8473017e"
+source = "git+https://github.com/fish-shell/rust-pcre2?branch=master#813a4267546e5ca8ff349c9c67d65e52a82172d2"
 dependencies = [
  "cc",
  "libc",
