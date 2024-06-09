@@ -2,6 +2,8 @@
 edition = "2021"
 name    = "printf"
 version = "0.1.0"
+description = "printf implementation, based on musl"
+license = "MIT"
 
 [dependencies]
 libc       = "0.2.155"
