@@ -2142,6 +2142,7 @@ impl ReaderData {
 
 impl ReaderData {
     fn handle_readline_command(&mut self, c: ReadlineCmd) {
+        #[allow(non_camel_case_types)]
         type rl = ReadlineCmd;
         match c {
             rl::BeginningOfLine => {
@@ -4633,6 +4634,7 @@ impl ReaderData {
 
 /// Indicates if the given command char ends paging.
 fn command_ends_paging(c: ReadlineCmd, focused_on_search_field: bool) -> bool {
+    #[allow(non_camel_case_types)]
     type rl = ReadlineCmd;
     match c {
         rl::HistoryPrefixSearchBackward
@@ -4715,6 +4717,7 @@ fn command_ends_paging(c: ReadlineCmd, focused_on_search_field: bool) -> bool {
 
 /// Indicates if the given command ends the history search.
 fn command_ends_history_search(c: ReadlineCmd) -> bool {
+    #[allow(non_camel_case_types)]
     type rl = ReadlineCmd;
     !matches!(
         c,
