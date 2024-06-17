@@ -1,4 +1,3 @@
-#![allow(non_camel_case_types)]
 //! Functions for reading data from stdin and passing to the parser. If stdin is a keyboard, it
 //! supplies a killring, history, syntax highlighting, tab-completion and various other interactive
 //! features.
@@ -2142,10 +2141,9 @@ impl ReaderData {
 
 impl ReaderData {
     fn handle_readline_command(&mut self, c: ReadlineCmd) {
-        #[allow(non_camel_case_types)]
-        type rl = ReadlineCmd;
+        type RL = ReadlineCmd;
         match c {
-            rl::BeginningOfLine => {
+            RL::BeginningOfLine => {
                 // Go to beginning of line.
                 loop {
                     let (elt, el) = self.active_edit_line();
@@ -2159,7 +2157,7 @@ impl ReaderData {
                     self.update_buff_pos(elt, Some(position - 1));
                 }
             }
-            rl::EndOfLine => {
+            RL::EndOfLine => {
                 let (_elt, el) = self.active_edit_line();
                 if self.is_at_end(el) {
                     self.accept_autosuggestion(true, false, MoveWordStyle::Punctuation);
@@ -2182,13 +2180,13 @@ impl ReaderData {
                     }
                 }
             }
-            rl::BeginningOfBuffer => {
+            RL::BeginningOfBuffer => {
                 self.update_buff_pos(EditableLineTag::Commandline, Some(0));
             }
-            rl::EndOfBuffer => {
+            RL::EndOfBuffer => {
                 self.update_buff_pos(EditableLineTag::Commandline, Some(self.command_line.len()));
             }
-            rl::CancelCommandline => {
+            RL::CancelCommandline => {
                 if self.command_line.is_empty() {
                     return;
                 }
@@ -2200,7 +2198,7 @@ impl ReaderData {
                 // Post fish_cancel.
                 event::fire_generic(self.parser(), L!("fish_cancel").to_owned(), vec![]);
             }
-            rl::Cancel => {
+            RL::Cancel => {
                 // If we last inserted a completion, undo it.
                 // This doesn't apply if the completion was selected via the pager
                 // (in which case the last command is "execute" or similar,
@@ -2210,7 +2208,7 @@ impl ReaderData {
                 if self.rls().complete_did_insert
                     && matches!(
                         self.rls().last_cmd,
-                        Some(rl::Complete | rl::CompleteAndSearch)
+                        Some(RL::Complete | RL::CompleteAndSearch)
                     )
                 {
                     let (elt, el) = self.active_edit_line_mut();
@@ -2218,10 +2216,10 @@ impl ReaderData {
                     self.update_buff_pos(elt, None);
                 }
             }
-            rl::RepaintMode | rl::ForceRepaint | rl::Repaint => {
+            RL::RepaintMode | RL::ForceRepaint | RL::Repaint => {
                 self.queued_repaint = false;
                 self.parser().libdata_mut().is_repaint = true;
-                if c == rl::RepaintMode {
+                if c == RL::RepaintMode {
                     // Repaint the mode-prompt only if possible.
                     // This is an optimization basically exclusively for vi-mode, since the prompt
                     // may sometimes take a while but when switching the mode all we care about is the
@@ -2251,14 +2249,14 @@ impl ReaderData {
                 self.force_exec_prompt_and_repaint = false;
                 self.parser().libdata_mut().is_repaint = false;
             }
-            rl::Complete | rl::CompleteAndSearch => {
+            RL::Complete | RL::CompleteAndSearch => {
                 if !self.conf.complete_ok {
                     return;
                 }
                 if self.is_navigating_pager_contents()
                     || (!self.rls().comp.is_empty()
                         && !self.rls().complete_did_insert
-                        && self.rls().last_cmd == Some(rl::Complete))
+                        && self.rls().last_cmd == Some(RL::Complete))
                 {
                     // The user typed complete more than once in a row. If we are not yet fully
                     // disclosed, then become so; otherwise cycle through our available completions.
@@ -2266,7 +2264,7 @@ impl ReaderData {
                         self.pager.set_fully_disclosed();
                     } else {
                         self.select_completion_in_direction(
-                            if c == rl::Complete {
+                            if c == RL::Complete {
                                 SelectionMotion::Next
                             } else {
                                 SelectionMotion::Prev
@@ -2279,7 +2277,7 @@ impl ReaderData {
                     self.compute_and_apply_completions(c);
                 }
             }
-            rl::PagerToggleSearch => {
+            RL::PagerToggleSearch => {
                 if self.history_pager_active {
                     self.fill_history_pager(
                         HistoryPagerInvocation::Advance,
@@ -2297,7 +2295,7 @@ impl ReaderData {
                     }
                 }
             }
-            rl::KillLine => {
+            RL::KillLine => {
                 let (elt, el) = self.active_edit_line();
                 let position = el.position();
 
@@ -2318,11 +2316,11 @@ impl ReaderData {
                         elt,
                         range,
                         Kill::Append,
-                        self.rls().last_cmd != Some(rl::KillLine),
+                        self.rls().last_cmd != Some(RL::KillLine),
                     );
                 }
             }
-            rl::BackwardKillLine => {
+            RL::BackwardKillLine => {
                 let (elt, el) = self.active_edit_line();
                 let position = el.position();
                 if position == 0 {
@@ -2350,10 +2348,10 @@ impl ReaderData {
                     elt,
                     end - len..end,
                     Kill::Prepend,
-                    self.rls().last_cmd != Some(rl::BackwardKillLine),
+                    self.rls().last_cmd != Some(RL::BackwardKillLine),
                 );
             }
-            rl::KillWholeLine | rl::KillInnerLine => {
+            RL::KillWholeLine | RL::KillInnerLine => {
                 // The first matches the emacs behavior here: "kills the entire line including
                 // the following newline".
                 // The second does not kill the following newline
@@ -2376,7 +2374,7 @@ impl ReaderData {
                 let mut end = position;
                 loop {
                     if end == text.len() {
-                        if c == rl::KillWholeLine && begin > 0 {
+                        if c == RL::KillWholeLine && begin > 0 {
                             // We are on the last line. Delete the newline in the beginning to clear
                             // this line.
                             begin -= 1;
@@ -2384,7 +2382,7 @@ impl ReaderData {
                         break;
                     }
                     if text.as_char_slice()[end] == '\n' {
-                        if c == rl::KillWholeLine {
+                        if c == RL::KillWholeLine {
                             end += 1;
                         }
                         break;
@@ -2403,7 +2401,7 @@ impl ReaderData {
                     );
                 }
             }
-            rl::Yank => {
+            RL::Yank => {
                 let yank_str = kill_yank();
                 self.insert_string(self.active_edit_line_tag(), &yank_str);
                 self.rls_mut().yank_len = yank_str.len();
@@ -2412,7 +2410,7 @@ impl ReaderData {
                     self.update_buff_pos(self.active_edit_line_tag(), Some(el.position() - 1));
                 }
             }
-            rl::YankPop => {
+            RL::YankPop => {
                 if self.rls().yank_len != 0 {
                     let (elt, el) = self.active_edit_line();
                     let yank_str = kill_yank_rotate();
@@ -2430,23 +2428,23 @@ impl ReaderData {
                     self.suppress_autosuggestion = true;
                 }
             }
-            rl::BackwardDeleteChar => {
+            RL::BackwardDeleteChar => {
                 self.delete_char(true);
             }
-            rl::Exit => {
+            RL::Exit => {
                 // This is by definition a successful exit, override the status
                 self.parser()
                     .set_last_statuses(Statuses::just(STATUS_CMD_OK.unwrap()));
                 self.exit_loop_requested = true;
                 check_exit_loop_maybe_warning(Some(self));
             }
-            rl::DeleteOrExit | rl::DeleteChar => {
+            RL::DeleteOrExit | RL::DeleteChar => {
                 // Remove the current character in the character buffer and on the screen using
                 // syntax highlighting, etc.
                 let (_elt, el) = self.active_edit_line();
                 if el.position() < el.len() {
                     self.delete_char(false);
-                } else if c == rl::DeleteOrExit && el.is_empty() {
+                } else if c == RL::DeleteOrExit && el.is_empty() {
                     // This is by definition a successful exit, override the status
                     self.parser()
                         .set_last_statuses(Statuses::just(STATUS_CMD_OK.unwrap()));
@@ -2454,7 +2452,7 @@ impl ReaderData {
                     check_exit_loop_maybe_warning(Some(self));
                 }
             }
-            rl::Execute => {
+            RL::Execute => {
                 if !self.handle_execute() {
                     event::fire_generic(
                         self.parser(),
@@ -2465,20 +2463,20 @@ impl ReaderData {
                         .reset_abandoning_line(usize::try_from(termsize_last().width).unwrap());
                 }
             }
-            rl::HistoryPrefixSearchBackward
-            | rl::HistoryPrefixSearchForward
-            | rl::HistorySearchBackward
-            | rl::HistorySearchForward
-            | rl::HistoryTokenSearchBackward
-            | rl::HistoryTokenSearchForward => {
+            RL::HistoryPrefixSearchBackward
+            | RL::HistoryPrefixSearchForward
+            | RL::HistorySearchBackward
+            | RL::HistorySearchForward
+            | RL::HistoryTokenSearchBackward
+            | RL::HistoryTokenSearchForward => {
                 let mode = match c {
-                    rl::HistoryTokenSearchBackward | rl::HistoryTokenSearchForward => {
+                    RL::HistoryTokenSearchBackward | RL::HistoryTokenSearchForward => {
                         SearchMode::Token
                     }
-                    rl::HistoryPrefixSearchBackward | rl::HistoryPrefixSearchForward => {
+                    RL::HistoryPrefixSearchBackward | RL::HistoryPrefixSearchForward => {
                         SearchMode::Prefix
                     }
-                    rl::HistorySearchBackward | rl::HistorySearchForward => SearchMode::Line,
+                    RL::HistorySearchBackward | RL::HistorySearchForward => SearchMode::Line,
                     _ => unreachable!(),
                 };
 
@@ -2517,12 +2515,12 @@ impl ReaderData {
                 }
                 assert!(self.history_search.active());
                 let dir = match c {
-                    rl::HistorySearchBackward
-                    | rl::HistoryTokenSearchBackward
-                    | rl::HistoryPrefixSearchBackward => SearchDirection::Backward,
-                    rl::HistorySearchForward
-                    | rl::HistoryTokenSearchForward
-                    | rl::HistoryPrefixSearchForward => SearchDirection::Forward,
+                    RL::HistorySearchBackward
+                    | RL::HistoryTokenSearchBackward
+                    | RL::HistoryPrefixSearchBackward => SearchDirection::Backward,
+                    RL::HistorySearchForward
+                    | RL::HistoryTokenSearchForward
+                    | RL::HistoryPrefixSearchForward => SearchDirection::Forward,
                     _ => unreachable!(),
                 };
                 let found = self.history_search.move_in_direction(dir);
@@ -2540,7 +2538,7 @@ impl ReaderData {
                     self.update_command_line_from_history_search();
                 }
             }
-            rl::HistoryPager => {
+            RL::HistoryPager => {
                 if self.history_pager_active {
                     self.fill_history_pager(
                         HistoryPagerInvocation::Advance,
@@ -2588,7 +2586,7 @@ impl ReaderData {
                 };
                 self.insert_string(EditableLineTag::SearchField, &search_string);
             }
-            rl::HistoryPagerDelete => {
+            RL::HistoryPagerDelete => {
                 // Also applies to ordinary history search.
                 let is_history_search = !self.history_search.is_at_end();
                 if is_history_search || !self.autosuggestion.is_empty() {
@@ -2623,7 +2621,7 @@ impl ReaderData {
                     );
                 }
             }
-            rl::BackwardChar => {
+            RL::BackwardChar => {
                 let (elt, el) = self.active_edit_line();
                 if self.is_navigating_pager_contents() {
                     self.select_completion_in_direction(SelectionMotion::West, false);
@@ -2631,7 +2629,7 @@ impl ReaderData {
                     self.update_buff_pos(elt, Some(el.position() - 1));
                 }
             }
-            rl::BackwardCharPassive => {
+            RL::BackwardCharPassive => {
                 let (elt, el) = self.active_edit_line();
                 if el.position() != 0 {
                     if elt == EditableLineTag::SearchField || !self.is_navigating_pager_contents() {
@@ -2639,21 +2637,21 @@ impl ReaderData {
                     }
                 }
             }
-            rl::ForwardChar | rl::ForwardSingleChar => {
+            RL::ForwardChar | RL::ForwardSingleChar => {
                 let (elt, el) = self.active_edit_line();
                 if self.is_navigating_pager_contents() {
                     self.select_completion_in_direction(SelectionMotion::East, false);
                 } else if self.is_at_end(el) {
                     self.accept_autosuggestion(
-                        /*full=*/ c != rl::ForwardSingleChar,
-                        /*single=*/ c == rl::ForwardSingleChar,
+                        /*full=*/ c != RL::ForwardSingleChar,
+                        /*single=*/ c == RL::ForwardSingleChar,
                         MoveWordStyle::Punctuation,
                     );
                 } else {
                     self.update_buff_pos(elt, Some(el.position() + 1));
                 }
             }
-            rl::ForwardCharPassive => {
+            RL::ForwardCharPassive => {
                 let (elt, el) = self.active_edit_line();
                 if !self.is_at_end(el) {
                     if elt == EditableLineTag::SearchField || !self.is_navigating_pager_contents() {
@@ -2661,20 +2659,20 @@ impl ReaderData {
                     }
                 }
             }
-            rl::BackwardKillWord | rl::BackwardKillPathComponent | rl::BackwardKillBigword => {
+            RL::BackwardKillWord | RL::BackwardKillPathComponent | RL::BackwardKillBigword => {
                 let style = match c {
-                    rl::BackwardKillBigword => MoveWordStyle::Whitespace,
-                    rl::BackwardKillPathComponent => MoveWordStyle::PathComponents,
-                    rl::BackwardKillWord => MoveWordStyle::Punctuation,
+                    RL::BackwardKillBigword => MoveWordStyle::Whitespace,
+                    RL::BackwardKillPathComponent => MoveWordStyle::PathComponents,
+                    RL::BackwardKillWord => MoveWordStyle::Punctuation,
                     _ => unreachable!(),
                 };
                 // Is this the same killring item as the last kill?
                 let newv = !matches!(
                     self.rls().last_cmd,
                     Some(
-                        rl::BackwardKillWord
-                            | rl::BackwardKillPathComponent
-                            | rl::BackwardKillBigword
+                        RL::BackwardKillWord
+                            | RL::BackwardKillPathComponent
+                            | RL::BackwardKillBigword
                     )
                 );
                 self.move_word(
@@ -2685,10 +2683,10 @@ impl ReaderData {
                     newv,
                 )
             }
-            rl::KillWord | rl::KillBigword => {
+            RL::KillWord | RL::KillBigword => {
                 // The "bigword" functions differ only in that they move to the next whitespace, not
                 // punctuation.
-                let style = if c == rl::KillWord {
+                let style = if c == RL::KillWord {
                     MoveWordStyle::Punctuation
                 } else {
                     MoveWordStyle::Whitespace
@@ -2701,8 +2699,8 @@ impl ReaderData {
                     self.rls().last_cmd != Some(c),
                 );
             }
-            rl::BackwardWord | rl::BackwardBigword | rl::PrevdOrBackwardWord => {
-                if c == rl::PrevdOrBackwardWord && self.command_line.is_empty() {
+            RL::BackwardWord | RL::BackwardBigword | RL::PrevdOrBackwardWord => {
+                if c == RL::PrevdOrBackwardWord && self.command_line.is_empty() {
                     self.eval_bind_cmd(L!("prevd"));
                     self.force_exec_prompt_and_repaint = true;
                     self.inputter
@@ -2710,7 +2708,7 @@ impl ReaderData {
                     return;
                 }
 
-                let style = if c != rl::BackwardBigword {
+                let style = if c != RL::BackwardBigword {
                     MoveWordStyle::Punctuation
                 } else {
                     MoveWordStyle::Whitespace
@@ -2723,8 +2721,8 @@ impl ReaderData {
                     false,
                 );
             }
-            rl::ForwardWord | rl::ForwardBigword | rl::NextdOrForwardWord => {
-                if c == rl::NextdOrForwardWord && self.command_line.is_empty() {
+            RL::ForwardWord | RL::ForwardBigword | RL::NextdOrForwardWord => {
+                if c == RL::NextdOrForwardWord && self.command_line.is_empty() {
                     self.eval_bind_cmd(L!("nextd"));
                     self.force_exec_prompt_and_repaint = true;
                     self.inputter
@@ -2732,7 +2730,7 @@ impl ReaderData {
                     return;
                 }
 
-                let style = if c != rl::ForwardBigword {
+                let style = if c != RL::ForwardBigword {
                     MoveWordStyle::Punctuation
                 } else {
                     MoveWordStyle::Whitespace
@@ -2744,8 +2742,8 @@ impl ReaderData {
                     self.move_word(elt, MoveWordDir::Right, /*erase=*/ false, style, false);
                 }
             }
-            rl::BeginningOfHistory | rl::EndOfHistory => {
-                let up = c == rl::BeginningOfHistory;
+            RL::BeginningOfHistory | RL::EndOfHistory => {
+                let up = c == RL::BeginningOfHistory;
                 if self.is_navigating_pager_contents() {
                     self.select_completion_in_direction(
                         if up {
@@ -2766,10 +2764,10 @@ impl ReaderData {
                     }
                 }
             }
-            rl::UpLine | rl::DownLine => {
+            RL::UpLine | RL::DownLine => {
                 if self.is_navigating_pager_contents() {
                     // We are already navigating pager contents.
-                    let direction = if c == rl::DownLine {
+                    let direction = if c == RL::DownLine {
                         // Down arrow is always south.
                         SelectionMotion::South
                     } else if self.selection_is_at_top() {
@@ -2785,7 +2783,7 @@ impl ReaderData {
                 } else if !self.pager.is_empty() {
                     // We pressed a direction with a non-empty pager, begin navigation.
                     self.select_completion_in_direction(
-                        if c == rl::DownLine {
+                        if c == RL::DownLine {
                             SelectionMotion::South
                         } else {
                             SelectionMotion::North
@@ -2799,7 +2797,7 @@ impl ReaderData {
                         i32::try_from(parse_util_get_line_from_offset(el.text(), el.position()))
                             .unwrap();
 
-                    let line_new = if c == rl::UpLine {
+                    let line_new = if c == RL::UpLine {
                         line_old - 1
                     } else {
                         line_old + 1
@@ -2832,17 +2830,17 @@ impl ReaderData {
                     }
                 }
             }
-            rl::SuppressAutosuggestion => {
+            RL::SuppressAutosuggestion => {
                 self.suppress_autosuggestion = true;
                 let success = !self.autosuggestion.is_empty();
                 self.autosuggestion.clear();
                 // Return true if we had a suggestion to clear.
                 self.inputter.function_set_status(success);
             }
-            rl::AcceptAutosuggestion => {
+            RL::AcceptAutosuggestion => {
                 self.accept_autosuggestion(true, false, MoveWordStyle::Punctuation);
             }
-            rl::TransposeChars => {
+            RL::TransposeChars => {
                 let (elt, el) = self.active_edit_line();
                 if el.len() < 2 {
                     return;
@@ -2864,7 +2862,7 @@ impl ReaderData {
                     self.set_command_line_and_position(elt, local_cmd, el.position() + 1);
                 }
             }
-            rl::TransposeWords => {
+            RL::TransposeWords => {
                 let (elt, el) = self.active_edit_line();
 
                 // If we are not in a token, look for one ahead.
@@ -2905,7 +2903,7 @@ impl ReaderData {
                     self.set_command_line_and_position(elt, new_text, tok.end);
                 }
             }
-            rl::TogglecaseChar => {
+            RL::TogglecaseChar => {
                 let (elt, el) = self.active_edit_line();
                 let buff_pos = el.position();
 
@@ -2928,7 +2926,7 @@ impl ReaderData {
                     self.update_buff_pos(elt, Some(buff_pos));
                 }
             }
-            rl::TogglecaseSelection => {
+            RL::TogglecaseSelection => {
                 let (elt, el) = self.active_edit_line();
 
                 // Check that we have an active selection and get the bounds.
@@ -2959,7 +2957,7 @@ impl ReaderData {
                     self.update_buff_pos(elt, Some(buff_pos));
                 }
             }
-            rl::UpcaseWord | rl::DowncaseWord | rl::CapitalizeWord => {
+            RL::UpcaseWord | RL::DowncaseWord | RL::CapitalizeWord => {
                 let (elt, el) = self.active_edit_line();
                 // For capitalize_word, whether we've capitalized a character so far.
                 let mut capitalized_first = false;
@@ -2981,10 +2979,10 @@ impl ReaderData {
 
                     // We always change the case; this decides whether we go uppercase (true) or
                     // lowercase (false).
-                    let make_uppercase = if c == rl::CapitalizeWord {
+                    let make_uppercase = if c == RL::CapitalizeWord {
                         !capitalized_first && chr.is_alphanumeric()
                     } else {
-                        c == rl::UpcaseWord
+                        c == RL::UpcaseWord
                     };
 
                     // Apply the operation and then record what we did.
@@ -2999,7 +2997,7 @@ impl ReaderData {
                 self.replace_substring(elt, init_pos..pos, replacement);
                 self.update_buff_pos(elt, None);
             }
-            rl::BeginSelection => {
+            RL::BeginSelection => {
                 let mut selection = SelectionData::default();
                 let pos = self.command_line.position();
                 selection.begin = pos;
@@ -3012,10 +3010,10 @@ impl ReaderData {
                     };
                 self.selection = Some(selection);
             }
-            rl::EndSelection => {
+            RL::EndSelection => {
                 self.selection = None;
             }
-            rl::SwapSelectionStartStop => {
+            RL::SwapSelectionStartStop => {
                 let position = self.command_line.position();
                 let Some(selection) = &mut self.selection else {
                     return;
@@ -3025,13 +3023,13 @@ impl ReaderData {
                 selection.start = position;
                 self.update_buff_pos(self.active_edit_line_tag(), Some(tmp));
             }
-            rl::KillSelection => {
-                let newv = self.rls().last_cmd != Some(rl::KillSelection);
+            RL::KillSelection => {
+                let newv = self.rls().last_cmd != Some(RL::KillSelection);
                 if let Some(selection) = self.get_selection() {
                     self.kill(EditableLineTag::Commandline, selection, Kill::Append, newv);
                 }
             }
-            rl::InsertLineOver => {
+            RL::InsertLineOver => {
                 let elt = loop {
                     let (elt, el) = self.active_edit_line();
                     if el.position() == 0 || el.text().as_char_slice()[el.position() - 1] == '\n' {
@@ -3045,7 +3043,7 @@ impl ReaderData {
                 let (elt, el) = self.active_edit_line();
                 self.update_buff_pos(elt, Some(el.position() - 1));
             }
-            rl::InsertLineUnder => {
+            RL::InsertLineUnder => {
                 let elt = loop {
                     let (elt, el) = self.active_edit_line();
                     if el.position() == el.len() || el.text().as_char_slice()[el.position()] == '\n'
@@ -3058,15 +3056,15 @@ impl ReaderData {
                 };
                 self.insert_char(elt, '\n');
             }
-            rl::ForwardJump | rl::BackwardJump | rl::ForwardJumpTill | rl::BackwardJumpTill => {
+            RL::ForwardJump | RL::BackwardJump | RL::ForwardJumpTill | RL::BackwardJumpTill => {
                 let direction = match c {
-                    rl::ForwardJump | rl::ForwardJumpTill => JumpDirection::Forward,
-                    rl::BackwardJump | rl::BackwardJumpTill => JumpDirection::Backward,
+                    RL::ForwardJump | RL::ForwardJumpTill => JumpDirection::Forward,
+                    RL::BackwardJump | RL::BackwardJumpTill => JumpDirection::Backward,
                     _ => unreachable!(),
                 };
                 let precision = match c {
-                    rl::ForwardJump | rl::BackwardJump => JumpPrecision::To,
-                    rl::ForwardJumpTill | rl::BackwardJumpTill => JumpPrecision::Till,
+                    RL::ForwardJump | RL::BackwardJump => JumpPrecision::To,
+                    RL::ForwardJumpTill | RL::BackwardJumpTill => JumpPrecision::Till,
                     _ => unreachable!(),
                 };
                 let (elt, _el) = self.active_edit_line();
@@ -3076,7 +3074,7 @@ impl ReaderData {
                     self.inputter.function_set_status(success);
                 }
             }
-            rl::RepeatJump => {
+            RL::RepeatJump => {
                 let (elt, _el) = self.active_edit_line();
                 let mut success = false;
 
@@ -3091,7 +3089,7 @@ impl ReaderData {
 
                 self.inputter.function_set_status(success);
             }
-            rl::ReverseRepeatJump => {
+            RL::ReverseRepeatJump => {
                 let (elt, _el) = self.active_edit_line();
                 let mut success = false;
                 let original_dir = self.last_jump_direction;
@@ -3110,16 +3108,16 @@ impl ReaderData {
 
                 self.inputter.function_set_status(success);
             }
-            rl::ExpandAbbr => {
+            RL::ExpandAbbr => {
                 if self.expand_abbreviation_at_cursor(1) {
                     self.inputter.function_set_status(true);
                 } else {
                     self.inputter.function_set_status(false);
                 }
             }
-            rl::Undo | rl::Redo => {
+            RL::Undo | RL::Redo => {
                 let (elt, el) = self.active_edit_line_mut();
-                let ok = if c == rl::Undo { el.undo() } else { el.redo() };
+                let ok = if c == RL::Undo { el.undo() } else { el.redo() };
                 if !ok {
                     self.flash();
                     return;
@@ -3131,26 +3129,26 @@ impl ReaderData {
                 self.update_buff_pos(elt, None);
                 self.maybe_refilter_pager(elt);
             }
-            rl::BeginUndoGroup => {
+            RL::BeginUndoGroup => {
                 let (_elt, el) = self.active_edit_line_mut();
                 el.begin_edit_group();
             }
-            rl::EndUndoGroup => {
+            RL::EndUndoGroup => {
                 let (_elt, el) = self.active_edit_line_mut();
                 el.end_edit_group();
             }
-            rl::DisableMouseTracking => {
+            RL::DisableMouseTracking => {
                 Outputter::stdoutput()
                     .borrow_mut()
                     .write_wstr(L!("\x1B[?1000l"));
             }
-            rl::FocusIn => {
+            RL::FocusIn => {
                 event::fire_generic(self.parser(), L!("fish_focus_in").to_owned(), vec![]);
             }
-            rl::FocusOut => {
+            RL::FocusOut => {
                 event::fire_generic(self.parser(), L!("fish_focus_out").to_owned(), vec![]);
             }
-            rl::ClearScreenAndRepaint => {
+            RL::ClearScreenAndRepaint => {
                 self.parser().libdata_mut().is_repaint = true;
                 let clear = screen_clear();
                 if !clear.is_empty() {
@@ -3169,7 +3167,7 @@ impl ReaderData {
                 self.force_exec_prompt_and_repaint = false;
                 self.parser().libdata_mut().is_repaint = false;
             }
-            rl::SelfInsert | rl::SelfInsertNotFirst | rl::FuncAnd | rl::FuncOr => {
+            RL::SelfInsert | RL::SelfInsertNotFirst | RL::FuncAnd | RL::FuncOr => {
                 // This can be reached via `commandline -f and` etc
                 // panic!("should have been handled by inputter_t::readch");
             }
@@ -4634,79 +4632,78 @@ impl ReaderData {
 
 /// Indicates if the given command char ends paging.
 fn command_ends_paging(c: ReadlineCmd, focused_on_search_field: bool) -> bool {
-    #[allow(non_camel_case_types)]
-    type rl = ReadlineCmd;
+    type RL = ReadlineCmd;
     match c {
-        rl::HistoryPrefixSearchBackward
-        | rl::HistoryPrefixSearchForward
-        | rl::HistorySearchBackward
-        | rl::HistorySearchForward
-        | rl::HistoryTokenSearchBackward
-        | rl::HistoryTokenSearchForward
-        | rl::AcceptAutosuggestion
-        | rl::DeleteOrExit
-        | rl::CancelCommandline
-        | rl::Cancel =>
+        RL::HistoryPrefixSearchBackward
+        | RL::HistoryPrefixSearchForward
+        | RL::HistorySearchBackward
+        | RL::HistorySearchForward
+        | RL::HistoryTokenSearchBackward
+        | RL::HistoryTokenSearchForward
+        | RL::AcceptAutosuggestion
+        | RL::DeleteOrExit
+        | RL::CancelCommandline
+        | RL::Cancel =>
         // These commands always end paging.
         {
             true
         }
-        rl::Complete
-        | rl::CompleteAndSearch
-        | rl::HistoryPager
-        | rl::BackwardChar
-        | rl::BackwardCharPassive
-        | rl::ForwardChar
-        | rl::ForwardCharPassive
-        | rl::ForwardSingleChar
-        | rl::UpLine
-        | rl::DownLine
-        | rl::Repaint
-        | rl::SuppressAutosuggestion
-        | rl::BeginningOfHistory
-        | rl::EndOfHistory =>
+        RL::Complete
+        | RL::CompleteAndSearch
+        | RL::HistoryPager
+        | RL::BackwardChar
+        | RL::BackwardCharPassive
+        | RL::ForwardChar
+        | RL::ForwardCharPassive
+        | RL::ForwardSingleChar
+        | RL::UpLine
+        | RL::DownLine
+        | RL::Repaint
+        | RL::SuppressAutosuggestion
+        | RL::BeginningOfHistory
+        | RL::EndOfHistory =>
         // These commands never end paging.
         {
             false
         }
-        rl::Execute =>
+        RL::Execute =>
         // execute does end paging, but only executes if it was not paging. So it's handled
         // specially.
         {
             false
         }
-        rl::BeginningOfLine
-        | rl::EndOfLine
-        | rl::ForwardWord
-        | rl::BackwardWord
-        | rl::ForwardBigword
-        | rl::BackwardBigword
-        | rl::NextdOrForwardWord
-        | rl::PrevdOrBackwardWord
-        | rl::DeleteChar
-        | rl::BackwardDeleteChar
-        | rl::KillLine
-        | rl::Yank
-        | rl::YankPop
-        | rl::BackwardKillLine
-        | rl::KillWholeLine
-        | rl::KillInnerLine
-        | rl::KillWord
-        | rl::KillBigword
-        | rl::BackwardKillWord
-        | rl::BackwardKillPathComponent
-        | rl::BackwardKillBigword
-        | rl::SelfInsert
-        | rl::SelfInsertNotFirst
-        | rl::TransposeChars
-        | rl::TransposeWords
-        | rl::UpcaseWord
-        | rl::DowncaseWord
-        | rl::CapitalizeWord
-        | rl::BeginningOfBuffer
-        | rl::EndOfBuffer
-        | rl::Undo
-        | rl::Redo =>
+        RL::BeginningOfLine
+        | RL::EndOfLine
+        | RL::ForwardWord
+        | RL::BackwardWord
+        | RL::ForwardBigword
+        | RL::BackwardBigword
+        | RL::NextdOrForwardWord
+        | RL::PrevdOrBackwardWord
+        | RL::DeleteChar
+        | RL::BackwardDeleteChar
+        | RL::KillLine
+        | RL::Yank
+        | RL::YankPop
+        | RL::BackwardKillLine
+        | RL::KillWholeLine
+        | RL::KillInnerLine
+        | RL::KillWord
+        | RL::KillBigword
+        | RL::BackwardKillWord
+        | RL::BackwardKillPathComponent
+        | RL::BackwardKillBigword
+        | RL::SelfInsert
+        | RL::SelfInsertNotFirst
+        | RL::TransposeChars
+        | RL::TransposeWords
+        | RL::UpcaseWord
+        | RL::DowncaseWord
+        | RL::CapitalizeWord
+        | RL::BeginningOfBuffer
+        | RL::EndOfBuffer
+        | RL::Undo
+        | RL::Redo =>
         // These commands operate on the search field if that's where the focus is.
         {
             !focused_on_search_field
@@ -4717,23 +4714,22 @@ fn command_ends_paging(c: ReadlineCmd, focused_on_search_field: bool) -> bool {
 
 /// Indicates if the given command ends the history search.
 fn command_ends_history_search(c: ReadlineCmd) -> bool {
-    #[allow(non_camel_case_types)]
-    type rl = ReadlineCmd;
+    type RL = ReadlineCmd;
     !matches!(
         c,
-        rl::HistoryPrefixSearchBackward
-            | rl::HistoryPrefixSearchForward
-            | rl::HistorySearchBackward
-            | rl::HistorySearchForward
-            | rl::HistoryTokenSearchBackward
-            | rl::HistoryTokenSearchForward
-            | rl::HistoryPagerDelete
-            | rl::BeginningOfHistory
-            | rl::EndOfHistory
-            | rl::Repaint
-            | rl::ForceRepaint
-            | rl::FocusIn
-            | rl::FocusOut
+        RL::HistoryPrefixSearchBackward
+            | RL::HistoryPrefixSearchForward
+            | RL::HistorySearchBackward
+            | RL::HistorySearchForward
+            | RL::HistoryTokenSearchBackward
+            | RL::HistoryTokenSearchForward
+            | RL::HistoryPagerDelete
+            | RL::BeginningOfHistory
+            | RL::EndOfHistory
+            | RL::Repaint
+            | RL::ForceRepaint
+            | RL::FocusIn
+            | RL::FocusOut
     )
 }
 
