@@ -71,10 +71,13 @@ rust.unknown_lints            = "allow"
 rust.unstable_name_collisions = "allow"
 
 [profile.dev]
-codegen-units = 256
-incremental   = true
-lto           = "off"
-opt-level     = 1
+codegen-units    = 256
+debug            = 0
+debug-assertions = false
+incremental      = true
+lto              = "off"
+opt-level        = 0
+overflow-checks  = false
 
 [profile.release]
 codegen-units    = 1
