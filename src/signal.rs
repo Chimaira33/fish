@@ -5,7 +5,7 @@ use crate::event::{enqueue_signal, is_signal_observed};
 use crate::nix::getpid;
 use crate::reader::{reader_handle_sigint, reader_sighup};
 use crate::termsize::TermsizeContainer;
-use crate::topic_monitor::{generation_t, topic_monitor_principal, topic_t, GenerationsList};
+use crate::topic_monitor::{topic_monitor_principal, Generation, GenerationsList, Topic};
 use crate::wchar::prelude::*;
 use crate::wutil::{fish_wcstoi, perror};
 use errno::{errno, set_errno};
@@ -82,7 +82,7 @@ extern "C" fn fish_signal_handler(
             if !observed {
                 reader_sighup();
             }
-            topic_monitor_principal().post(topic_t::sighupint);
+            topic_monitor_principal().post(Topic::sighupint);
         }
         libc::SIGTERM => {
             // Handle sigterm. The only thing we do is restore the front process ID, then die.
@@ -101,11 +101,11 @@ extern "C" fn fish_signal_handler(
                 CANCELLATION_SIGNAL.store(libc::SIGINT, Ordering::Relaxed);
             }
             reader_handle_sigint();
-            topic_monitor_principal().post(topic_t::sighupint);
+            topic_monitor_principal().post(Topic::sighupint);
         }
         libc::SIGCHLD => {
             // A child process stopped or exited.
-            topic_monitor_principal().post(topic_t::sigchld);
+            topic_monitor_principal().post(Topic::sigchld);
         }
         libc::SIGALRM => {
             // We have a sigalarm handler that does nothing. This is used in the signal torture
@@ -300,13 +300,13 @@ pub fn signal_unblock_all() {
 
 /// A Sigchecker can be used to check if a SIGINT (or SIGHUP) has been delivered.
 pub struct SigChecker {
-    topic: topic_t,
-    gen: generation_t,
+    topic: Topic,
+    gen: Generation,
 }
 
 impl SigChecker {
     /// Create a new checker for the given topic.
-    pub fn new(topic: topic_t) -> Self {
+    pub fn new(topic: Topic) -> Self {
         let mut res = SigChecker { topic, gen: 0 };
         // Call check() to update our generation.
         res.check();
@@ -315,7 +315,7 @@ impl SigChecker {
 
     /// Create a new checker for SIGHUP and SIGINT.
     pub fn new_sighupint() -> Self {
-        Self::new(topic_t::sighupint)
+        Self::new(Topic::sighupint)
     }
 
     /// Check if a sigint has been delivered since the last call to check(), or since the detector
