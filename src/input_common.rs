@@ -6,8 +6,8 @@ use crate::key::{
     self, alt, canonicalize_control_char, canonicalize_keyed_control_char, function_key, shift,
     Key, Modifiers,
 };
-use crate::reader::{reader_current_data, reader_test_and_clear_interrupted};
-use crate::threads::{iothread_port, MainThread};
+use crate::reader::reader_test_and_clear_interrupted;
+use crate::threads::iothread_port;
 use crate::universal_notifier::default_notifier;
 use crate::wchar::{encode_byte_to_char, prelude::*};
 use crate::wutil::encoding::{mbrtowc, mbstate_t, zero_mbstate};
