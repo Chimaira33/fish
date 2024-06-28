@@ -103,6 +103,7 @@ pub enum ReadlineCmd {
     BackwardJump,
     ForwardJumpTill,
     BackwardJumpTill,
+    JumpToMatchingBracket,
     FuncAnd,
     FuncOr,
     ExpandAbbr,
