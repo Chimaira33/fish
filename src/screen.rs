@@ -1115,6 +1115,7 @@ impl LayoutCache {
     pub const PROMPT_CACHE_MAX_SIZE: usize = 12;
 
     /// Return the size of the escape code cache.
+    #[cfg(test)]
     pub fn esc_cache_size(&self) -> usize {
         self.esc_cache.len()
     }
