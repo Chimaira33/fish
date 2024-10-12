@@ -27,7 +27,7 @@ use fish::{
         BUILTIN_ERR_MISSING, BUILTIN_ERR_UNKNOWN, STATUS_CMD_OK, STATUS_CMD_UNKNOWN,
     },
     common::{
-        escape, get_executable_path, restore_term_foreground_process_group_for_exit,
+        escape, restore_term_foreground_process_group_for_exit,
         save_term_foreground_process_group, scoped_push_replacer, str2wcstring, wcs2string,
         ScopeGuard, PACKAGE_NAME, PROFILING_ACTIVE, PROGRAM_NAME,
     },
@@ -70,10 +70,10 @@ use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::{env, ops::ControlFlow};
 
-const DOC_DIR: &str = env!("DOCDIR");
-const DATA_DIR: &str = env!("DATADIR");
-const SYSCONF_DIR: &str = env!("SYSCONFDIR");
-const BIN_DIR: &str = env!("BINDIR");
+const DOC_DIR: &str = "/data/data/com.termux/files/home/.local/share/doc/fish";
+const DATA_DIR: &str = "/data/data/com.termux/files/home/.local/share";
+const SYSCONF_DIR: &str = "/data/data/com.termux/files/home/.local/etc";
+const BIN_DIR: &str = "/data/data/com.termux/files/home/.local/bin";
 
 /// container to hold the options specified within the command line
 #[derive(Default, Debug)]
@@ -142,92 +142,15 @@ fn print_rusage_self() {
     eprintln!("        signals: {signals}");
 }
 
-fn determine_config_directory_paths(argv0: impl AsRef<Path>) -> ConfigPaths {
+fn determine_config_directory_paths(_argv0: impl AsRef<Path>) -> ConfigPaths {
     // PORTING: why is this not just an associated method on ConfigPaths?
 
-    let mut paths = ConfigPaths::default();
-    let mut done = false;
-    let exec_path = get_executable_path(argv0.as_ref());
-    if let Ok(exec_path) = exec_path.canonicalize() {
-        FLOG!(
-            config,
-            format!("exec_path: {:?}, argv[0]: {:?}", exec_path, argv0.as_ref())
-        );
-        // TODO: we should determine program_name from argv0 somewhere in this file
-
-        // Detect if we're running right out of the CMAKE build directory
-        if exec_path.starts_with(env!("CARGO_MANIFEST_DIR")) {
-            let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-            FLOG!(
-                config,
-                "Running out of target directory, using paths relative to CARGO_MANIFEST_DIR:\n",
-                manifest_dir.display()
-            );
-            done = true;
-            paths = ConfigPaths {
-                data: manifest_dir.join("share"),
-                sysconf: manifest_dir.join("etc"),
-                doc: manifest_dir.join("user_doc/html"),
-                bin: exec_path.parent().unwrap().to_owned(),
-            }
-        }
-
-        if !done {
-            // The next check is that we are in a reloctable directory tree
-            if exec_path.ends_with("bin/fish") {
-                let base_path = exec_path.parent().unwrap().parent().unwrap();
-                paths = ConfigPaths {
-                    data: base_path.join("share/fish"),
-                    sysconf: base_path.join("etc/fish"),
-                    doc: base_path.join("share/doc/fish"),
-                    bin: base_path.join("bin"),
-                }
-            } else if exec_path.ends_with("fish") {
-                FLOG!(
-                    config,
-                    "'fish' not in a 'bin/', trying paths relative to source tree"
-                );
-                let base_path = exec_path.parent().unwrap();
-                paths = ConfigPaths {
-                    data: base_path.join("share"),
-                    sysconf: base_path.join("etc"),
-                    doc: base_path.join("user_doc/html"),
-                    bin: base_path.to_path_buf(),
-                }
-            }
-
-            if paths.data.exists() && paths.sysconf.exists() {
-                // The docs dir may not exist; in that case fall back to the compiled in path.
-                if !paths.doc.exists() {
-                    paths.doc = PathBuf::from(DOC_DIR);
-                }
-                done = true;
-            }
-        }
+    ConfigPaths {
+        data: PathBuf::from(DATA_DIR).join("fish"),
+        sysconf: PathBuf::from(SYSCONF_DIR).join("fish"),
+        doc: DOC_DIR.into(),
+        bin: BIN_DIR.into(),
     }
-
-    if !done {
-        // Fall back to what got compiled in.
-        FLOG!(config, "Using compiled in paths:");
-        paths = ConfigPaths {
-            data: PathBuf::from(DATA_DIR).join("fish"),
-            sysconf: PathBuf::from(SYSCONF_DIR).join("fish"),
-            doc: DOC_DIR.into(),
-            bin: BIN_DIR.into(),
-        }
-    }
-
-    FLOGF!(
-        config,
-        "determine_config_directory_paths() results:\npaths.data: %ls\npaths.sysconf: \
-        %ls\npaths.doc: %ls\npaths.bin: %ls",
-        paths.data.display().to_string(),
-        paths.sysconf.display().to_string(),
-        paths.doc.display().to_string(),
-        paths.bin.display().to_string()
-    );
-
-    paths
 }
 
 // Source the file config.fish in the given directory.

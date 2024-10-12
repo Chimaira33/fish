@@ -106,8 +106,8 @@ impl DirEntry {
         let mut s: libc::stat = unsafe { std::mem::zeroed() };
         if unsafe { libc::fstatat(fd, narrow.as_ptr(), &mut s, 0) } == 0 {
             let dev_inode = DevInode {
-                device: s.st_dev as u64,
-                inode: s.st_ino as u64,
+                device: s.st_dev,
+                inode: s.st_ino,
             };
             self.dev_inode.set(Some(dev_inode));
             self.typ.set(stat_mode_to_entry_type(s.st_mode));
@@ -267,7 +267,7 @@ impl DirIter {
         assert!(std::mem::size_of::<libc::c_char>() == std::mem::size_of::<u8>());
         let d_name_cchar = &dent.d_name;
         let d_name = unsafe {
-            slice::from_raw_parts(d_name_cchar.as_ptr() as *const u8, d_name_cchar.len())
+            slice::from_raw_parts(d_name_cchar.as_ptr(), d_name_cchar.len())
         };
 
         // Skip . and ..,
@@ -277,10 +277,7 @@ impl DirIter {
         }
 
         let nul_pos = dent.d_name.iter().position(|b| *b == 0).unwrap();
-        let d_name: Vec<u8> = dent.d_name[..nul_pos + 1]
-            .iter()
-            .map(|b| *b as u8)
-            .collect();
+        let d_name: Vec<u8> = dent.d_name[..nul_pos + 1].to_vec();
         self.entry.reset();
         self.entry.name = cstr2wcstring(&d_name);
         #[cfg(any(target_os = "freebsd", target_os = "netbsd", target_os = "openbsd"))]

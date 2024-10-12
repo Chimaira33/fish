@@ -449,7 +449,6 @@ mod expander {
     use crate::{
         common::scoped_push,
         path::append_path_component,
-        threads::is_main_thread,
         wutil::{dir_iter::DirIter, normalize_path, DevInode},
     };
 
@@ -591,10 +590,6 @@ mod expander {
                     if self.interrupted_or_overflowed() {
                         return;
                     }
-                }
-
-                if is_main_thread() {
-                    crate::input_common::terminal_protocols_disable_ifn();
                 }
 
                 // return "." and ".." entries if we're doing completions

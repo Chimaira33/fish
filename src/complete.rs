@@ -6,11 +6,10 @@ use std::{
         atomic::{self, AtomicUsize},
         Mutex, MutexGuard,
     },
-    time::{Duration, Instant},
 };
 
 use crate::{
-    common::{charptr2wcstring, escape_string, EscapeFlags, EscapeStringStyle},
+    common::{escape_string, EscapeFlags, EscapeStringStyle},
     reader::{get_quote, is_backslashed},
     util::wcsfilecmp,
     wutil::sprintf,
@@ -47,7 +46,7 @@ use crate::{
     wchar::{wstr, WString, L},
     wchar_ext::WExt,
     wcstringutil::{
-        string_fuzzy_match_string, string_prefixes_string, string_prefixes_string_case_insensitive,
+        string_fuzzy_match_string, string_prefixes_string,
         StringFuzzyMatch,
     },
     wildcard::{wildcard_complete, wildcard_has, wildcard_match},
@@ -59,9 +58,6 @@ use crate::{
 //
 // There are a few more completion description strings defined in expand.rs. Maybe all completion
 // description strings should be defined in the same file?
-
-/// Description for ~USER completion.
-static COMPLETE_USER_DESC: Lazy<&wstr> = Lazy::new(|| wgettext!("Home for %ls"));
 
 /// Description for short variables. The value is concatenated to this description.
 static COMPLETE_VAR_DESC_VAL: Lazy<&wstr> = Lazy::new(|| wgettext!("Variable: %ls"));
@@ -1784,7 +1780,7 @@ impl<'ctx> Completer<'ctx> {
     /// Try to complete the specified string as a username. This is used by `~USER` type expansion.
     ///
     /// Returns `false` if unable to complete, `true` otherwise
-    fn try_complete_user(&mut self, s: &wstr) -> bool {
+    fn try_complete_user(&mut self, _s: &wstr) -> bool {
         #[cfg(target_os = "android")]
         {
             // The getpwent() function does not exist on Android. A Linux user on Android isn't

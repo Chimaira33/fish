@@ -12,7 +12,6 @@ use crate::reader::{
     reader_change_cursor_end_mode, reader_change_cursor_selection_mode, reader_change_history,
     reader_schedule_prompt_repaint, reader_set_autosuggestion_enabled,
 };
-use crate::screen::screen_set_midnight_commander_hack;
 use crate::screen::LAYOUT_CACHE_SHARED;
 use crate::wchar::prelude::*;
 use crate::wutil::fish_wcstoi;
@@ -588,16 +587,6 @@ fn apply_term_hacks(vars: &EnvStack, term: &mut Term) {
     }
 }
 
-/// Apply any platform- or environment-specific hacks that don't involve a `Term` instance.
-fn apply_non_term_hacks(vars: &EnvStack) {
-    // Midnight Commander tries to extract the last line of the prompt, and does so in a way that is
-    // broken if you do '\r' after it like we normally do.
-    // See https://midnight-commander.org/ticket/4258.
-    if vars.get(L!("MC_SID")).is_some() {
-        screen_set_midnight_commander_hack();
-    }
-}
-
 // Initialize the curses subsystem
 fn init_curses(vars: &EnvStack) {
     for var_name in CURSES_VARIABLES {
@@ -633,9 +622,6 @@ fn init_curses(vars: &EnvStack) {
 
         initialize_curses_using_fallbacks(vars);
     }
-
-    // Configure hacks that apply regardless of whether we successfully init curses or not.
-    apply_non_term_hacks(vars);
 
     // Store some global variables that reflect the term's capabilities
     if let Some(term) = curses::term() {

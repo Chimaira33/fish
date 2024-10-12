@@ -2,7 +2,6 @@ use std::num::NonZeroI32;
 
 use crate::common::{exit_without_destructors, restore_term_foreground_process_group_for_exit};
 use crate::event::{enqueue_signal, is_signal_observed};
-use crate::input_common::terminal_protocols_disable_ifn;
 use crate::nix::getpid;
 use crate::reader::{reader_handle_sigint, reader_sighup};
 use crate::termsize::TermsizeContainer;
@@ -89,7 +88,6 @@ extern "C" fn fish_signal_handler(
             // Handle sigterm. The only thing we do is restore the front process ID, then die.
             if !observed {
                 restore_term_foreground_process_group_for_exit();
-                terminal_protocols_disable_ifn();
                 // Safety: signal() and raise() are async-signal-safe.
                 unsafe {
                     libc::signal(libc::SIGTERM, libc::SIG_DFL);
@@ -391,10 +389,10 @@ const SIGNAL_TABLE : &[LookupEntry] = &[
     LookupEntry::new(libc::SIGSYS,    L!("SIGSYS"), L!("Bad system call")),
     LookupEntry::new(libc::SIGIOT,    L!("SIGIOT"), L!("Abort (Alias for SIGABRT)")),
 
-    #[cfg(any(bsd, target_os = "macos"))]
+    #[cfg(target_os = "macos")]
     LookupEntry::new(libc::SIGEMT,    L!("SIGEMT"), L!("Unused signal")),
 
-    #[cfg(any(bsd, target_os = "macos"))]
+    #[cfg(target_os = "macos")]
     LookupEntry::new(libc::SIGINFO,   L!("SIGINFO"), L!("Information request")),
 
     #[cfg(target_os = "linux")]

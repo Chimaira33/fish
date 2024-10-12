@@ -3,6 +3,51 @@ use std::sync::atomic::AtomicPtr;
 use libc::{c_char, c_int};
 use once_cell::sync::Lazy;
 
+pub type PosixSpawnFileActionsT = *mut libc::c_void;
+pub type PosixSpawnattrT = *mut libc::c_void;
+
+pub const POSIX_SPAWN_SETPGROUP: libc::c_int = 0x02;
+pub const POSIX_SPAWN_SETSIGDEF: libc::c_int = 0x04;
+pub const POSIX_SPAWN_SETSIGMASK: libc::c_int = 0x08;
+
+extern "C" {
+    pub fn mkostemp(template: *mut libc::c_char, flags: libc::c_int) -> libc::c_int;
+    pub fn posix_spawn(
+        pid: *mut libc::pid_t,
+        path: *const libc::c_char,
+        file_actions: *const PosixSpawnFileActionsT,
+        attrp: *const PosixSpawnattrT,
+        argv: *const *mut libc::c_char,
+        envp: *const *mut libc::c_char,
+    ) -> libc::c_int;
+    pub fn posix_spawnattr_init(attr: *mut PosixSpawnattrT) -> libc::c_int;
+    pub fn posix_spawnattr_setflags(
+        attr: *mut PosixSpawnattrT,
+        flags: libc::c_short,
+    ) -> libc::c_int;
+    pub fn posix_spawnattr_setpgroup(attr: *mut PosixSpawnattrT, flags: libc::pid_t)
+        -> libc::c_int;
+    pub fn posix_spawnattr_setsigdefault(
+        attr: *mut PosixSpawnattrT,
+        default: *const libc::sigset_t,
+    ) -> libc::c_int;
+    pub fn posix_spawnattr_setsigmask(
+        attr: *mut PosixSpawnattrT,
+        default: *const libc::sigset_t,
+    ) -> libc::c_int;
+    pub fn posix_spawnattr_destroy(attr: *mut PosixSpawnattrT) -> libc::c_int;
+    pub fn posix_spawn_file_actions_destroy(actions: *mut PosixSpawnFileActionsT) -> libc::c_int;
+    pub fn posix_spawn_file_actions_init(actions: *mut PosixSpawnFileActionsT) -> libc::c_int;
+    pub fn posix_spawn_file_actions_addclose(
+        actions: *mut PosixSpawnFileActionsT,
+        fd: libc::c_int,
+    ) -> libc::c_int;
+    pub fn posix_spawn_file_actions_adddup2(
+        actions: *mut PosixSpawnFileActionsT,
+        fd: libc::c_int,
+        newfd: libc::c_int,
+    ) -> libc::c_int;
+}
 pub static _PATH_BSHELL: AtomicPtr<c_char> = AtomicPtr::new(std::ptr::null_mut());
 extern "C" {
     pub fn C_PATH_BSHELL() -> *const c_char;

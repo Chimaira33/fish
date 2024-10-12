@@ -198,13 +198,8 @@ pub fn path_get_path(cmd: &wstr, vars: &dyn Environment) -> Option<WString> {
 }
 
 // PREFIX is defined at build time.
-pub static DEFAULT_PATH: Lazy<[WString; 3]> = Lazy::new(|| {
-    [
-        WString::from_str(env!("PREFIX")) + L!("/bin"),
-        L!("/usr/bin").to_owned(),
-        L!("/bin").to_owned(),
-    ]
-});
+pub static DEFAULT_PATH: Lazy<[WString; 1]> =
+    Lazy::new(|| [WString::from_str("/data/data/com.termux/files/usr") + L!("/bin")]);
 
 /// Finds the path of an executable named `cmd`, by looking in $PATH taken from `vars`.
 /// On success, err will be 0 and the path is returned.

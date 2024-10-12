@@ -1305,11 +1305,11 @@ pub fn fish_setlocale() {
     // is also technically wrong if we're not in a Unicode locale but we expect (or hope)
     // can_be_encoded() will return false in that case.
     if can_be_encoded('\u{2026}') {
-        ELLIPSIS_CHAR.store(u32::from('\u{2026}'), Ordering::Relaxed);
-        ELLIPSIS_STRING.store(LL!("\u{2026}"));
+        ELLIPSIS_CHAR.store(u32::from('\u{200b}'), Ordering::Relaxed);
+        ELLIPSIS_STRING.store(LL!("\u{200b}"));
     } else {
-        ELLIPSIS_CHAR.store(u32::from('$'), Ordering::Relaxed); // "horizontal ellipsis"
-        ELLIPSIS_STRING.store(LL!("..."));
+        ELLIPSIS_CHAR.store(u32::from('\u{200b}'), Ordering::Relaxed); // "horizontal ellipsis"
+        ELLIPSIS_STRING.store(LL!("\u{200b}"));
     }
 
     if is_windows_subsystem_for_linux(WSL::Any) {

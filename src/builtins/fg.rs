@@ -146,9 +146,6 @@ pub fn fg(parser: &Parser, streams: &mut IoStreams, argv: &mut [&wstr]) -> Optio
     {
         let job_group = job.group();
         job_group.set_is_foreground(true);
-        if job.entitled_to_terminal() {
-            crate::input_common::terminal_protocols_disable_ifn();
-        }
         let tmodes = job_group.tmodes.borrow();
         if job_group.wants_terminal() && tmodes.is_some() {
             let termios = tmodes.as_ref().unwrap();

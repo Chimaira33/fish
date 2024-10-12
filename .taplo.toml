@@ -1,0 +1,13 @@
+exclude = ["./benchmark/**/*.toml"]
+include = [".cargo/config.toml", ".taplo.toml", "Cargo.toml", "crates/**/Cargo.toml", "xtask/**/*.toml"]
+
+[formatting]
+align_entries       = true
+array_auto_expand   = false
+column_width        = 80
+inline_table_expand = false
+reorder_arrays      = true
+reorder_keys        = true
+
+[schema]
+path = "https://raw.githubusercontent.com/tamasfe/taplo/master/site/site/public/schemas/Cargo.toml.json"

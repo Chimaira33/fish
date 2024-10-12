@@ -7,9 +7,6 @@ mod notifyd;
 #[cfg(any(target_os = "android", target_os = "linux"))]
 mod inotify;
 
-#[cfg(bsd)]
-mod kqueue;
-
 #[cfg(test)]
 mod test_helpers;
 
@@ -59,10 +56,6 @@ pub fn create_notifier() -> Box<dyn UniversalNotifier> {
     }
     #[cfg(any(target_os = "android", target_os = "linux"))]
     if let Some(notifier) = inotify::InotifyNotifier::new() {
-        return Box::new(notifier);
-    }
-    #[cfg(bsd)]
-    if let Some(notifier) = kqueue::KqueueNotifier::new() {
         return Box::new(notifier);
     }
     Box::new(NullNotifier)

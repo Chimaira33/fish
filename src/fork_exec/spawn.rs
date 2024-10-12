@@ -1,10 +1,11 @@
 //! Wrappers around posix_spawn.
 
+use crate::libc::{posix_spawn, posix_spawn_file_actions_addclose, posix_spawn_file_actions_adddup2, posix_spawn_file_actions_destroy, posix_spawn_file_actions_init, posix_spawnattr_destroy, posix_spawnattr_init, posix_spawnattr_setflags, posix_spawnattr_setpgroup, posix_spawnattr_setsigdefault, posix_spawnattr_setsigmask, POSIX_SPAWN_SETPGROUP, POSIX_SPAWN_SETSIGDEF, POSIX_SPAWN_SETSIGMASK, _PATH_BSHELL};
 use super::blocked_signals_for_job;
 use crate::proc::Job;
 use crate::redirection::Dup2List;
 use crate::signal::get_signals_with_handlers;
-use crate::{exec::is_thompson_shell_script, libc::_PATH_BSHELL};
+use crate::exec::is_thompson_shell_script;
 use errno::Errno;
 use libc::{c_char, posix_spawn_file_actions_t, posix_spawnattr_t};
 use std::ffi::{CStr, CString};
@@ -26,32 +27,32 @@ impl Attr {
     fn new() -> Result<Self, Errno> {
         unsafe {
             let mut attr: posix_spawnattr_t = std::mem::zeroed();
-            check_fail(libc::posix_spawnattr_init(&mut attr))?;
+            check_fail(posix_spawnattr_init(&mut attr))?;
             Ok(Self(attr))
         }
     }
 
     fn set_flags(&mut self, flags: libc::c_short) -> Result<(), Errno> {
-        unsafe { check_fail(libc::posix_spawnattr_setflags(&mut self.0, flags)) }
+        unsafe { check_fail(posix_spawnattr_setflags(&mut self.0, flags)) }
     }
 
     fn set_pgroup(&mut self, pgroup: libc::pid_t) -> Result<(), Errno> {
-        unsafe { check_fail(libc::posix_spawnattr_setpgroup(&mut self.0, pgroup)) }
+        unsafe { check_fail(posix_spawnattr_setpgroup(&mut self.0, pgroup)) }
     }
 
     fn set_sigdefault(&mut self, sigs: &libc::sigset_t) -> Result<(), Errno> {
-        unsafe { check_fail(libc::posix_spawnattr_setsigdefault(&mut self.0, sigs)) }
+        unsafe { check_fail(posix_spawnattr_setsigdefault(&mut self.0, sigs)) }
     }
 
     fn set_sigmask(&mut self, sigs: &libc::sigset_t) -> Result<(), Errno> {
-        unsafe { check_fail(libc::posix_spawnattr_setsigmask(&mut self.0, sigs)) }
+        unsafe { check_fail(posix_spawnattr_setsigmask(&mut self.0, sigs)) }
     }
 }
 
 impl Drop for Attr {
     fn drop(&mut self) {
         unsafe {
-            let _ = libc::posix_spawnattr_destroy(&mut self.0);
+            let _ = posix_spawnattr_destroy(&mut self.0);
         }
     }
 }
@@ -63,18 +64,18 @@ impl FileActions {
     fn new() -> Result<Self, Errno> {
         unsafe {
             let mut actions: posix_spawn_file_actions_t = std::mem::zeroed();
-            check_fail(libc::posix_spawn_file_actions_init(&mut actions))?;
+            check_fail(posix_spawn_file_actions_init(&mut actions))?;
             Ok(Self(actions))
         }
     }
 
     fn add_close(&mut self, fd: libc::c_int) -> Result<(), Errno> {
-        unsafe { check_fail(libc::posix_spawn_file_actions_addclose(&mut self.0, fd)) }
+        unsafe { check_fail(posix_spawn_file_actions_addclose(&mut self.0, fd)) }
     }
 
     fn add_dup2(&mut self, src: libc::c_int, target: libc::c_int) -> Result<(), Errno> {
         unsafe {
-            check_fail(libc::posix_spawn_file_actions_adddup2(
+            check_fail(posix_spawn_file_actions_adddup2(
                 &mut self.0,
                 src,
                 target,
@@ -86,7 +87,7 @@ impl FileActions {
 impl Drop for FileActions {
     fn drop(&mut self) {
         unsafe {
-            let _ = libc::posix_spawn_file_actions_destroy(&mut self.0);
+            let _ = posix_spawn_file_actions_destroy(&mut self.0);
         }
     }
 }
@@ -121,13 +122,13 @@ impl PosixSpawner {
         // Set our flags.
         let mut flags: i32 = 0;
         if reset_signal_handlers {
-            flags |= libc::POSIX_SPAWN_SETSIGDEF;
+            flags |= POSIX_SPAWN_SETSIGDEF;
         }
         if reset_sigmask {
-            flags |= libc::POSIX_SPAWN_SETSIGMASK;
+            flags |= POSIX_SPAWN_SETSIGMASK;
         }
         if desired_pgid.is_some() {
-            flags |= libc::POSIX_SPAWN_SETPGROUP;
+            flags |= POSIX_SPAWN_SETPGROUP;
         }
         attr.set_flags(flags.try_into().expect("Flags should fit in c_short"))?;
 
@@ -170,7 +171,7 @@ impl PosixSpawner {
     ) -> Result<libc::pid_t, Errno> {
         let mut pid = -1;
         let spawned = check_fail(unsafe {
-            libc::posix_spawn(&mut pid, cmd, &self.actions.0, &self.attr.0, argv, envp)
+            posix_spawn(&mut pid, cmd, &self.actions.0, &self.attr.0, argv, envp)
         });
         if spawned.is_ok() {
             return Ok(pid);
@@ -199,7 +200,7 @@ impl PosixSpawner {
             }
             argv2.push(std::ptr::null_mut());
             check_fail(unsafe {
-                libc::posix_spawn(
+                posix_spawn(
                     &mut pid,
                     _PATH_BSHELL.load(Ordering::Relaxed),
                     &self.actions.0,

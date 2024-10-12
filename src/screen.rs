@@ -28,7 +28,6 @@ use crate::env::{Environment, TERM_HAS_XN};
 use crate::fallback::fish_wcwidth;
 use crate::flog::FLOGF;
 use crate::future::IsSomeAnd;
-use crate::global_safety::RelaxedAtomicBool;
 use crate::highlight::HighlightColorResolver;
 use crate::highlight::HighlightSpec;
 use crate::output::Outputter;
@@ -1027,11 +1026,8 @@ impl Screen {
 
         // Also move the cursor to the beginning of the line here,
         // in case we're wrong about the width anywhere.
-        // Don't do it when running in midnight_commander because of
         // https://midnight-commander.org/ticket/4258.
-        if !MIDNIGHT_COMMANDER_HACK.load() {
-            zelf.r#move(0, 0);
-        }
+           zelf.r#move(0, 0);
 
         // Clear remaining lines (if any) if we haven't cleared the screen.
         if let (false, true, Some(clr_eol)) = (
@@ -1297,14 +1293,8 @@ pub fn screen_clear() -> WString {
         .unwrap_or_default()
 }
 
-static MIDNIGHT_COMMANDER_HACK: RelaxedAtomicBool = RelaxedAtomicBool::new(false);
-
-pub fn screen_set_midnight_commander_hack() {
-    MIDNIGHT_COMMANDER_HACK.store(true)
-}
-
 /// The number of characters to indent new blocks.
-const INDENT_STEP: usize = 4;
+const INDENT_STEP: usize = 2;
 
 /// Tests if the specified narrow character sequence is present at the specified position of the
 /// specified wide character string. All of \c seq must match, but str may be longer than seq.
@@ -1336,21 +1326,33 @@ fn allow_soft_wrap() -> bool {
 }
 
 /// Does this look like the escape sequence for setting a screen name?
-fn is_screen_name_escape_seq(code: &wstr) -> Option<usize> {
-    // Tmux escapes start with `\ePtmux;` and end also in `\e\\`,
-    // so we can just handle them here.
-    let tmux_seq = L!("Ptmux;");
-    let mut is_tmux = false;
+/* fn is_screen_name_escape_seq(code: &wstr) -> Option<usize> {
     if code.char_at(1) != 'k' {
-        if code.starts_with(tmux_seq) {
-            is_tmux = true;
-        } else {
-            return None;
-        }
+          return None;
     }
     let screen_name_end_sentinel = L!("\x1B\\");
-    let mut offset = 2;
+    let offset = 2;
     let escape_sequence_end;
+    loop {
+        let Some(pos) = code[offset..].find(screen_name_end_sentinel) else {
+            // Consider just <esc>k to be the code.
+            escape_sequence_end = 2;
+            break;
+        };
+        let screen_name_end = offset + pos;
+        escape_sequence_end = screen_name_end + screen_name_end_sentinel.len();
+        break;
+    }
+    Some(escape_sequence_end)
+} */
+fn is_screen_name_escape_seq(code: &wstr) -> Option<usize> {
+    if code.char_at(1) != 'k' {
+        return None;
+    }
+    let screen_name_end_sentinel = L!("\x1B\\");
+    let offset = 2;
+    let escape_sequence_end;
+    #[allow(clippy::never_loop)]
     loop {
         let Some(pos) = code[offset..].find(screen_name_end_sentinel) else {
             // Consider just <esc>k to be the code.
@@ -1361,20 +1363,6 @@ fn is_screen_name_escape_seq(code: &wstr) -> Option<usize> {
         let screen_name_end = offset + pos;
         // The tmux sequence requires that all escapes in the payload sequence
         // be doubled. So if we have \e\e\\ that's still not the end.
-        if is_tmux {
-            let mut esc_count = 0;
-            let mut i = screen_name_end;
-            while i > 0 && code.as_char_slice()[i - 1] == '\x1B' {
-                i -= 1;
-                if i > 0 {
-                    esc_count += 1;
-                }
-            }
-            if esc_count % 2 == 1 {
-                offset = screen_name_end + 1;
-                continue;
-            }
-        }
         escape_sequence_end = screen_name_end + screen_name_end_sentinel.len();
         break;
     }
