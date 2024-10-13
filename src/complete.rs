@@ -722,7 +722,7 @@ impl<'ctx> Completer<'ctx> {
         // return. No need for any other completions.
         let current_token = cur_tok.get_source(&cmdline);
         if cur_tok.location_in_or_at_end_of_source_range(cursor_pos)
-            && (self.try_complete_variable(current_token) || self.try_complete_user(current_token))
+            && self.try_complete_variable(current_token)
         {
             return;
         }
@@ -1780,7 +1780,7 @@ impl<'ctx> Completer<'ctx> {
     /// Try to complete the specified string as a username. This is used by `~USER` type expansion.
     ///
     /// Returns `false` if unable to complete, `true` otherwise
-    fn try_complete_user(&mut self, _s: &wstr) -> bool {
+    /* fn try_complete_user(&mut self, _s: &wstr) -> bool {
         #[cfg(target_os = "android")]
         {
             // The getpwent() function does not exist on Android. A Linux user on Android isn't
@@ -1860,7 +1860,7 @@ impl<'ctx> Completer<'ctx> {
 
             result
         }
-    }
+    } */
 
     /// If we have variable assignments, attempt to apply them in our parser. As soon as the return
     /// value goes out of scope, the variables will be removed from the parser.

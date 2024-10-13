@@ -395,7 +395,7 @@ const SIGNAL_TABLE : &[LookupEntry] = &[
     #[cfg(target_os = "macos")]
     LookupEntry::new(libc::SIGINFO,   L!("SIGINFO"), L!("Information request")),
 
-    #[cfg(target_os = "linux")]
+    // #[cfg(target_os = "linux")]
     LookupEntry::new(libc::SIGSTKFLT, L!("SISTKFLT"), L!("Stack fault")),
 
     #[cfg(target_os = "linux")]
@@ -405,7 +405,7 @@ const SIGNAL_TABLE : &[LookupEntry] = &[
     #[allow(deprecated)]
     LookupEntry::new(libc::SIGUNUSED, L!("SIGUNUSED"), L!("Unused signal")),
 
-    #[cfg(target_os = "linux")]
+    // #[cfg(target_os = "linux")]
     LookupEntry::new(libc::SIGPWR,    L!("SIGPWR"), L!("Power failure")),
 
     // TODO: determine whether SIGWIND is defined on any platform.

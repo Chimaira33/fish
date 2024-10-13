@@ -169,7 +169,7 @@ impl BinarySemaphore {
         // sem_init always fails with ENOSYS on Mac and has an annoying deprecation warning.
         // On BSD sem_init uses a file descriptor under the hood which doesn't get CLOEXEC (see #7304).
         // So use fast semaphores on Linux only.
-        #[cfg(target_os = "linux")]
+        #[cfg(any(target_os = "android", target_os = "linux"))]
         {
             // sem_t does not have an initializer in Rust so we use zeroed().
             let sem = Box::pin(UnsafeCell::new(unsafe { std::mem::zeroed() }));
